@@ -1,0 +1,34 @@
+{
+    "title": "Shipping Container Cliffs",
+    "prefabID": 2337881356,
+    "density": 150,
+    "frequency": 50,
+    "floor": 490,
+    "ceiling": 1000,
+    "avoidTopo": true,
+    "flipping": true,
+    "tilting": true,
+    "scalesLow": {
+        "x": 2.956495761871338,
+        "y": 2.850259304046631,
+        "z": 2.9564967155456545
+    },
+    "scalesHigh": {
+        "x": 3.283350944519043,
+        "y": 3.185947895050049,
+        "z": 3.283351421356201
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 86.67195129394531
+    },
+    "rotationsHigh": {
+        "x": 3.816255569458008,
+        "y": 360.0,
+        "z": 95.16810607910156
+    },
+    "zOffset": -10.0,
+    "slopeLow": 55.10418701171875,
+    "slopeHigh": 90.0
+}

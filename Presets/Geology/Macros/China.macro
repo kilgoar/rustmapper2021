@@ -1,0 +1,199 @@
+{
+    "title": "China Cliffs",
+    "prefabID": 181322589,
+    "density": 100,
+    "frequency": 10,
+    "floor": 490,
+    "ceiling": 1000,
+    "avoidTopo": true,
+    "flipping": false,
+    "tilting": true,
+    "scalesLow": {
+        "x": 3.067244052886963,
+        "y": 2.0575149059295656,
+        "z": 1.988477110862732
+    },
+    "scalesHigh": {
+        "x": 3.5292985439300539,
+        "y": 2.4593636989593508,
+        "z": 2.459364414215088
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 89.0
+    },
+    "rotationsHigh": {
+        "x": 3.0,
+        "y": 355.9178161621094,
+        "z": 91.0
+    },
+    "zOffset": -24.0,
+    "slopeLow": 40.0,
+    "slopeHigh": 90.0
+}*{
+    "title": "China Cliff Bushes",
+    "prefabID": 3809416830,
+    "density": 140,
+    "frequency": 25,
+    "floor": 490,
+    "ceiling": 1000,
+    "avoidTopo": true,
+    "flipping": false,
+    "tilting": false,
+    "scalesLow": {
+        "x": 3.067244052886963,
+        "y": 2.0575149059295656,
+        "z": 3.067244052886963
+    },
+    "scalesHigh": {
+        "x": 4.094367027282715,
+        "y": 2.4593636989593508,
+        "z": 4.15457010269165
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 0.0,
+        "y": 360.0,
+        "z": 0.0
+    },
+    "zOffset": 0.0,
+    "slopeLow": 50.19117736816406,
+    "slopeHigh": 90.0
+}*{
+    "title": "China Cliff Bushes 2",
+    "prefabID": 382842717,
+    "density": 140,
+    "frequency": 25,
+    "floor": 490,
+    "ceiling": 1000,
+    "avoidTopo": true,
+    "flipping": false,
+    "tilting": false,
+    "scalesLow": {
+        "x": 3.067244052886963,
+        "y": 2.0575149059295656,
+        "z": 3.067244052886963
+    },
+    "scalesHigh": {
+        "x": 4.094367027282715,
+        "y": 2.4593636989593508,
+        "z": 4.15457010269165
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 0.0,
+        "y": 360.0,
+        "z": 0.0
+    },
+    "zOffset": 0.0,
+    "slopeLow": 50.19117736816406,
+    "slopeHigh": 90.0
+}*{
+    "title": "China Plains Boulders 2",
+    "prefabID": 3216412203,
+    "density": 150,
+    "frequency": 80,
+    "floor": 505,
+    "ceiling": 1000,
+    "avoidTopo": true,
+    "flipping": true,
+    "tilting": true,
+    "scalesLow": {
+        "x": 1.0124495029449463,
+        "y": 1.0301176309585572,
+        "z": 1.0124497413635255
+    },
+    "scalesHigh": {
+        "x": 1.4745044708251954,
+        "y": 1.5860761404037476,
+        "z": 1.5347073078155518
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 360.0,
+        "y": 360.0,
+        "z": 360.0
+    },
+    "zOffset": 0.0,
+    "slopeLow": 0.0,
+    "slopeHigh": 25.117645263671876
+}*{
+    "title": "China Plains Boulders",
+    "prefabID": 1298741248,
+    "density": 150,
+    "frequency": 80,
+    "floor": 505,
+    "ceiling": 1000,
+    "avoidTopo": true,
+    "flipping": true,
+    "tilting": true,
+    "scalesLow": {
+        "x": 1.0124495029449463,
+        "y": 1.0301176309585572,
+        "z": 1.0124497413635255
+    },
+    "scalesHigh": {
+        "x": 1.4745044708251954,
+        "y": 1.5860761404037476,
+        "z": 1.5347073078155518
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 360.0,
+        "y": 360.0,
+        "z": 360.0
+    },
+    "zOffset": 0.0,
+    "slopeLow": 0.0,
+    "slopeHigh": 25.117645263671876
+}*{
+    "title": "China Plains Boulders 3",
+    "prefabID": 717806699,
+    "density": 150,
+    "frequency": 80,
+    "floor": 505,
+    "ceiling": 1000,
+    "avoidTopo": true,
+    "flipping": true,
+    "tilting": true,
+    "scalesLow": {
+        "x": 1.0124495029449463,
+        "y": 1.0301176309585572,
+        "z": 1.0124497413635255
+    },
+    "scalesHigh": {
+        "x": 1.4745044708251954,
+        "y": 1.5860761404037476,
+        "z": 1.5347073078155518
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 360.0,
+        "y": 360.0,
+        "z": 360.0
+    },
+    "zOffset": 0.0,
+    "slopeLow": 0.0,
+    "slopeHigh": 25.117645263671876
+}*

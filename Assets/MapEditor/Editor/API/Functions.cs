@@ -51,6 +51,20 @@ namespace RustMapEditor.UI
 						tttWeight = GUILayout.HorizontalSlider(tttWeight, 0.7f, .1f);
 			EditorGUILayout.EndHorizontal();
 		}
+		
+		public static void LakeOcean(ref Layers layers)
+		{
+			EditorGUILayout.BeginHorizontal();
+			if (GUILayout.Button("Fill Lakes"))
+					{
+						GenerativeManager.lakeTopologyFill(layers);
+					}
+			if (GUILayout.Button("Fill Oceans"))
+					{
+						GenerativeManager.oceanTopologyFill(layers);
+					}
+			EditorGUILayout.EndHorizontal();
+		}
 	
 		public static void Crazing(ref CrazingPreset preset)
 		{
@@ -1166,6 +1180,18 @@ namespace RustMapEditor.UI
             Elements.ToolbarLabel(new GUIContent(prefabPath, prefabPath));
             Elements.EndToolbarHorizontal();
         }
+		
+		public static void Merger()
+		{
+			if (GUILayout.Button("Merge Maps"))
+					{
+						var blob = new WorldSerialization();
+						string loadFile = "";
+						loadFile = UnityEditor.EditorUtility.OpenFilePanel("Merge with", loadFile, "monument.map");
+						blob.Load(loadFile);
+						GenerativeManager.pasteMonument(blob, 0,0,0f);
+					}
+		}
 
         public static void SelectPrefabPaths(PrefabsListTreeView treeView, ref bool showAllPrefabs)
         {

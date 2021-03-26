@@ -172,7 +172,7 @@ public class MapManagerWindow : EditorWindow
 						
 						
 						Functions.RiverTools(TerrainManager.LandLayer, 0, ref aboveTerrain, 1, TerrainTopology.TypeToIndex((int)layers.Topologies));
-						
+						Functions.LakeOcean(ref layers);
 						break;
 				}
 			
@@ -256,6 +256,7 @@ public class MapManagerWindow : EditorWindow
 		break;
 		
 		case 5:
+			Functions.Merger();
 		break;
 		
         }

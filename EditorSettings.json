@@ -5,7 +5,7 @@
     "waterTransparency": 0.20000000298023225,
     "loadbundleonlaunch": false,
     "terrainTextureSet": false,
-    "style": true,
+    "style": false,
     "crazing": {
         "title": "",
         "zones": 100,
@@ -28,8 +28,8 @@
     },
     "ocean": {
         "title": "",
-        "radius": 50,
-        "gradient": 200,
+        "radius": 400,
+        "gradient": 300,
         "xOffset": 0,
         "yOffset": 0,
         "s": 100,
@@ -55,38 +55,38 @@
         "simple": true
     },
     "geology": {
-        "title": "Anasazi Cliffs",
-        "prefabID": 181322589,
+        "title": "Anasazi Rubble",
+        "prefabID": 919092475,
         "density": 100,
-        "frequency": 10,
-        "floor": 490,
+        "frequency": 40,
+        "floor": 504,
         "ceiling": 1000,
         "avoidTopo": true,
         "flipping": false,
         "tilting": true,
         "scalesLow": {
-            "x": 1.5261483192443848,
-            "y": 1.5438162088394166,
-            "z": 1.5261483192443848
+            "x": 0.42402827739715578,
+            "y": 0.4151943325996399,
+            "z": 0.42402899265289309
         },
         "scalesHigh": {
-            "x": 2.4505300521850588,
-            "y": 2.4593639373779299,
-            "z": 2.4593639373779299
+            "x": 0.7508834600448608,
+            "y": 0.7508829832077026,
+            "z": 0.7508834600448608
         },
         "rotationsLow": {
             "x": 0.0,
             "y": 0.0,
-            "z": 89.0
+            "z": 89.6819839477539
         },
         "rotationsHigh": {
-            "x": 3.0,
-            "y": 359.0,
-            "z": 91.0
+            "x": 3.816255569458008,
+            "y": 360.0,
+            "z": 90.95405578613281
         },
-        "zOffset": -11.0,
-        "slopeLow": 40.0,
-        "slopeHigh": 90.0
+        "zOffset": 0.0,
+        "slopeLow": 12.579540252685547,
+        "slopeHigh": 25.558897018432618
     },
     "prefabPaths": [
         "assets/bundled/prefabs/autospawn/",
