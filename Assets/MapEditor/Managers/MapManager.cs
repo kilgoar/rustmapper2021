@@ -693,7 +693,7 @@ public static class MapManager
 
             PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, delPrefab);
             PathManager.DeletePaths(PathManager.CurrentMapPaths, delPath);
-            //CentreSceneObjects(mapInfo);
+            CentreSceneObjects(mapInfo);
             SetTerrain(mapInfo, terrainID);
             PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
             PathManager.SpawnPaths(mapInfo.pathData, spwPath);

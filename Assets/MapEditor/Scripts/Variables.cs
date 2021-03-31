@@ -3,6 +3,18 @@ using System;
 
 namespace RustMapEditor.Variables
 {
+	public struct monumentData
+	{
+		public monumentData(int X, int Y, int Width, int Height)
+		{
+			x=X;
+			y=Y;
+			width=Width;
+			height=Height;
+		}
+		public int x,y,width,height;
+	}
+	
 	public struct Point
 	{
 		public Point(int x, int y)

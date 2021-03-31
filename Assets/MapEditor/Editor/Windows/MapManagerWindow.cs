@@ -220,9 +220,10 @@ public class MapManagerWindow : EditorWindow
             }
             break;
 		case 4:
-			GUIContent[] generatorMenu = new GUIContent[2];
+			GUIContent[] generatorMenu = new GUIContent[3];
 				generatorMenu[0] = new GUIContent("Heightmap");
 				generatorMenu[1] = new GUIContent("Geology");
+				generatorMenu[2] = new GUIContent("Monuments");
 				
 				generatorOptions = GUILayout.Toolbar(generatorOptions, generatorMenu, EditorStyles.toolbarButton);
 				switch (generatorOptions)
@@ -249,6 +250,10 @@ public class MapManagerWindow : EditorWindow
 
 						case 1:
 								Functions.Geology(ref activePreset, ref presetIndex, ref geologyList, ref macroIndex, ref macroList, ref macroTitle, ref macroDisplay);
+						break;
+						
+						case 2:
+								Functions.RustCity();
 						break;
 
 				

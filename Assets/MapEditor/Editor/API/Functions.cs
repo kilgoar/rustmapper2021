@@ -1187,10 +1187,23 @@ namespace RustMapEditor.UI
 					{
 						var blob = new WorldSerialization();
 						string loadFile = "";
-						loadFile = UnityEditor.EditorUtility.OpenFilePanel("Merge with", loadFile, "monument.map");
+						loadFile = UnityEditor.EditorUtility.OpenFilePanel("Merge with", loadFile, ".map");
 						blob.Load(loadFile);
 						GenerativeManager.pasteMonument(blob, 0,0,0f);
 					}
+			
+		}
+
+		public static void RustCity()
+		{
+					if (GUILayout.Button("Rust City"))
+					{
+						var monumentBlob = new WorldSerialization();
+						string loadFile = "highrise.monuments.map";
+						monumentBlob.Load(loadFile);
+						GenerativeManager.createRustCity(monumentBlob);
+					}
+			
 		}
 
         public static void SelectPrefabPaths(PrefabsListTreeView treeView, ref bool showAllPrefabs)

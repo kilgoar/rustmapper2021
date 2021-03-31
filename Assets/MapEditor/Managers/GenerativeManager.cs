@@ -473,6 +473,111 @@ public static class GenerativeManager
         TerrainManager.SetLayer(LandLayers.Topology,  TerrainTopology.TypeToIndex((int)layer.Topologies));
 	}
 	
+
+	public static monumentData [] monumentLocations(float [,,] biomeMap)
+	{
+		int res = biomeMap.GetLength(0);
+		float[,,] analysisMap = new float[res,res,2];
+		
+		monumentData[] monument = new monumentData[10];
+		
+		for (int i = 0; i < res; i++)
+		{
+			for (int j = 0; j < res; j++)
+			{
+				if (biomeMap[i,j,0] != 0)
+				{
+					analysisMap[i,j,1] = 0f;
+					analysisMap[i,j,0] = 1f;
+				}
+				else
+				{
+					analysisMap[i,j,1] = 1f;
+					analysisMap[i,j,0] = 0f;
+				}
+			}
+		}
+		TerrainManager.SetData(analysisMap, LandLayers.Topology,  0);
+		
+		Stack<Point> pixels = new Stack<Point>();
+		Point p;
+		int maxX, maxY, minX, minY;
+		int count = -1;
+		
+		for (int i = 0; i < res; i++)
+		{
+			for (int j = 0; j < res; j++)
+			{
+				if (analysisMap[i,j,1] == 0f)
+				{
+							pixels = new Stack<Point>();
+							p.X = i;
+							p.Y = j;
+							
+							maxX = i;
+							minX = i;
+							maxY = j;
+							minY = j;
+							
+							count++;
+							
+							pixels.Push(p);
+							
+							float target =0f;
+							
+							while (pixels.Count != 0)
+							{
+								
+								Point temp = pixels.Pop();
+								int y1 = temp.Y;
+								
+								while (y1 >= 0 && analysisMap[temp.X, y1,1] == target)
+								{
+									y1--;
+								}
+								y1++;
+								bool spanLeft =false;
+								bool spanRight =false;
+								while (y1 < res && analysisMap[temp.X,y1,1] == target)
+								{
+									analysisMap[temp.X, y1, 1] = 1f;
+									analysisMap[temp.X, y1, 0] = 0f;
+									
+									maxX = Math.Max(temp.X, maxX);
+									minX = Math.Min(temp.X, minX);
+									maxY = Math.Max(y1, maxY);
+									minY = Math.Min(y1, minY);
+									
+									if(!spanLeft && temp.X > 0 && analysisMap[temp.X-1, y1,1] == target)
+									{
+										pixels.Push(new Point(temp.X -1, y1));
+										spanLeft=true;
+									}
+									else if(spanLeft && temp.X -1 >= 0 && (analysisMap[temp.X-1, y1, 1] != target))
+									{
+										spanLeft=false;
+									}
+									if(!spanRight && temp.X < res - 1 && analysisMap[temp.X+1, y1, 1] == target)
+									{
+										pixels.Push(new Point(temp.X +1, y1));
+										spanRight=true;
+									}
+									else if(spanRight && temp.X < res - 1 && (analysisMap[temp.X+1, y1, 1] != target))
+									{
+										spanRight=false;
+									}
+									y1++;
+								}
+									
+							}
+							
+					monument[count] = new monumentData(minX, minY, maxX-minX, maxY-minY);
+				}
+			}
+		}
+		return monument;
+	}
+	
 	public static void oceanTopologyFill(Layers layer)
 	{
 		Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
@@ -866,6 +971,7 @@ public static class GenerativeManager
 		TerrainManager.SetData(newGround, LandLayers.Ground, 0);
 		TerrainManager.SetData(newBiome, LandLayers.Biome, 0);
         TerrainManager.SetData(newAlpha, LandLayers.Alpha);
+		TerrainManager.SetLayer(TerrainManager.LandLayer, 0);
 		
 		for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
@@ -917,15 +1023,38 @@ public static class GenerativeManager
 		
 	}
 	
-
-	
-	public static void RustCity(WorldSerialization blob, int x, int y, float zOffset)
+	public static void createRustCity(WorldSerialization blob)
 	{
-		
-		
-		EditorUtility.DisplayProgressBar("reeeLoading", "Monument File", .75f);
-		//selectedLandLayer = null;
 		WorldConverter.MapInfo terrains = WorldConverter.WorldToTerrain(blob);
+		monumentData [] monuments = monumentLocations(terrains.biomeMap);
+		int dim = 300;
+		int start = 500;
+		int x = start;
+		int y = start;
+		int lane = 10;
+		int height = 50;
+		int k = 0;
+		
+		while (y < start + dim)
+		{
+			while (x < start + dim)
+			{
+				k = UnityEngine.Random.Range(0,5);
+				RustCity(terrains, monuments[k], x, y);
+				
+				x+= (monuments[k].width + lane);
+			}
+			y += height;
+			x = start; 
+		}
+		
+	}
+	
+	
+	public static void RustCity(WorldConverter.MapInfo terrains, monumentData monument, int x, int y)
+	{
+		float zOffset=0;
+		//selectedLandLayer = null;
 		Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
 		var terrainPosition = 0.5f * terrains.size;
 		
@@ -947,10 +1076,15 @@ public static class GenerativeManager
 		
 		int dim=baseMap.GetLength(0)-4;
 		
-		float x1 = x/2f;
-		float y1 = y/2f;
-		x=(int)(x/ratio);
-		y=(int)(y/ratio);
+		int monumentX = monument.x;
+		int monumentY = monument.y;
+		int width = monument.width;
+		int height = monument.height;
+		
+		float x2 = monumentX*ratio;
+		float y2 = monumentY*ratio;
+		float x1 = x*ratio;
+		float y1 = y*ratio;
 		
 		float[,,] newGround = TerrainManager.GroundArray;
 		float[,,] newBiome = TerrainManager.BiomeArray;
@@ -958,57 +1092,50 @@ public static class GenerativeManager
 		
 		EditorUtility.ClearProgressBar();
 		
-		int helk = 0;
+
+		float sum = 0;
+		float sum1= 0;
+		int count = 0;
+		int xCheck = 0;
+		int yCheck = 0;
+		Vector3 holderPosition = new Vector3(0f,0f,0f);
 		
-		for (int i = 0; i < dim; i++)
+		for (int i = 0; i < width; i++)
 		{
-			for (int j = 0; j < dim; j++)
+			for (int j = 0; j < height; j++)
 			{
-
-			if (pBiome[i, j,3] > 0.2f)
-				{	
-				 dim = j;
-				 break;
+				if (pBiome[i,j,1] > 0f)
+				{
+				count++;
+				sum += pasteMap[i+monumentX,j+monumentY];
+				sum1 += baseMap[i+x,j+y];
 				}
-				
-				helk = j;
-
 			}
-
-			if (pBiome[i, helk, 3] > 0.2f)
-				{	
-				 dim = i;
-				 break;
-				}
-        }
+		}
 		
-		dim = dim + 25;
-		if(dim == 25)
-		{	dim = 0;   }
-	
-		//here comes the finale
-		dim = 2040;
+		zOffset = (sum1-sum)/(count*2f);
 		
-		for (int i = 0; i < dim; i++)
+		for (int i = 0; i < width; i++)
 		{
-			EditorUtility.DisplayProgressBar("Loading", "Monument Layers", (i*1f/dim));
-			for (int j = 0; j < dim; j++)
+			
+			
+			for (int j = 0; j < height; j++)
 			{
 
-				baseMap[i + x, j + y] = Mathf.Lerp(baseMap[i+x, j+y], pasteMap[i,j]+zOffset, pBiome[i,j,0]);
+				baseMap[i + x, j + y] = Mathf.Lerp(baseMap[i+x, j+y], pasteMap[i+monumentX,j+monumentY]+zOffset, pBiome[i+monumentX,j+monumentY,0]);
 				
 				for (int k = 0; k < 8; k++)
 				{
-					newGround[i + x, j + y, k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[i,j,k], pBiome[i,j,0]);
+					newGround[i + x, j + y, k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[i+monumentX,j+monumentY,k], pBiome[i+monumentX,j+monumentY,0]);
 				}
 				
-				if (pBiome[i,j,0] > 0.1f)
+				if (pBiome[i,j,0] > 0f)
 				{
-					topTerrainMap[i + x, j + y] = pTopoMap[i, j];
+					topTerrainMap[i + x, j + y] = pTopoMap[i+monumentX, j+monumentY];
 					
-					newAlpha[i + x, j + y] = pAlpha[i, j];
+					newAlpha[i + x, j + y] = pAlpha[i+monumentX, j+monumentY];
 				}
-			
+				
 				
 				
 			}
@@ -1016,7 +1143,7 @@ public static class GenerativeManager
 			
         }
 		
-		EditorUtility.ClearProgressBar();
+
 		TopologyData.InitMesh(topTerrainMap);
 		
 		land.terrainData.SetHeights(0,0,baseMap);
@@ -1030,6 +1157,7 @@ public static class GenerativeManager
 			TerrainManager.SetData(TerrainManager.GetSplatMap(LandLayers.Topology, i), LandLayers.Topology, i);
         }
 		
+		TerrainManager.SetLayer(TerrainManager.LandLayer, 0);
 		
 		
 		
@@ -1037,20 +1165,29 @@ public static class GenerativeManager
 		Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
 		GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         
+		int prefabcounter=0;
 		
 		for (int i = 0; i < terrains.prefabData.Length; i++)
         {
+			xCheck = (int)((terrains.prefabData[i].position.z/ratio)+res/2f);
+			yCheck = (int)((terrains.prefabData[i].position.x/ratio)+res/2f);
 			
-			terrains.prefabData[i].position.x = terrains.prefabData[i].position.x+y1*2f;
-			terrains.prefabData[i].position.z = terrains.prefabData[i].position.z+x1*2f;
-			terrains.prefabData[i].position.y = terrains.prefabData[i].position.y + zOffset*1000f;
 			
-			GameObject newObj = PrefabManager.SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
-            newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
-			
+			if( xCheck > monumentX && xCheck < monumentX+width && yCheck > monumentY && yCheck < monumentY+height )
+			{
+									
+					holderPosition.x = terrains.prefabData[i].position.x+y1-y2;
+					holderPosition.z = terrains.prefabData[i].position.z+x1-x2;
+					holderPosition.y = terrains.prefabData[i].position.y + zOffset*1000f;
+					PrefabManager.createPrefab(terrains.prefabData[i].category, terrains.prefabData[i].id, holderPosition, terrains.prefabData[i].rotation, terrains.prefabData[i].scale);
+					//GameObject newObj = PrefabManager.SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+					//newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+					prefabcounter++;
+				
+			}
 			
         }
-		
+		/*
 		Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
         GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
         for (int i = 0; i < terrains.pathData.Length; i++)
@@ -1070,7 +1207,7 @@ public static class GenerativeManager
 			GameObject newObject = GameObject.Instantiate(pathObj, averageLocation + terrainPosition, Quaternion.identity, pathsParent);
             newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
         }
-		
+		*/
 		
 	}
 	
