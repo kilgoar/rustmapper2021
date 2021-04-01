@@ -8,10 +8,10 @@
     "style": false,
     "crazing": {
         "title": "",
-        "zones": 100,
-        "minSize": 1200,
-        "maxSize": 2000,
-        "splatLayer": 3
+        "zones": 1000,
+        "minSize": 2000,
+        "maxSize": 3000,
+        "splatLayer": 5
     },
     "perlinSplat": {
         "scale": 50,
@@ -23,17 +23,17 @@
     },
     "ripple": {
         "size": 300,
-        "density": 50,
+        "density": 70,
         "weight": 0.25
     },
     "ocean": {
         "title": "",
         "radius": 400,
         "gradient": 300,
-        "xOffset": 0,
-        "yOffset": 0,
-        "s": 100,
-        "seafloor": 450,
+        "xOffset": 10,
+        "yOffset": 20,
+        "s": 200,
+        "seafloor": 480,
         "perlin": true
     },
     "terracing": {
@@ -50,8 +50,8 @@
     },
     "perlin": {
         "layers": 3,
-        "period": 85,
-        "scale": 220,
+        "period": 70,
+        "scale": 200,
         "simple": true
     },
     "geology": {

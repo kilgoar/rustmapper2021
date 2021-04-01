@@ -1027,27 +1027,28 @@ public static class GenerativeManager
 	{
 		WorldConverter.MapInfo terrains = WorldConverter.WorldToTerrain(blob);
 		monumentData [] monuments = monumentLocations(terrains.biomeMap);
-		int dim = 300;
-		int start = 500;
+		int dim = 250;
+		int start = 1000;
 		int x = start;
 		int y = start;
-		int lane = 10;
-		int height = 50;
+		int lane = 8;
+		int height = 30;
 		int k = 0;
-		
+		EditorUtility.DisplayProgressBar("Generating", "building: " + k, ((y*x*1f)/(dim*dim)));
 		while (y < start + dim)
 		{
+			
 			while (x < start + dim)
 			{
-				k = UnityEngine.Random.Range(0,5);
-				RustCity(terrains, monuments[k], x, y);
 				
+				k = UnityEngine.Random.Range(0,6);
+				RustCity(terrains, monuments[k], x, y);
 				x+= (monuments[k].width + lane);
 			}
 			y += height;
 			x = start; 
 		}
-		
+		EditorUtility.ClearProgressBar();
 	}
 	
 	
@@ -1113,7 +1114,7 @@ public static class GenerativeManager
 			}
 		}
 		
-		zOffset = (sum1-sum)/(count*2f);
+		zOffset = (sum1/count)-(sum/count);
 		
 		for (int i = 0; i < width; i++)
 		{
@@ -1166,7 +1167,8 @@ public static class GenerativeManager
 		GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
         
 		int prefabcounter=0;
-		
+		int roll = 0;
+		uint id = 0;
 		for (int i = 0; i < terrains.prefabData.Length; i++)
         {
 			xCheck = (int)((terrains.prefabData[i].position.z/ratio)+res/2f);
@@ -1175,16 +1177,48 @@ public static class GenerativeManager
 			
 			if( xCheck > monumentX && xCheck < monumentX+width && yCheck > monumentY && yCheck < monumentY+height )
 			{
-									
+					id = terrains.prefabData[i].id;
+					
+					if(terrains.prefabData[i].id == 2473172851 || terrains.prefabData[i].id == 579459297 ||
+					terrains.prefabData[i].id == 2337881356 || terrains.prefabData[i].id == 2722544497 ||
+					terrains.prefabData[i].id == 2269472079 || terrains.prefabData[i].id == 1776925867)
+					{
+						roll = UnityEngine.Random.Range(0,5);
+						switch (roll)
+						{
+							case 0:
+								id = 2473172851;
+								break;
+							case 1:
+								id = 579459297;
+								break;
+							case 2:
+								id = 2337881356;
+								break;
+							case 3:
+								id = 2722544497;
+								break;
+							case 4:
+								id = 2269472079;
+								break;
+							case 5:
+								id =  1776925867;
+								break;
+						}
+							
+					}
+			
+					
+					
 					holderPosition.x = terrains.prefabData[i].position.x+y1-y2;
 					holderPosition.z = terrains.prefabData[i].position.z+x1-x2;
 					holderPosition.y = terrains.prefabData[i].position.y + zOffset*1000f;
-					PrefabManager.createPrefab(terrains.prefabData[i].category, terrains.prefabData[i].id, holderPosition, terrains.prefabData[i].rotation, terrains.prefabData[i].scale);
+					PrefabManager.createPrefab(terrains.prefabData[i].category, id, holderPosition, terrains.prefabData[i].rotation, terrains.prefabData[i].scale);
 					//GameObject newObj = PrefabManager.SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
 					//newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
 					prefabcounter++;
-				
 			}
+			
 			
         }
 		/*
