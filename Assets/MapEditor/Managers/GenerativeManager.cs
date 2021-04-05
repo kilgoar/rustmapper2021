@@ -479,7 +479,7 @@ public static class GenerativeManager
 		int res = biomeMap.GetLength(0);
 		float[,,] analysisMap = new float[res,res,2];
 		
-		monumentData[] monument = new monumentData[10];
+		monumentData[] monument = new monumentData[20];
 		
 		for (int i = 0; i < res; i++)
 		{
@@ -575,7 +575,9 @@ public static class GenerativeManager
 				}
 			}
 		}
+		Debug.LogError(count);
 		return monument;
+		
 	}
 	
 	public static void oceanTopologyFill(Layers layer)
@@ -1027,8 +1029,8 @@ public static class GenerativeManager
 	{
 		WorldConverter.MapInfo terrains = WorldConverter.WorldToTerrain(blob);
 		monumentData [] monuments = monumentLocations(terrains.biomeMap);
-		int dim = 250;
-		int start = 1000;
+		int dim = 400;
+		int start = 400;
 		int x = start;
 		int y = start;
 		int lane = 8;
@@ -1041,8 +1043,8 @@ public static class GenerativeManager
 			while (x < start + dim)
 			{
 				
-				k = UnityEngine.Random.Range(0,6);
-				RustCity(terrains, monuments[k], x, y);
+				k = UnityEngine.Random.Range(0,20);
+				RustCity(terrains, monuments[k], x, y, .005f);
 				x+= (monuments[k].width + lane);
 			}
 			y += height;
@@ -1052,7 +1054,7 @@ public static class GenerativeManager
 	}
 	
 	
-	public static void RustCity(WorldConverter.MapInfo terrains, monumentData monument, int x, int y)
+	public static void RustCity(WorldConverter.MapInfo terrains, monumentData monument, int x, int y, float steepness)
 	{
 		float zOffset=0;
 		//selectedLandLayer = null;
@@ -1100,6 +1102,9 @@ public static class GenerativeManager
 		int xCheck = 0;
 		int yCheck = 0;
 		Vector3 holderPosition = new Vector3(0f,0f,0f);
+		float maxZ = 0;
+		float minZ = 1;
+		float zDiff = 0;
 		
 		for (int i = 0; i < width; i++)
 		{
@@ -1108,141 +1113,505 @@ public static class GenerativeManager
 				if (pBiome[i,j,1] > 0f)
 				{
 				count++;
+				maxZ = Math.Max(maxZ, baseMap[i+x,j+y]);
+				minZ = Math.Min(minZ, baseMap[i+x,j+y]);
 				sum += pasteMap[i+monumentX,j+monumentY];
 				sum1 += baseMap[i+x,j+y];
 				}
 			}
 		}
 		
-		zOffset = (sum1/count)-(sum/count);
+		zDiff = maxZ-minZ;
+		zOffset = (sum1/count)-(sum/count)+(.5f*zDiff);
 		
-		for (int i = 0; i < width; i++)
+		if (zDiff<steepness)
 		{
-			
-			
-			for (int j = 0; j < height; j++)
-			{
-
-				baseMap[i + x, j + y] = Mathf.Lerp(baseMap[i+x, j+y], pasteMap[i+monumentX,j+monumentY]+zOffset, pBiome[i+monumentX,j+monumentY,0]);
-				
-				for (int k = 0; k < 8; k++)
+		
+				for (int i = 0; i < width; i++)
 				{
-					newGround[i + x, j + y, k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[i+monumentX,j+monumentY,k], pBiome[i+monumentX,j+monumentY,0]);
-				}
-				
-				if (pBiome[i,j,0] > 0f)
-				{
-					topTerrainMap[i + x, j + y] = pTopoMap[i+monumentX, j+monumentY];
 					
-					newAlpha[i + x, j + y] = pAlpha[i+monumentX, j+monumentY];
-				}
-				
-				
-				
-			}
-			
-			
-        }
-		
-
-		TopologyData.InitMesh(topTerrainMap);
-		
-		land.terrainData.SetHeights(0,0,baseMap);
-		TerrainManager.SetData(newGround, LandLayers.Ground, 0);
-		TerrainManager.SetData(newBiome, LandLayers.Biome, 0);
-        TerrainManager.SetData(newAlpha, LandLayers.Alpha);
-		
-		for (int i = 0; i < TerrainTopology.COUNT; i++)
-        {
-            //TerrainManager.SetData(TerrainManager.GetSplatMap(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
-			TerrainManager.SetData(TerrainManager.GetSplatMap(LandLayers.Topology, i), LandLayers.Topology, i);
-        }
-		
-		TerrainManager.SetLayer(TerrainManager.LandLayer, 0);
-		
-		
-		
-		
-		Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
-		GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
-        
-		int prefabcounter=0;
-		int roll = 0;
-		uint id = 0;
-		for (int i = 0; i < terrains.prefabData.Length; i++)
-        {
-			xCheck = (int)((terrains.prefabData[i].position.z/ratio)+res/2f);
-			yCheck = (int)((terrains.prefabData[i].position.x/ratio)+res/2f);
-			
-			
-			if( xCheck > monumentX && xCheck < monumentX+width && yCheck > monumentY && yCheck < monumentY+height )
-			{
-					id = terrains.prefabData[i].id;
 					
-					if(terrains.prefabData[i].id == 2473172851 || terrains.prefabData[i].id == 579459297 ||
-					terrains.prefabData[i].id == 2337881356 || terrains.prefabData[i].id == 2722544497 ||
-					terrains.prefabData[i].id == 2269472079 || terrains.prefabData[i].id == 1776925867)
+					for (int j = 0; j < height; j++)
 					{
-						roll = UnityEngine.Random.Range(0,5);
-						switch (roll)
+
+						baseMap[i + x, j + y] = Mathf.Lerp(baseMap[i+x, j+y], pasteMap[i+monumentX,j+monumentY]+zOffset, pBiome[i+monumentX,j+monumentY,0]);
+						
+						for (int k = 0; k < 8; k++)
 						{
-							case 0:
-								id = 2473172851;
-								break;
-							case 1:
-								id = 579459297;
-								break;
-							case 2:
-								id = 2337881356;
-								break;
-							case 3:
-								id = 2722544497;
-								break;
-							case 4:
-								id = 2269472079;
-								break;
-							case 5:
-								id =  1776925867;
-								break;
+							newGround[i + x, j + y, k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[i+monumentX,j+monumentY,k], pBiome[i+monumentX,j+monumentY,0]);
 						}
+						
+						if (pBiome[i,j,0] > 0f)
+						{
+							topTerrainMap[i + x, j + y] = pTopoMap[i+monumentX, j+monumentY];
 							
+							newAlpha[i + x, j + y] = pAlpha[i+monumentX, j+monumentY];
+						}
+						
+						
+						
 					}
-			
 					
 					
-					holderPosition.x = terrains.prefabData[i].position.x+y1-y2;
-					holderPosition.z = terrains.prefabData[i].position.z+x1-x2;
-					holderPosition.y = terrains.prefabData[i].position.y + zOffset*1000f;
-					PrefabManager.createPrefab(terrains.prefabData[i].category, id, holderPosition, terrains.prefabData[i].rotation, terrains.prefabData[i].scale);
-					//GameObject newObj = PrefabManager.SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
-					//newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
-					prefabcounter++;
-			}
-			
-			
-        }
-		/*
-		Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
-        GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
-        for (int i = 0; i < terrains.pathData.Length; i++)
-        {
-            Vector3 averageLocation = Vector3.zero;
-            for (int j = 0; j < terrains.pathData[i].nodes.Length; j++)
-            {
-                averageLocation += terrains.pathData[i].nodes[j];
-				terrains.pathData[i].nodes[j].x = terrains.pathData[i].nodes[j].x + y1*2f;
-				terrains.pathData[i].nodes[j].z = terrains.pathData[i].nodes[j].z + x1*2f;
-				terrains.pathData[i].nodes[j].y = terrains.pathData[i].nodes[j].y + zOffset*1000f;
+				}
 				
-            }
-            
-			averageLocation /= terrains.pathData[i].nodes.Length;
-            
-			GameObject newObject = GameObject.Instantiate(pathObj, averageLocation + terrainPosition, Quaternion.identity, pathsParent);
-            newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
-        }
-		*/
-		
+
+				TopologyData.InitMesh(topTerrainMap);
+				
+				land.terrainData.SetHeights(0,0,baseMap);
+				TerrainManager.SetData(newGround, LandLayers.Ground, 0);
+				TerrainManager.SetData(newBiome, LandLayers.Biome, 0);
+				TerrainManager.SetData(newAlpha, LandLayers.Alpha);
+				
+				for (int i = 0; i < TerrainTopology.COUNT; i++)
+				{
+					//TerrainManager.SetData(TerrainManager.GetSplatMap(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
+					TerrainManager.SetData(TerrainManager.GetSplatMap(LandLayers.Topology, i), LandLayers.Topology, i);
+				}
+				
+				TerrainManager.SetLayer(TerrainManager.LandLayer, 0);
+				
+				
+				
+				
+				Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
+				GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
+				
+				int prefabcounter=0;
+				int roll = 0;
+				int roll2 = 0;
+				uint id = 0;
+				
+				
+				uint yellow = 2337881356;
+				uint white = 2269472079;
+				uint red = 579459297;
+				uint navy = 241986762;
+				uint junkyard = 1115909638;
+				uint green = 1776925867;
+				uint snowblue = 2600171998;
+				uint blue = 2473172851;
+				uint black = 2722544497;
+				uint industrialglassnt = 1048750230;
+				uint palette1=0;
+				uint palette2=0;
+				uint palette3=0;
+				uint palette4=0;
+				
+				uint creepingcornerB = 2447885804;
+				uint creepingcornerA = 738251630;
+				uint creepingcornerC = 648907673;
+				uint creepingplantfall = 2166677703;
+				uint creepingwall600 = 1431389280;
+				
+				uint foliage=0;
+				
+				Vector3 distance = new Vector3(0,0,0);
+				float foliageRatio = 0f;
+				int foliageRoll = 0;
+				int cornerRoll=0;
+				Vector3 foliageScale = new Vector3(0,0,0);
+				Vector3 foliageRotation = new Vector3(0,0,0);
+				Vector3 foliageLocation = new Vector3(0,0,0);
+				
+				roll = UnityEngine.Random.Range(0,9);
+				roll2 = UnityEngine.Random.Range(0,3);
+								switch (roll)
+								{
+									case 0:
+									palette1=green;
+									palette2=yellow;
+									palette3=red;
+									palette4=blue;
+									break;
+									
+									case 1:
+									palette1=white;
+									palette2=navy;
+									palette3=red;
+									palette4=navy;
+									break;
+									
+									case 2:
+									palette1=yellow;
+									palette2=red;
+									palette3=black;
+									palette4=black;
+									break;
+									
+									case 3:
+									palette1=blue;
+									palette2=black;
+									palette3=navy;
+									palette4=snowblue;
+									break;
+									
+									case 4:
+									palette1=junkyard;
+									palette2=green;
+									palette3=yellow;
+									palette4=black;
+									break;
+									
+									case 5:
+									palette1=red;
+									palette2=yellow;
+									palette3=blue;
+									palette4=blue;
+									break;
+									
+									case 6:
+									palette1=blue;
+									palette2=yellow;
+									palette3=red;
+									palette4=black;
+									break;
+									
+									case 7:
+									switch(roll2)
+										{
+											case 0:
+											palette1=black;
+											palette2=black;
+											palette3=black;
+											palette4=black;
+											break;
+											case 1:
+											palette1=white;
+											palette2=white;
+											palette3=white;
+											palette4=white;
+											break;
+											case 2:
+											palette1=junkyard;
+											palette2=junkyard;
+											palette3=junkyard;
+											palette4=junkyard;
+											break;
+										}
+									break;
+									
+									case 8:
+									palette1=blue;
+									palette2=white;
+									palette3=green;
+									palette4=yellow;
+									break;
+								}
+								
+				
+				
+				for (int i = 0; i < terrains.prefabData.Length; i++)
+				{
+					xCheck = (int)((terrains.prefabData[i].position.z/ratio)+res/2f);
+					yCheck = (int)((terrains.prefabData[i].position.x/ratio)+res/2f);
+					
+					
+					if( xCheck > monumentX && xCheck < monumentX+width && yCheck > monumentY && yCheck < monumentY+height )
+					{
+							id = terrains.prefabData[i].id;
+							
+							holderPosition.x = terrains.prefabData[i].position.x+y1-y2;
+							holderPosition.z = terrains.prefabData[i].position.z+x1-x2;
+							holderPosition.y = terrains.prefabData[i].position.y + zOffset*1000f;
+							
+							
+							if(terrains.prefabData[i].id == blue || terrains.prefabData[i].id == red ||
+							terrains.prefabData[i].id == yellow || terrains.prefabData[i].id == black ||
+							terrains.prefabData[i].id == white || terrains.prefabData[i].id == snowblue || 
+							terrains.prefabData[i].id == green || terrains.prefabData[i].id == navy ||
+							terrains.prefabData[i].id == junkyard)
+							{
+								
+								roll = UnityEngine.Random.Range(0,4);
+								
+								switch (roll)
+								{
+									case 0:
+										id = palette1;
+										break;
+									case 1:
+										id = palette2;
+										break;
+									case 2:
+										id = palette3;
+										break;
+									case 3:
+										id = palette4;
+										break;
+								}
+									
+							}
+							else if(terrains.prefabData[i].id == industrialglassnt)
+							{	
+								foliageRatio = ((terrains.prefabData[i].scale.x / terrains.prefabData[i].scale.y) + (terrains.prefabData[i].scale.x / terrains.prefabData[i].scale.z)) / 2f;
+								
+								if(foliageRatio > .8f && foliageRatio < 1.2f)
+								{
+									distance.x = terrains.prefabData[i].scale.x / 2f;
+									distance.y = terrains.prefabData[i].scale.y / 2f;
+									distance.z = terrains.prefabData[i].scale.z / 2f;
+									
+									
+									
+									foliageScale.x = terrains.prefabData[i].scale.x /6.8f;
+									foliageScale.y = terrains.prefabData[i].scale.y /6.8f;
+									foliageScale.z = terrains.prefabData[i].scale.z /6.8f;
+									
+									
+									foliageRoll = UnityEngine.Random.Range(2,5);
+									
+									for (int f = 0; f < foliageRoll; f++)
+									{
+										
+										roll = UnityEngine.Random.Range(0,5);
+										cornerRoll = UnityEngine.Random.Range(0,4);
+										
+										
+										switch (roll)
+										{
+											case 0:
+											
+												foliage = creepingcornerB;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = holderPosition.x + distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = holderPosition.x - distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = holderPosition.x + distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = holderPosition.x - distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;
+												
+											case 1:
+											
+												foliage = creepingcornerA;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = holderPosition.x + distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = holderPosition.x - distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = holderPosition.x + distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = holderPosition.x - distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;
+
+											case 2:
+											
+												foliage = creepingcornerC;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = holderPosition.x + distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = holderPosition.x - distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = holderPosition.x + distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = holderPosition.x - distance.x;
+															foliageLocation.y = holderPosition.y - distance.y;
+															foliageLocation.z = holderPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;	
+												
+											case 3:
+											
+												foliage = creepingplantfall;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = holderPosition.x;
+															foliageLocation.y = holderPosition.y + distance.y;
+															foliageLocation.z = holderPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = holderPosition.x;
+															foliageLocation.y = holderPosition.y + distance.y;
+															foliageLocation.z = holderPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = holderPosition.x - distance.x;
+															foliageLocation.y = holderPosition.y + distance.y;
+															foliageLocation.z = holderPosition.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = holderPosition.x + distance.x;
+															foliageLocation.y = holderPosition.y + distance.y;
+															foliageLocation.z = holderPosition.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;
+											
+											case 4:
+											
+												foliage = creepingwall600;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = holderPosition.x + distance.x;
+															foliageLocation.y = holderPosition.y;
+															foliageLocation.z = holderPosition.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = holderPosition.x - distance.x;
+															foliageLocation.y = holderPosition.y;
+															foliageLocation.z = holderPosition.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = holderPosition.x;
+															foliageLocation.y = holderPosition.y;
+															foliageLocation.z = holderPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = holderPosition.x;
+															foliageLocation.y = holderPosition.y;
+															foliageLocation.z = holderPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;
+										}
+									PrefabManager.createPrefab("Decor", foliage, foliageLocation, foliageRotation, foliageScale);
+									}
+								}
+							}
+							
+							
+
+							PrefabManager.createPrefab(terrains.prefabData[i].category, id, holderPosition, terrains.prefabData[i].rotation, terrains.prefabData[i].scale);
+							//GameObject newObj = PrefabManager.SpawnPrefab(defaultObj, terrains.prefabData[i], prefabsParent);
+							//newObj.GetComponent<PrefabDataHolder>().prefabData = terrains.prefabData[i];
+							prefabcounter++;
+					}
+					
+					
+				}
+				/*
+				Transform pathsParent = GameObject.FindGameObjectWithTag("Paths").transform;
+				GameObject pathObj = Resources.Load<GameObject>("Paths/Path");
+				for (int i = 0; i < terrains.pathData.Length; i++)
+				{
+					Vector3 averageLocation = Vector3.zero;
+					for (int j = 0; j < terrains.pathData[i].nodes.Length; j++)
+					{
+						averageLocation += terrains.pathData[i].nodes[j];
+						terrains.pathData[i].nodes[j].x = terrains.pathData[i].nodes[j].x + y1*2f;
+						terrains.pathData[i].nodes[j].z = terrains.pathData[i].nodes[j].z + x1*2f;
+						terrains.pathData[i].nodes[j].y = terrains.pathData[i].nodes[j].y + zOffset*1000f;
+						
+					}
+					
+					averageLocation /= terrains.pathData[i].nodes.Length;
+					
+					GameObject newObject = GameObject.Instantiate(pathObj, averageLocation + terrainPosition, Quaternion.identity, pathsParent);
+					newObject.GetComponent<PathDataHolder>().pathData = terrains.pathData[i];
+				}
+				*/
+		}
 	}
 	
 	public static void insertPrefabCliffs(GeologyPreset geo)
