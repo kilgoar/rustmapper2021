@@ -1,0 +1,43 @@
+{
+    "title": "Trashbags",
+    "prefabID": 222963432,
+    "prefabID0": 0,
+    "prefabID1": 0,
+    "prefabID2": 0,
+    "prefabID3": 0,
+    "prefabID4": 0,
+    "prefabID5": 0,
+    "prefabID6": 0,
+    "prefabID7": 0,
+    "density": 1250,
+    "frequency": 60,
+    "floor": 500,
+    "ceiling": 1000,
+    "avoidTopo": true,
+    "flipping": false,
+    "tilting": false,
+    "normalizeY": false,
+    "scalesLow": {
+        "x": 1.0326086282730103,
+        "y": 1.0326087474822999,
+        "z": 1.0326083898544312
+    },
+    "scalesHigh": {
+        "x": 1.0326086282730103,
+        "y": 1.0326087474822999,
+        "z": 1.0326083898544312
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 0.0,
+        "y": 360.0,
+        "z": 1.3042879104614258
+    },
+    "zOffset": -0.25999999046325686,
+    "slopeLow": 0.0,
+    "slopeHigh": 3.8510022163391115
+}

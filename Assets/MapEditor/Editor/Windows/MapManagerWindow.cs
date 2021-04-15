@@ -23,12 +23,14 @@ public class MapManagerWindow : EditorWindow
 	GeologyPreset activePreset = new GeologyPreset();
 	
 	int presetIndex = 0;
+	int replacerPresetIndex = 0;
 	int macroIndex = 0;
 	string macroTitle = "";
 	
 	float tttWeight = .7f;
 	
 	string [] geologyList = SettingsManager.GetPresetTitles("Presets/Geology/");
+	string [] replacerList = SettingsManager.GetPresetTitles("Presets/Replacer/");
 	string [] macroList = SettingsManager.GetPresetTitles("Presets/Geology/Macros/");
 	
 
@@ -48,6 +50,7 @@ public class MapManagerWindow : EditorWindow
 	RipplePreset ripple = new RipplePreset();
 	TerracingPreset terracing = new TerracingPreset();
 	PerlinPreset perlin = new PerlinPreset();
+	ReplacerPreset replacer = new ReplacerPreset();
 	
 	string macroDisplay;
 	
@@ -89,19 +92,7 @@ public class MapManagerWindow : EditorWindow
                 Functions.EditorLinks();
 				break;
             case 2:
-				GUIContent[] prefabsMenu = new GUIContent[2];
-				prefabsMenu[0] = new GUIContent("List");
-				prefabsMenu[1] = new GUIContent("Hierarchy");
-				
-				prefabIndex = GUILayout.Toolbar(prefabIndex, prefabsMenu, EditorStyles.toolbarButton);
-					switch (prefabIndex)
-					{
-					case 0:
-					break;
-					case 1:
-					break;
-					}
-
+				Functions.Replacer(ref replacer, ref replacerPresetIndex, ref replacerList);
 				break;
             #endregion
             case 3:
@@ -249,7 +240,7 @@ public class MapManagerWindow : EditorWindow
 						break;
 
 						case 1:
-								Functions.Geology(ref activePreset, ref presetIndex, ref geologyList, ref macroIndex, ref macroList, ref macroTitle, ref macroDisplay);
+								Functions.Geology(ref activePreset, ref presetIndex, ref geologyList, ref macroIndex, ref macroList, ref macroTitle, ref macroDisplay, ref layers);
 						break;
 						
 						case 2:

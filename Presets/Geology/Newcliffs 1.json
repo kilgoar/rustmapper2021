@@ -1,0 +1,34 @@
+{
+    "title": "Newcliffs 1",
+    "prefabID": 917817594,
+    "density": 200,
+    "frequency": 60,
+    "floor": 0,
+    "ceiling": 1000,
+    "avoidTopo": false,
+    "flipping": false,
+    "tilting": false,
+    "scalesLow": {
+        "x": 0.9239130020141602,
+        "y": 0.8695652484893799,
+        "z": 0.9782609343528748
+    },
+    "scalesHigh": {
+        "x": 1.1413044929504395,
+        "y": 1.1413042545318604,
+        "z": 1.1956521272659302
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "zOffset": -4.0,
+    "slopeLow": 31.250009536743165,
+    "slopeHigh": 90.0
+}

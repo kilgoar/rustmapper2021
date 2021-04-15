@@ -479,7 +479,7 @@ public static class GenerativeManager
 		int res = biomeMap.GetLength(0);
 		float[,,] analysisMap = new float[res,res,2];
 		
-		monumentData[] monument = new monumentData[20];
+		monumentData[] monument = new monumentData[300];
 		
 		for (int i = 0; i < res; i++)
 		{
@@ -508,7 +508,7 @@ public static class GenerativeManager
 		{
 			for (int j = 0; j < res; j++)
 			{
-				if (analysisMap[i,j,1] == 0f)
+				if (analysisMap[i,j,1] == 0f && count < 299)
 				{
 							pixels = new Stack<Point>();
 							p.X = i;
@@ -1025,11 +1025,91 @@ public static class GenerativeManager
 		
 	}
 	
+	public static void rustBuildings()
+	{
+		int buildings = 300;
+		
+		int dim = (int)Mathf.Sqrt(buildings);
+		int maxWidth = 4;
+		int maxBreadth = 3;
+		int maxHeight = 5;
+		
+		int start = -1000;
+		int buildingSize = Math.Max(maxWidth,maxBreadth)*6+18;
+		
+		for (int i = 0; i < dim; i++)
+		{
+			for (int j = 0; j < dim; j++)
+			{
+				createRustBuilding(i*buildingSize+start,j*buildingSize+start, UnityEngine.Random.Range(1,maxWidth +1),UnityEngine.Random.Range(1,maxBreadth +1),UnityEngine.Random.Range(1,maxHeight +1));
+			}
+		}
+	}
+	
+	
+	public static void createRustBuilding(int x, int y, int width, int breadth, int tallest)
+	{
+		uint industrialglassnt = 1048750230;
+		uint yellow = 2337881356;
+		int glassScale = 6;
+		float z = 9.36f;
+		float yRotation;
+		int height = 0;
+		int tallness = 0;
+		Vector3 position = new Vector3(0f,0f,0f);
+		Vector3 rotation = new Vector3(0f,0f,0f);
+		Vector3 containerRotation = new Vector3(0f,0f,0f);
+		Vector3 scale = new Vector3(glassScale,glassScale,glassScale);
+		
+		Vector3 containerScale = new Vector3(.689f, .510f, .675f);
+		float containerYoffset = 1.511f;
+		float containerZoffset = 2.03f;
+		float foundationYoffset = -4.476f;
+		//PrefabManager.createPrefab("Decor", foliage, foliageLocation, foliageRotation, foliageScale);
+		
+		
+		for (int i = 0; i < width; i++)
+		{
+			for(int j = 0; j < breadth; j++)
+			{
+				tallness = UnityEngine.Random.Range(0, tallest +1);
+				for(int k = 0; k<tallness; k++)
+				{
+					rotation.y = UnityEngine.Random.Range(0, 4) * 90f;
+					position.x = i*glassScale+y;
+					position.z = j*glassScale+x;
+					position.y = k*glassScale + z;
+					PrefabManager.createPrefab("Decor", industrialglassnt, position, rotation, scale);
+					position.y = position.y + containerYoffset;
+					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
+					position.z = position.z + containerZoffset;
+					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
+					position.z = position.z - (containerZoffset * 2f);
+					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
+					if (k==0)
+					{
+					position.z = position.z + containerZoffset;
+					position.y = position.y - containerYoffset + foundationYoffset;
+					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
+					position.z = position.z + containerZoffset;
+					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
+					position.z = position.z - (containerZoffset * 2f);
+					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
+					}
+				}
+			}
+		}
+		
+		
+	}
+	
+	
 	public static void createRustCity(WorldSerialization blob)
 	{
 		WorldConverter.MapInfo terrains = WorldConverter.WorldToTerrain(blob);
 		monumentData [] monuments = monumentLocations(terrains.biomeMap);
-		int dim = 400;
+		
+		int dim = 1200;
 		int start = 400;
 		int x = start;
 		int y = start;
@@ -1043,14 +1123,15 @@ public static class GenerativeManager
 			while (x < start + dim)
 			{
 				
-				k = UnityEngine.Random.Range(0,20);
-				RustCity(terrains, monuments[k], x, y, .005f);
+				k = UnityEngine.Random.Range(0,109);
+				RustCity(terrains, monuments[k], x, y, .006f);
 				x+= (monuments[k].width + lane);
 			}
 			y += height;
 			x = start; 
 		}
 		EditorUtility.ClearProgressBar();
+		
 	}
 	
 	
@@ -1616,8 +1697,11 @@ public static class GenerativeManager
 	
 	public static void insertPrefabCliffs(GeologyPreset geo)
 	{
+		uint featPrefabID = 0;
+		int roll = 0;
 		
-		uint featPrefabID = geo.prefabID;
+		
+		
 		Vector3 rotationRange1 = geo.rotationsLow;
 		Vector3 rotationRange2 = geo.rotationsHigh;
 		Vector3 scaleRange1 = geo.scalesLow;
@@ -1626,7 +1710,7 @@ public static class GenerativeManager
 		float zOffset = geo.zOffset;
 		float floor = geo.floor/1000f;
 		float ceiling = geo.ceiling/1000f;
-		
+		float cliffFade = 0f;
 		float s1 = geo.slopeLow;
 		float s2 = geo.slopeHigh;
 		int density = geo.density;
@@ -1636,14 +1720,13 @@ public static class GenerativeManager
 		bool tilting = geo.tilting;
 		bool flipping = geo.flipping;
 		
-		bool normalizeX = false, normalizeY = false, normalizeZ = false;
 		
 		
 		Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
 		float[,] baseMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution);
 		float[,,] avoidMap = TerrainManager.TopologyArray[TerrainTopology.TypeToIndex(1024)];
 		float[,,] avoidMap1 = TerrainManager.TopologyArray[TerrainTopology.TypeToIndex(2048)];
-		
+		float[,,] biomeMap = TerrainManager.BiomeArray;
 		
 		Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
 		GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
@@ -1654,9 +1737,10 @@ public static class GenerativeManager
 		int sizeZ = (int)land.terrainData.size.y;
 		
 		Vector3 position;
-		Vector3 rRotate;
+		Vector3 rRotate, preRotate;
 		Vector3 rScale;
 		Vector3 normal = new Vector3(0,0,0);
+		Quaternion qRotate;
 		
 		float[] heights = new float[9];
 		
@@ -1685,6 +1769,7 @@ public static class GenerativeManager
 		
 		float ratio = land.terrainData.size.x / (baseMap.GetLength(0));
 		
+		
 		if (avoid)
 		{
 			avoider=.01f;
@@ -1696,7 +1781,7 @@ public static class GenerativeManager
             for (int j = 0; j < res; j++)
             {
 				
-				cliffMap[i,j] = (land.terrainData.GetSteepness(1f*j/res, 1f*i/res))/90 * (density / 100f);
+					cliffMap[i,j] = (land.terrainData.GetSteepness(1f*j/res, 1f*i/res))/90 * (density / 100f);
 			
 			}
 		}
@@ -1756,9 +1841,16 @@ public static class GenerativeManager
             {
 				slope = land.terrainData.GetSteepness(1f*j/res, 1f*i/res);
 				
-						
+				if (geo.biomeExclusive)
+				{
+					cliffFade = cliffMap[i,j] * biomeMap[i,j,geo.biomeIndex];		
+				}
+				else
+				{
+					cliffFade = cliffMap[i,j];
+				}
 				
-				if(baseMap[i,j] > floor && baseMap[i,j] < ceiling && avoidMap[i,j,0] < avoider && avoidMap1[i,j,0] < avoider && cliffMap[i,j]>=.5f && slope > s1 && slope < s2)
+				if(baseMap[i,j] > floor && baseMap[i,j] < ceiling && avoidMap[i,j,0] < avoider && avoidMap1[i,j,0] < avoider && cliffFade > .5f && slope > s1 && slope < s2)
 				{
 
 									
@@ -1801,30 +1893,70 @@ public static class GenerativeManager
 									//rotation gets geology and randomization
 									//normalization
 									
-									normal = land.terrainData.GetInterpolatedNormal(1f*j/res, 1f*i/res);
-									
-									if(normalizeX)
-									{
-									xNormalizer = normal.x*90f;
-									}
-									
-									if(normalizeY)
-									{
-									yNormalizer = normal.y*90f;
-									}
-									
-									if(normalizeZ)
-									{
-									zNormalizer = normal.z*90f;
-									}
 									
 									
-									rRotate = new Vector3(xNormalizer + UnityEngine.Random.Range(rotationRange1.x, rotationRange2.x) + geology + flipX, yNormalizer + UnityEngine.Random.Range(rotationRange1.y, rotationRange2.y), zNormalizer + UnityEngine.Random.Range(rotationRange1.z,rotationRange2.z) + flipZ);
+
+									
+									
+									rRotate = new Vector3(UnityEngine.Random.Range(rotationRange1.x, rotationRange2.x) + geology + flipX, UnityEngine.Random.Range(rotationRange1.y, rotationRange2.y), UnityEngine.Random.Range(rotationRange1.z,rotationRange2.z) + flipZ);
 									rScale = new Vector3(UnityEngine.Random.Range(scaleRange1.x, scaleRange2.x), UnityEngine.Random.Range(scaleRange1.y, scaleRange2.y), UnityEngine.Random.Range(scaleRange1.z,scaleRange2.z));
+									
+									if(geo.normalizeY)
+									{
+									normal = land.terrainData.GetInterpolatedNormal(1f*j/res, 1f*i/res);
+									qRotate = Quaternion.LookRotation(normal);
+									preRotate = qRotate.eulerAngles;
+									rRotate.y = preRotate.y;
+									}
 									
 									//public static void createPrefab(string category, uint id, Vector3 position, Vector3 rotation, Vector3 scale)
 									if(UnityEngine.Random.Range(0,thinnitude) == 2)
 									{
+										featPrefabID=0;
+										while (featPrefabID == 0)
+										{
+										roll = UnityEngine.Random.Range(0,9);
+										switch(roll)
+											{
+											case 0:
+											featPrefabID = geo.prefabID;
+											break;
+											
+											case 1:
+											featPrefabID = geo.prefabID0;
+											break;
+											
+											case 2:
+											featPrefabID = geo.prefabID1;
+											break;
+											
+											case 3:
+											featPrefabID = geo.prefabID2;
+											break;
+											
+											case 4:
+											featPrefabID = geo.prefabID3;
+											break;
+											
+											case 5:
+											featPrefabID = geo.prefabID4;
+											break;
+											
+											case 6:
+											featPrefabID = geo.prefabID5;
+											break;
+											
+											case 7:
+											featPrefabID = geo.prefabID6;
+											break;
+											
+											case 8:
+											featPrefabID = geo.prefabID7;
+											break;
+											
+											}
+										}
+									
 									PrefabManager.createPrefab("Decor", featPrefabID, position, rRotate, rScale);
 									count++;
 									}

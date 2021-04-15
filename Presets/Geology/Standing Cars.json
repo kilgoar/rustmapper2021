@@ -1,0 +1,43 @@
+{
+    "title": "Standing Cars",
+    "prefabID": 579044360,
+    "prefabID0": 0,
+    "prefabID1": 3435737336,
+    "prefabID2": 786199644,
+    "prefabID3": 1460121016,
+    "prefabID4": 2742523209,
+    "prefabID5": 3417439261,
+    "prefabID6": 0,
+    "prefabID7": 0,
+    "density": 100,
+    "frequency": 10,
+    "floor": 500,
+    "ceiling": 1000,
+    "avoidTopo": true,
+    "flipping": false,
+    "tilting": false,
+    "normalizeY": false,
+    "scalesLow": {
+        "x": 0.9782608151435852,
+        "y": 0.9782608151435852,
+        "z": 0.9782605171203613
+    },
+    "scalesHigh": {
+        "x": 0.9782608151435852,
+        "y": 0.9782608151435852,
+        "z": 0.9782605171203613
+    },
+    "rotationsLow": {
+        "x": 82.82608795166016,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 92.60872650146485,
+        "y": 360.0,
+        "z": 0.0
+    },
+    "zOffset": 0.0,
+    "slopeLow": 3.970386028289795,
+    "slopeHigh": 17.659557342529298
+}

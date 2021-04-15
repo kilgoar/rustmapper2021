@@ -4,6 +4,7 @@ using static WorldSerialization;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Collections.Generic;
+using RustMapEditor.Variables;
 
 public static class PrefabManager
 {
@@ -194,6 +195,198 @@ public static class PrefabManager
 		prefab.scale = scale;
 		SpawnPrefab(defaultObj, prefab, prefabsParent);
     }
+
+	public static void BatchReplace(PrefabDataHolder[] prefabs, ReplacerPreset replace)
+	{
+		bool flag = false;
+		Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+		int res = land.terrainData.heightmapResolution;
+		float ratio = 1f* TerrainManager.TerrainSize.x / res;
+		Quaternion qRotate;
+		Vector3 preRotate;
+		Vector3 rRotate = new Vector3(0,0,0);
+		Vector3 normal = new Vector3(0,0,0);
+		float xCheck =0f;
+		float yCheck =0f;
+		int count = 0;
+		int count1= 0;
+		for (int k = 0; k < prefabs.Length; k++)
+		{
+			flag = false;
+			
+			if (prefabs[k] != null)
+			{
+				if(prefabs[k].prefabData.id == replace.prefabID0)
+				{
+					prefabs[k].prefabData.id = replace.replaceID0;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID1)
+				{
+					prefabs[k].prefabData.id = replace.replaceID1;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID2)
+				{
+					prefabs[k].prefabData.id = replace.replaceID2;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID3)
+				{
+					prefabs[k].prefabData.id = replace.replaceID3;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID4)
+				{
+					prefabs[k].prefabData.id = replace.replaceID4;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID5)
+				{
+					prefabs[k].prefabData.id = replace.replaceID5;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID6)
+				{
+					prefabs[k].prefabData.id = replace.replaceID6;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID7)
+				{
+					prefabs[k].prefabData.id = replace.replaceID7;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID8)
+				{
+					prefabs[k].prefabData.id = replace.replaceID8;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID9)
+				{
+					prefabs[k].prefabData.id = replace.replaceID9;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID10)
+				{
+					prefabs[k].prefabData.id = replace.replaceID10;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID11)
+				{
+					prefabs[k].prefabData.id = replace.replaceID11;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID12)
+				{
+					prefabs[k].prefabData.id = replace.replaceID12;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID13)
+				{
+					prefabs[k].prefabData.id = replace.replaceID13;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID14)
+				{
+					prefabs[k].prefabData.id = replace.replaceID14;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID15)
+				{
+					prefabs[k].prefabData.id = replace.replaceID15;
+					flag = true;
+				}
+				else if(prefabs[k].prefabData.id == replace.prefabID16)
+				{
+					prefabs[k].prefabData.id = replace.replaceID16;
+					flag = true;
+				}
+				
+				if(flag && replace.rotateToTerrain)
+				{
+					count++;
+					xCheck = ((prefabs[k].prefabData.position.z/ratio)+res/2f);
+					yCheck = ((prefabs[k].prefabData.position.x/ratio)+res/2f);
+					normal = land.terrainData.GetInterpolatedNormal(1f*yCheck/res, 1f*xCheck/res);
+					qRotate = Quaternion.LookRotation(normal);
+					preRotate = qRotate.eulerAngles;
+					rRotate.y = preRotate.y;
+					
+					createPrefab("Decor", prefabs[k].prefabData.id, prefabs[k].prefabData.position, rRotate, prefabs[k].prefabData.scale);
+					
+					GameObject.DestroyImmediate(prefabs[k].gameObject);
+								prefabs[k] = null;
+								
+				}
+				else if(flag && !replace.rotateToTerrain)
+				{
+					createPrefab("Decor", prefabs[k].prefabData.id, prefabs[k].prefabData.position, prefabs[k].prefabData.rotation, prefabs[k].prefabData.scale);
+					
+					GameObject.DestroyImmediate(prefabs[k].gameObject);
+								prefabs[k] = null;
+								count1++;
+				}
+			}
+		}
+		Debug.LogError(count1 + count + " prefabs replaced." + count + " prefabs rotated to terrain. " );
+	}
+
+	public static void breakMonument(PrefabDataHolder[] prefabs, uint ID)
+	{
+		int count = 0;
+		Transform scanItem;
+		Transform spawnItem;
+		Transform childSpawnItem;
+		uint replaceID = 0;
+		string[] parse;
+		string itemName;
+		Vector3 adjuster = new Vector3(2049f,500f,2049f);
+
+		for (int k = 0; k < prefabs.Length; k++)
+		{
+			if (prefabs[k] != null)
+			{
+
+
+					for (int i = 0; i < prefabs[k].transform.childCount; i++)
+						{
+							scanItem = prefabs[k].transform.GetChild(i);
+							
+								for (int j = 0; j < scanItem.transform.childCount; j++)
+								{
+									spawnItem = scanItem.transform.GetChild(j);
+									itemName = spawnItem.name;
+									parse = itemName.Split(' ');
+									itemName = parse[0];
+									replaceID = AssetManager.partialToID(itemName);
+									
+									if (replaceID != 0)
+										createPrefab("Decor", replaceID, spawnItem.position - adjuster, spawnItem.eulerAngles, spawnItem.lossyScale);
+									else
+									{
+										for (int n = 0; n < spawnItem.transform.childCount; n++)
+										{
+											childSpawnItem = spawnItem.transform.GetChild(n);
+											itemName = childSpawnItem.name;
+											parse = itemName.Split(' ');
+											itemName = parse[0];
+											replaceID = AssetManager.partialToID(itemName);
+											
+											if(replaceID !=0)
+												createPrefab("Decor", replaceID, childSpawnItem.position - adjuster, childSpawnItem.eulerAngles, childSpawnItem.lossyScale);
+										}
+									}
+								}
+								
+							
+						}
+					
+					GameObject.DestroyImmediate(prefabs[k].gameObject);
+					prefabs[k] = null;
+					
+			}
+		}
+	}
 
 	public static void deletePrefabIDs(PrefabDataHolder[] prefabs, uint ID)
 	{

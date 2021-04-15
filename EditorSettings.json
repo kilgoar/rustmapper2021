@@ -1,5 +1,5 @@
 {
-    "rustDirectory": "D:/Program Files (x86)/Steam/steamapps/common/Rust",
+    "rustDirectory": "D:/Program Files (x86)/Steam/steamapps/common/RustStaging",
     "prefabRenderDistance": 700.0,
     "pathRenderDistance": 250.0,
     "waterTransparency": 0.20000000298023225,
@@ -22,9 +22,9 @@
         "paintBiome": false
     },
     "ripple": {
-        "size": 300,
+        "size": 270,
         "density": 70,
-        "weight": 0.25
+        "weight": 0.20000000298023225
     },
     "ocean": {
         "title": "",
@@ -55,38 +55,87 @@
         "simple": true
     },
     "geology": {
-        "title": "Anasazi Rubble",
-        "prefabID": 919092475,
-        "density": 100,
-        "frequency": 40,
-        "floor": 504,
+        "title": "newcliffsArid",
+        "prefabID": 2494642805,
+        "prefabID0": 0,
+        "prefabID1": 3934282489,
+        "prefabID2": 3897867041,
+        "prefabID3": 3008655077,
+        "prefabID4": 0,
+        "prefabID5": 0,
+        "prefabID6": 0,
+        "prefabID7": 0,
+        "density": 200,
+        "frequency": 10,
+        "floor": 0,
         "ceiling": 1000,
+        "biomeIndex": 0,
         "avoidTopo": true,
         "flipping": false,
-        "tilting": true,
+        "tilting": false,
+        "normalizeY": true,
+        "biomeExclusive": true,
         "scalesLow": {
-            "x": 0.42402827739715578,
-            "y": 0.4151943325996399,
-            "z": 0.42402899265289309
+            "x": 1.013292908668518,
+            "y": 1.0120309591293336,
+            "z": 0.9644119143486023
         },
         "scalesHigh": {
-            "x": 0.7508834600448608,
-            "y": 0.7508829832077026,
-            "z": 0.7508834600448608
+            "x": 1.4353857040405274,
+            "y": 1.42722487449646,
+            "z": 1.4149413108825684
         },
         "rotationsLow": {
             "x": 0.0,
             "y": 0.0,
-            "z": 89.6819839477539
+            "z": 0.0
         },
         "rotationsHigh": {
-            "x": 3.816255569458008,
-            "y": 360.0,
-            "z": 90.95405578613281
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
         },
-        "zOffset": 0.0,
-        "slopeLow": 12.579540252685547,
-        "slopeHigh": 25.558897018432618
+        "zOffset": -12.5,
+        "slopeLow": 9.664630889892579,
+        "slopeHigh": 90.0
+    },
+    "replacer": {
+        "prefabID0": 2494642805,
+        "prefabID1": 3934282489,
+        "prefabID2": 3897867041,
+        "prefabID3": 3008655077,
+        "prefabID4": 0,
+        "prefabID5": 0,
+        "prefabID6": 0,
+        "prefabID7": 0,
+        "prefabID8": 0,
+        "prefabID9": 0,
+        "prefabID10": 0,
+        "prefabID11": 0,
+        "prefabID12": 0,
+        "prefabID13": 0,
+        "prefabID14": 0,
+        "prefabID15": 0,
+        "prefabID16": 0,
+        "replaceID0": 3008655077,
+        "replaceID1": 3897867041,
+        "replaceID2": 3934282489,
+        "replaceID3": 2494642805,
+        "replaceID4": 0,
+        "replaceID5": 0,
+        "replaceID6": 0,
+        "replaceID7": 0,
+        "replaceID8": 0,
+        "replaceID9": 0,
+        "replaceID10": 0,
+        "replaceID11": 0,
+        "replaceID12": 0,
+        "replaceID13": 0,
+        "replaceID14": 0,
+        "replaceID15": 0,
+        "replaceID16": 0,
+        "rotateToTerrain": true,
+        "title": "test"
     },
     "prefabPaths": [
         "assets/bundled/prefabs/autospawn/",

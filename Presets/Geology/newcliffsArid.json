@@ -1,0 +1,45 @@
+{
+    "title": "newcliffsArid",
+    "prefabID": 2494642805,
+    "prefabID0": 0,
+    "prefabID1": 3934282489,
+    "prefabID2": 3897867041,
+    "prefabID3": 3008655077,
+    "prefabID4": 0,
+    "prefabID5": 0,
+    "prefabID6": 0,
+    "prefabID7": 0,
+    "density": 200,
+    "frequency": 10,
+    "floor": 0,
+    "ceiling": 1000,
+    "biomeIndex": 0,
+    "avoidTopo": true,
+    "flipping": false,
+    "tilting": false,
+    "normalizeY": true,
+    "biomeExclusive": true,
+    "scalesLow": {
+        "x": 1.013292908668518,
+        "y": 1.0120309591293336,
+        "z": 0.9644119143486023
+    },
+    "scalesHigh": {
+        "x": 1.4353857040405274,
+        "y": 1.42722487449646,
+        "z": 1.4149413108825684
+    },
+    "rotationsLow": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "zOffset": -12.5,
+    "slopeLow": 9.664630889892579,
+    "slopeHigh": 90.0
+}

@@ -171,6 +171,20 @@ public static class AssetManager
 		return i.ToString();
 	}
 
+	public static uint partialToID(string str)
+	{
+		if (string.IsNullOrEmpty(str))
+			return 0;
+		foreach (KeyValuePair<string, uint> kvp in PathLookup)
+		{
+			if (kvp.Key.Contains(str))
+			{
+				return kvp.Value;
+			}
+		}
+		return 0;
+	}
+
 	public static uint ToID(string str)
 	{
 		if (string.IsNullOrEmpty(str))
@@ -377,13 +391,37 @@ public static class AssetManager
 					switch (lineSplit[0])
 					{
 						case "Standard":
-							EditorCoroutineUtility.StartCoroutineOwnerless(UpdateShader(LoadAsset<Material>(lineSplit[1]), std));
+							Material matStd = LoadAsset<Material>(lineSplit[1]);
+							if (matStd == null)
+                            {
+								Debug.LogWarning(lineSplit[1] + " is not a valid asset.");
+								break;
+                            }
+							EditorCoroutineUtility.StartCoroutineOwnerless(UpdateShader(matStd, std));
 							break;
+
 						case "Specular":
-							EditorCoroutineUtility.StartCoroutineOwnerless(UpdateShader(LoadAsset<Material>(lineSplit[1]), spc));
+							Material matSpc= LoadAsset<Material>(lineSplit[1]);
+							if (matSpc == null)
+							{
+								Debug.LogWarning(lineSplit[1] + " is not a valid asset.");
+								break;
+							}
+							EditorCoroutineUtility.StartCoroutineOwnerless(UpdateShader(matSpc, spc));
 							break;
+
 						case "Foliage":
-							LoadAsset<Material>(lineSplit[1]).DisableKeyword("_TINTENABLED_ON");
+							Material mat = LoadAsset<Material>(lineSplit[1]);
+							if(mat == null)
+                            {
+								Debug.LogWarning(lineSplit[1] + " is not a valid asset.");
+								break;
+							}
+							mat.DisableKeyword("_TINTENABLED_ON");
+							break;
+
+						default:
+							Debug.LogWarning(lineSplit[0] + " is not a valid shader.");
 							break;
 					}
 					yield return null;
@@ -395,9 +433,6 @@ public static class AssetManager
 
 		public static IEnumerator UpdateShader(Material mat, Shader shader)
 		{
-			if (mat == null)
-				yield break;
-
 			mat.shader = shader;
 			yield return null;
 			switch (mat.GetFloat("_Mode"))
@@ -415,6 +450,7 @@ public static class AssetManager
 						SetKeyword(mat, "_SPECGLOSSMAP", mat.GetTexture("_SpecGlossMap"));
 					mat.renderQueue = -1;
 					break;
+
 				case 1f:
 					mat.SetOverrideTag("RenderType", "TransparentCutout");
 					mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
@@ -426,6 +462,7 @@ public static class AssetManager
 					mat.EnableKeyword("_NORMALMAP");
 					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.AlphaTest;
 					break;
+
 				case 2f:
 					mat.SetOverrideTag("RenderType", "Transparent");
 					mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
@@ -437,6 +474,7 @@ public static class AssetManager
 					mat.EnableKeyword("_NORMALMAP");
 					mat.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
 					break;
+
 				case 3f:
 					mat.SetOverrideTag("RenderType", "Transparent");
 					mat.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);

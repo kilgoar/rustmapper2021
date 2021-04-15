@@ -236,12 +236,64 @@ namespace RustMapEditor.Variables
 	//int radius, int gradient, float seafloor, int xOffset, int yOffset, bool perlin, int s
 	
 	[Serializable]
+	public struct ReplacerPreset
+	{
+
+				public uint prefabID0;
+				public uint prefabID1;
+				public uint prefabID2;
+				public uint prefabID3;
+				public uint prefabID4;
+				public uint prefabID5;
+				public uint prefabID6;
+				public uint prefabID7;				
+				public uint prefabID8;
+				public uint prefabID9;
+				public uint prefabID10;
+				public uint prefabID11;
+				public uint prefabID12;
+				public uint prefabID13;
+				public uint prefabID14;
+				public uint prefabID15;
+				public uint prefabID16;
+				
+				public uint replaceID0;
+				public uint replaceID1;
+				public uint replaceID2;
+				public uint replaceID3;
+				public uint replaceID4;
+				public uint replaceID5;
+				public uint replaceID6;
+				public uint replaceID7;				
+				public uint replaceID8;
+				public uint replaceID9;
+				public uint replaceID10;
+				public uint replaceID11;
+				public uint replaceID12;
+				public uint replaceID13;
+				public uint replaceID14;
+				public uint replaceID15;
+				public uint replaceID16;
+				
+				public bool rotateToTerrain;
+				public string title;
+	}
+	
+	[Serializable]
 	public struct GeologyPreset
 	{
 				public string title;
 				public uint prefabID;
-				public int density, frequency, floor, ceiling;
-				public bool avoidTopo, flipping, tilting;
+				public uint prefabID0;
+				public uint prefabID1;
+				public uint prefabID2;
+				public uint prefabID3;
+				public uint prefabID4;
+				public uint prefabID5;
+				public uint prefabID6;
+				public uint prefabID7;
+				public int density, frequency, floor, ceiling, biomeIndex;
+				public bool avoidTopo, flipping, tilting, normalizeY, biomeExclusive;
 				public Vector3 scalesLow, scalesHigh, rotationsLow, rotationsHigh;
 				public float zOffset, slopeLow, slopeHigh;
 	}

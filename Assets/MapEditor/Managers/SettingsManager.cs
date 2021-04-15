@@ -23,6 +23,7 @@ public static class SettingsManager
 	public static TerracingPreset terracing { get; set; }
 	public static PerlinPreset perlin { get; set; }
 	public static GeologyPreset geology { get; set; }
+	public static ReplacerPreset replacer { get; set; }
 	public static string[] geologyPresets { get; set; }
     public static string[] PrefabPaths { get; private set; }
 	
@@ -46,7 +47,7 @@ public static class SettingsManager
         {
             EditorSettings editorSettings = new EditorSettings
             (
-                RustDirectory, PrefabRenderDistance, PathRenderDistance, WaterTransparency, LoadBundleOnLaunch, TerrainTextureSet, style, crazing, perlinSplat, ripple, ocean, terracing, perlin, geology
+                RustDirectory, PrefabRenderDistance, PathRenderDistance, WaterTransparency, LoadBundleOnLaunch, TerrainTextureSet, style, crazing, perlinSplat, ripple, ocean, terracing, perlin, geology, replacer
             );
             write.Write(JsonUtility.ToJson(editorSettings, true));
         }
@@ -60,11 +61,27 @@ public static class SettingsManager
         }
     }
 	
+	public static void SaveReplacerPreset()
+    {
+        using (StreamWriter write = new StreamWriter($"Presets/Replacer/{replacer.title}.json", false))
+        {
+            write.Write(JsonUtility.ToJson(replacer, true));
+        }
+    }
+	
 	public static void LoadGeologyPreset(string filename)
 	{
 		using (StreamReader reader = new StreamReader($"Presets/Geology/{filename}.json"))
 			{
 				geology = JsonUtility.FromJson<GeologyPreset>(reader.ReadToEnd());
+			}
+	}
+	
+	public static void LoadReplacerPreset(string filename)
+	{
+		using (StreamReader reader = new StreamReader($"Presets/Replacer/{filename}.json"))
+			{
+				replacer = JsonUtility.FromJson<ReplacerPreset>(reader.ReadToEnd());
 			}
 	}
 	
@@ -153,6 +170,7 @@ public static class SettingsManager
 			terracing = editorSettings.terracing;
 			perlin = editorSettings.perlin;
 			geology = editorSettings.geology;
+			replacer = editorSettings.replacer;
         }
 
 		LoadPresets();
@@ -216,13 +234,15 @@ public struct EditorSettings
 	public TerracingPreset terracing;
 	public PerlinPreset perlin;
 	public GeologyPreset geology;
+	public ReplacerPreset replacer;
 	public string[] prefabPaths;
 
     public EditorSettings
     (
         string rustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust", float prefabRenderDistance = 700f, float pathRenderDistance = 200f, 
         float waterTransparency = 0.2f, bool loadbundleonlaunch = false, bool terrainTextureSet = false, bool style = true, CrazingPreset crazing = new CrazingPreset(), PerlinSplatPreset perlinSplat = new PerlinSplatPreset(),
-		RipplePreset ripple = new RipplePreset(), OceanPreset ocean = new OceanPreset(), TerracingPreset terracing = new TerracingPreset(), PerlinPreset perlin = new PerlinPreset(), GeologyPreset geology = new GeologyPreset())
+		RipplePreset ripple = new RipplePreset(), OceanPreset ocean = new OceanPreset(), TerracingPreset terracing = new TerracingPreset(), PerlinPreset perlin = new PerlinPreset(), GeologyPreset geology = new GeologyPreset(), 
+		ReplacerPreset replacer = new ReplacerPreset())
         {
             this.rustDirectory = rustDirectory;
             this.prefabRenderDistance = prefabRenderDistance;
@@ -239,5 +259,6 @@ public struct EditorSettings
 			this.terracing = terracing;
 			this.perlin = perlin;
 			this.geology = geology;
+			this.replacer = replacer;
         }
 }

@@ -6,6 +6,13 @@ using static TerrainManager;
 
 namespace RustMapEditor.UI
 {
+	public enum BIOMES
+	{
+    TEMPERATE = 0,
+    ARID = 1,
+    TUNDRA = 2,
+	ARCTIC = 3
+	}
     public static class Functions
     {
         #region MainMenu
@@ -263,8 +270,140 @@ namespace RustMapEditor.UI
 				}		
 		}
 	
+		public static void Replacer(ref ReplacerPreset replacer, ref int replacerPresetIndex, ref string [] replacerList)
+		{
+			GUILayout.Label("Batch Prefab Replacer:", EditorStyles.boldLabel);
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID0 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID0);
+			replacer.replaceID0 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID0);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID1 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID1);
+			replacer.replaceID1 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID1);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID2 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID2);
+			replacer.replaceID2 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID2);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID3 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID3);
+			replacer.replaceID3 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID3);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID4 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID4);
+			replacer.replaceID4 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID4);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID5 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID5);
+			replacer.replaceID5 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID5);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID6 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID6);
+			replacer.replaceID6 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID6);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID7 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID7);
+			replacer.replaceID7 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID7);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID8 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID8);
+			replacer.replaceID8 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID8);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID9 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID9);
+			replacer.replaceID9 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID9);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID10 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID10);
+			replacer.replaceID10 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID10);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID11 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID11);
+			replacer.replaceID11 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID11);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID12 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID12);
+			replacer.replaceID12 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID12);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID13 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID13);
+			replacer.replaceID13 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID13);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID14 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID14);
+			replacer.replaceID14 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID14);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID15 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID15);
+			replacer.replaceID15 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID15);
+			EditorGUILayout.EndHorizontal();
+			
+			EditorGUILayout.BeginHorizontal();
+			replacer.prefabID16 = (uint)EditorGUILayout.LongField("Search ID:", replacer.prefabID16);
+			replacer.replaceID16 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID16);
+			EditorGUILayout.EndHorizontal();
+			
+			replacer.rotateToTerrain = EditorGUILayout.ToggleLeft("Rotate to terrain", replacer.rotateToTerrain, GUILayout.MaxWidth(250));
+			
+			EditorGUI.BeginChangeCheck();
+						
+			replacerPresetIndex = EditorGUILayout.Popup("Presets:", replacerPresetIndex, replacerList);
+						
+						if (EditorGUI.EndChangeCheck())
+						{
+							replacer.title = replacerList[replacerPresetIndex];
+							SettingsManager.LoadReplacerPreset(replacer.title);
+							replacer = SettingsManager.replacer;
+							replacerList = SettingsManager.GetPresetTitles("Presets/Replacer/");
+						}
+					
+					
+					if (EditorGUI.EndChangeCheck())
+					{
+						SettingsManager.replacer = replacer;
+					}
+					
+					replacer.title = EditorGUILayout.TextField("Preset Name", replacer.title);
+					
+					EditorGUILayout.BeginHorizontal();
+					if (GUILayout.Button("Save"))
+						{
+							SettingsManager.replacer = replacer;
+                            SettingsManager.SaveReplacerPreset();
+							SettingsManager.LoadPresets();							
+							replacerList = SettingsManager.GetPresetTitles("Presets/Replacer/");
+						}
+					if (GUILayout.Button("Apply"))
+						{
+                            SettingsManager.replacer = replacer;
+							PrefabManager.BatchReplace(PrefabManager.CurrentMapPrefabs, replacer);
+						}
+
+					EditorGUILayout.EndHorizontal();
+			
+			if (EditorGUI.EndChangeCheck())
+					{
+						SettingsManager.replacer = replacer;					
+					}
+			
+		}
 		
-		public static void Geology(ref GeologyPreset activePreset, ref int presetIndex, ref string [] geologyList, ref int macroIndex, ref string [] macroList, ref string macroTitle, ref string macroDisplay)
+		public static void Geology(ref GeologyPreset activePreset, ref int presetIndex, ref string [] geologyList, ref int macroIndex, ref string [] macroList, ref string macroTitle, ref string macroDisplay, ref Layers layers)
 		{
 					EditorGUI.BeginChangeCheck();
 					
@@ -272,9 +411,23 @@ namespace RustMapEditor.UI
 					GUILayout.Label("Feature Attributes", EditorStyles.boldLabel);
 
 					activePreset.prefabID = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID);
+					activePreset.prefabID1 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID1);
+					activePreset.prefabID2 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID2);
+					activePreset.prefabID3 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID3);
+					activePreset.prefabID4 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID4);
+					activePreset.prefabID5 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID5);
+					activePreset.prefabID6 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID6);
+					activePreset.prefabID7 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID7);
 					if (GUILayout.Button("Delete prefabs"))
 						{
 							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID1);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID2);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID3);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID4);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID5);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID6);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID7);
 						}
 					GUILayout.Label("Rotation range:", EditorStyles.boldLabel);
 					
@@ -294,6 +447,10 @@ namespace RustMapEditor.UI
 					EditorGUILayout.LabelField("z",GUILayout.MaxWidth(10));
 					EditorGUILayout.MinMaxSlider(ref activePreset.rotationsLow.z, ref activePreset.rotationsHigh.z, 0f, 360f);
 					EditorGUILayout.LabelField(activePreset.rotationsLow.z.ToString("0.#") + " - " + activePreset.rotationsHigh.z.ToString("0.#") ,GUILayout.MaxWidth(80));
+					EditorGUILayout.EndHorizontal();
+					
+					EditorGUILayout.BeginHorizontal();
+					activePreset.normalizeY = EditorGUILayout.ToggleLeft("Align to slope", activePreset.normalizeY, GUILayout.MaxWidth(250));
 					EditorGUILayout.EndHorizontal();
 					
 					GUILayout.Label("Scale range:", EditorStyles.boldLabel);
@@ -321,6 +478,12 @@ namespace RustMapEditor.UI
 					
 					GUILayout.Label("Placement", EditorStyles.boldLabel);
 					
+							EditorGUILayout.BeginHorizontal();
+							activePreset.biomeExclusive = EditorGUILayout.ToggleLeft("Place on biome:", activePreset.biomeExclusive, GUILayout.MaxWidth(250));
+							layers.Biome = (TerrainBiome.Enum)Elements.ToolbarEnumPopup(layers.Biome);
+							activePreset.biomeIndex = TerrainBiome.TypeToIndex((int)layers.Biome);
+							EditorGUILayout.EndHorizontal();
+						
                             EditorGUILayout.BeginHorizontal();
                             GUILayout.Label("Slope Range: " + activePreset.slopeLow.ToString("0.0#") + "° - " + activePreset.slopeHigh.ToString("0.0#") + "°");
                             EditorGUILayout.EndHorizontal();
@@ -1199,12 +1362,23 @@ namespace RustMapEditor.UI
 					if (GUILayout.Button("Rust City"))
 					{
 						var monumentBlob = new WorldSerialization();
-						string loadFile = "highrise.monuments.map";
+						string loadFile = "highrise.monuments.generated.map";
 						monumentBlob.Load(loadFile);
 						GenerativeManager.createRustCity(monumentBlob);
 					}
-			
+					
+					if (GUILayout.Button("Rust City Buildings"))
+					{
+						GenerativeManager.rustBuildings();
+					}
+					
+					if (GUILayout.Button("Destroy and Reconstruct Monuments"))
+					{
+						PrefabManager.breakMonument(PrefabManager.CurrentMapPrefabs, 3903103539);
+					}
 		}
+		
+		
 
         public static void SelectPrefabPaths(PrefabsListTreeView treeView, ref bool showAllPrefabs)
         {
