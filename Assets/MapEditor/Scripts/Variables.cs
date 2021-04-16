@@ -275,7 +275,7 @@ namespace RustMapEditor.Variables
 				public uint replaceID15;
 				public uint replaceID16;
 				
-				public bool rotateToTerrain;
+				public bool rotateToTerrain, rotateToX, rotateToY, rotateToZ;
 				public string title;
 	}
 	

@@ -55,35 +55,35 @@
         "simple": true
     },
     "geology": {
-        "title": "newcliffsArid",
-        "prefabID": 2494642805,
+        "title": "",
+        "prefabID": 0,
         "prefabID0": 0,
-        "prefabID1": 3934282489,
-        "prefabID2": 3897867041,
-        "prefabID3": 3008655077,
+        "prefabID1": 0,
+        "prefabID2": 0,
+        "prefabID3": 0,
         "prefabID4": 0,
         "prefabID5": 0,
         "prefabID6": 0,
         "prefabID7": 0,
-        "density": 200,
-        "frequency": 10,
+        "density": 0,
+        "frequency": 0,
         "floor": 0,
-        "ceiling": 1000,
-        "biomeIndex": 0,
-        "avoidTopo": true,
+        "ceiling": 0,
+        "biomeIndex": 1,
+        "avoidTopo": false,
         "flipping": false,
         "tilting": false,
-        "normalizeY": true,
-        "biomeExclusive": true,
+        "normalizeY": false,
+        "biomeExclusive": false,
         "scalesLow": {
-            "x": 1.013292908668518,
-            "y": 1.0120309591293336,
-            "z": 0.9644119143486023
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
         },
         "scalesHigh": {
-            "x": 1.4353857040405274,
-            "y": 1.42722487449646,
-            "z": 1.4149413108825684
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
         },
         "rotationsLow": {
             "x": 0.0,
@@ -95,9 +95,9 @@
             "y": 0.0,
             "z": 0.0
         },
-        "zOffset": -12.5,
-        "slopeLow": 9.664630889892579,
-        "slopeHigh": 90.0
+        "zOffset": 0.0,
+        "slopeLow": 0.0,
+        "slopeHigh": 0.0
     },
     "replacer": {
         "prefabID0": 2494642805,
@@ -117,10 +117,10 @@
         "prefabID14": 0,
         "prefabID15": 0,
         "prefabID16": 0,
-        "replaceID0": 3008655077,
-        "replaceID1": 3897867041,
-        "replaceID2": 3934282489,
-        "replaceID3": 2494642805,
+        "replaceID0": 140564594,
+        "replaceID1": 140564594,
+        "replaceID2": 214336632,
+        "replaceID3": 214336632,
         "replaceID4": 0,
         "replaceID5": 0,
         "replaceID6": 0,
@@ -135,7 +135,10 @@
         "replaceID15": 0,
         "replaceID16": 0,
         "rotateToTerrain": true,
-        "title": "test"
+        "rotateToX": true,
+        "rotateToY": true,
+        "rotateToZ": true,
+        "title": "testRotations"
     },
     "prefabPaths": [
         "assets/bundled/prefabs/autospawn/",

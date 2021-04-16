@@ -359,6 +359,9 @@ namespace RustMapEditor.UI
 			EditorGUILayout.EndHorizontal();
 			
 			replacer.rotateToTerrain = EditorGUILayout.ToggleLeft("Rotate to terrain", replacer.rotateToTerrain, GUILayout.MaxWidth(250));
+			replacer.rotateToX = EditorGUILayout.ToggleLeft("Rotate to x", replacer.rotateToX, GUILayout.MaxWidth(250));
+			replacer.rotateToY = EditorGUILayout.ToggleLeft("Rotate to y", replacer.rotateToY, GUILayout.MaxWidth(250));
+			replacer.rotateToZ = EditorGUILayout.ToggleLeft("Rotate to z", replacer.rotateToZ, GUILayout.MaxWidth(250));
 			
 			EditorGUI.BeginChangeCheck();
 						

@@ -310,7 +310,21 @@ public static class PrefabManager
 					normal = land.terrainData.GetInterpolatedNormal(1f*yCheck/res, 1f*xCheck/res);
 					qRotate = Quaternion.LookRotation(normal);
 					preRotate = qRotate.eulerAngles;
-					rRotate.y = preRotate.y;
+					
+					if(replace.rotateToY)
+					{
+						rRotate.y = preRotate.y;
+					}
+					
+					if(replace.rotateToX)
+					{
+						rRotate.x = preRotate.x+90f;
+					}
+					
+					if(replace.rotateToZ)
+					{
+						rRotate.z = preRotate.z;
+					}
 					
 					createPrefab("Decor", prefabs[k].prefabData.id, prefabs[k].prefabData.position, rRotate, prefabs[k].prefabData.scale);
 					

@@ -403,7 +403,6 @@ public static class GenerativeManager
 		//dont forget this shit again
 		TerrainManager.SetData(newGround, TerrainManager.LandLayer, 0);
 		TerrainManager.SetLayer(TerrainManager.LandLayer, 0);
-
 	}
 	
 	
@@ -437,6 +436,7 @@ public static class GenerativeManager
 		float[,,] splatMap = TerrainManager.GetSplatMap(LandLayers.Topology, TerrainTopology.TypeToIndex((int)sourceLayer.Topologies));
 		TerrainManager.SetData(splatMap, LandLayers.Topology, TerrainTopology.TypeToIndex((int)layer.Topologies));
         TerrainManager.SetLayer(LandLayers.Topology, TerrainTopology.TypeToIndex((int)layer.Topologies));
+
 	}
 	
 	public static void lakeTopologyFill(Layers layer)
@@ -471,6 +471,7 @@ public static class GenerativeManager
 		lakeMap = topoDeleteFill(lake, lakeMap);
 		TerrainManager.SetData(lakeMap, LandLayers.Topology,  TerrainTopology.TypeToIndex((int)layer.Topologies));
         TerrainManager.SetLayer(LandLayers.Topology,  TerrainTopology.TypeToIndex((int)layer.Topologies));
+
 	}
 	
 
@@ -631,6 +632,7 @@ public static class GenerativeManager
 		
 		TerrainManager.SetData(oceanMap, LandLayers.Topology,  TerrainTopology.TypeToIndex((int)layer.Topologies));
         TerrainManager.SetLayer(LandLayers.Topology,  TerrainTopology.TypeToIndex((int)layer.Topologies));
+
 	}
 	
 	public static float [,,] topoDeleteFill(Point p, float[,,] topoMap)
@@ -884,13 +886,16 @@ public static class GenerativeManager
 		float[,,] pSplat = terrains.splatMap;
 		float[,,] pBiome = terrains.biomeMap;
 		bool[,] pAlpha = terrains.alphaMap;
+		
 		//var topos = terrains.topology;
 		int res = pSplat.GetLength(0);
 		
 		TerrainMap<int> pTopoMap = terrains.topology;
 		TerrainMap<int> topTerrainMap = TopologyData.GetTerrainMap();
 		
-			
+
+		
+		
 		land.transform.position = terrainPosition;
         float[,] baseMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution);
 		float ratio = terrains.size.x / (baseMap.GetLength(0));
@@ -905,6 +910,34 @@ public static class GenerativeManager
 		float[,,] newGround = TerrainManager.GroundArray;
 		float[,,] newBiome = TerrainManager.BiomeArray;
 		bool[,] newAlpha = TerrainManager.AlphaArray;
+		
+		float[][,,] topologyArray  = TerrainManager.TopologyArray;
+		float[][,,] pTopologyArray =  new float[30][,,];
+		
+		for(int k = 0; k < 30 ;k++)
+				{
+					pTopologyArray[k] = new float[res,res,2];
+				}
+		for (int i = 0; i < dim; i++)
+		{
+			for (int j = 0; j < dim; j++)
+			{
+				for(int k = 0; k < 30 ;k++)
+				{
+					
+					if((pTopoMap[i,j] & TerrainTopology.IndexToType(k)) != 0)
+					{
+						pTopologyArray[k][i,j,0] = 1f;
+						pTopologyArray[k][i,j,1] = 0f;
+					}
+					else
+					{
+						pTopologyArray[k][i,j,1] = 1f;
+						pTopologyArray[k][i,j,0] = 0f;
+					}
+				}
+			}
+		}
 		
 		EditorUtility.ClearProgressBar();
 		
@@ -952,9 +985,13 @@ public static class GenerativeManager
 					newGround[i + x, j + y, k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[i,j,k], pBiome[i,j,0]);
 				}
 				
-				if (pBiome[i,j,0] > 0.1f)
+				if (pBiome[i,j,0] > 0f)
 				{
-					topTerrainMap[i + x, j + y] = pTopoMap[i, j];
+					for(int k = 0; k < 30 ;k++)
+					{
+						topologyArray[k][i + x, j + y,0] = pTopologyArray[k][i, j,0];
+						topologyArray[k][i + x, j + y,1] = pTopologyArray[k][i, j,1];
+					}
 					
 					newAlpha[i + x, j + y] = pAlpha[i, j];
 				}
@@ -967,7 +1004,7 @@ public static class GenerativeManager
         }
 		
 		EditorUtility.ClearProgressBar();
-		TopologyData.InitMesh(topTerrainMap);
+		//TopologyData.InitMesh(topTerrainMap);
 		
 		land.terrainData.SetHeights(0,0,baseMap);
 		TerrainManager.SetData(newGround, LandLayers.Ground, 0);
@@ -975,13 +1012,14 @@ public static class GenerativeManager
         TerrainManager.SetData(newAlpha, LandLayers.Alpha);
 		TerrainManager.SetLayer(TerrainManager.LandLayer, 0);
 		
+		
 		for (int i = 0; i < TerrainTopology.COUNT; i++)
         {
             //TerrainManager.SetData(TerrainManager.GetSplatMap(TerrainTopology.IndexToType(i)), LandLayers.Topology, i);
-			TerrainManager.SetData(TerrainManager.GetSplatMap(LandLayers.Topology, i), LandLayers.Topology, i);
+			TerrainManager.SetData(topologyArray[i], LandLayers.Topology, i);
         }
 		
-		
+
 		
 		
 		
