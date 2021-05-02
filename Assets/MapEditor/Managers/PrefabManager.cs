@@ -401,6 +401,446 @@ public static class PrefabManager
 			}
 		}
 	}
+	
+	public static void FoliageCube(Vector3 glassPosition, Vector3 glassScale)
+	{
+				Vector3 distance = new Vector3(0,0,0);
+				Vector3 foliageScale = new Vector3(0,0,0);
+				Vector3 foliageRotation = new Vector3(0,0,0);
+				Vector3 foliageLocation = new Vector3(0,0,0);
+				
+				uint creepingcornerB = 2447885804;
+				uint creepingcornerA = 738251630;
+				uint creepingcornerC = 648907673;
+				uint creepingplantfall = 2166677703;
+				uint creepingwall600 = 1431389280;
+				
+				int roll;
+				uint foliage=0;
+				float foliageRatio = 0f;
+				int foliageRoll = 0;
+				int cornerRoll=0;
+			
+				
+				foliageRatio = ((glassScale.x / glassScale.y) + (glassScale.x / glassScale.z)) / 2f;
+				
+								
+								if(foliageRatio > .8f && foliageRatio < 1.2f)
+								{
+									distance.x = glassScale.x / 2f;
+									distance.y = glassScale.y / 2f;
+									distance.z = glassScale.z / 2f;
+									
+									foliageScale.x = glassScale.x /6.8f;
+									foliageScale.y = glassScale.y /6.8f;
+									foliageScale.z = glassScale.z /6.8f;
+									
+									
+									foliageRoll = UnityEngine.Random.Range(2,5);
+									
+									for (int f = 0; f < foliageRoll; f++)
+									{										
+									roll = UnityEngine.Random.Range(0,5);
+										cornerRoll = UnityEngine.Random.Range(0,4);
+										
+										switch (roll)
+										{
+											case 0:
+											
+												foliage = creepingcornerB;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = glassPosition.x + distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = glassPosition.x - distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = glassPosition.x + distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = glassPosition.x - distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;
+												
+											case 1:
+											
+												foliage = creepingcornerA;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = glassPosition.x + distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = glassPosition.x - distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = glassPosition.x + distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = glassPosition.x - distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;
+
+											case 2:
+											
+												foliage = creepingcornerC;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = glassPosition.x + distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = glassPosition.x - distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = glassPosition.x + distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = glassPosition.x - distance.x;
+															foliageLocation.y = glassPosition.y - distance.y;
+															foliageLocation.z = glassPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;	
+												
+											case 3:
+											
+												foliage = creepingplantfall;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = glassPosition.x;
+															foliageLocation.y = glassPosition.y + distance.y;
+															foliageLocation.z = glassPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = glassPosition.x;
+															foliageLocation.y = glassPosition.y + distance.y;
+															foliageLocation.z = glassPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = glassPosition.x - distance.x;
+															foliageLocation.y = glassPosition.y + distance.y;
+															foliageLocation.z = glassPosition.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = glassPosition.x + distance.x;
+															foliageLocation.y = glassPosition.y + distance.y;
+															foliageLocation.z = glassPosition.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;
+											
+											case 4:
+											
+												foliage = creepingwall600;
+												
+													switch (cornerRoll)
+													{
+														case 0:
+															foliageLocation.x = glassPosition.x + distance.x;
+															foliageLocation.y = glassPosition.y;
+															foliageLocation.z = glassPosition.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 90f;
+															foliageRotation.z = 0f;
+															break;
+														case 1:
+															foliageLocation.x = glassPosition.x - distance.x;
+															foliageLocation.y = glassPosition.y;
+															foliageLocation.z = glassPosition.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 270f;
+															foliageRotation.z = 0f;
+															break;
+														case 2:
+															foliageLocation.x = glassPosition.x;
+															foliageLocation.y = glassPosition.y;
+															foliageLocation.z = glassPosition.z + distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 0f;
+															foliageRotation.z = 0f;
+															break;
+														case 3:
+															foliageLocation.x = glassPosition.x;
+															foliageLocation.y = glassPosition.y;
+															foliageLocation.z = glassPosition.z - distance.z;
+															foliageRotation.x = 0f;
+															foliageRotation.y = 180f;
+															foliageRotation.z = 0f;
+															break;
+													}
+												break;
+										}
+									
+									createPrefab("Decor", foliage, foliageLocation, foliageRotation, foliageScale);
+									}
+								}
+	}
+	
+	public static uint GetPalette(int index)
+	{
+	uint id=0;
+				
+				uint yellow = 2337881356;
+				uint white = 2269472079;
+				uint red = 579459297;
+				uint navy = 241986762;
+				uint junkyard = 1115909638;
+				uint green = 1776925867;
+				uint snowblue = 2600171998;
+				uint blue = 2473172851;
+				uint black = 2722544497;
+				
+		uint palette1=0;
+		uint palette2=0;
+		uint palette3=0;
+		uint palette4=0;
+			
+		int roll2 = UnityEngine.Random.Range(0,3);						
+		switch (index)
+								{
+																		case 0:
+									palette1=green;
+										palette2=yellow;
+											palette3=red;
+												palette4=blue;
+								break;
+									
+																		case 1:
+									palette1=white;
+										palette2=navy;
+											palette3=red;
+												palette4=navy;
+								break;
+									
+																		case 2:
+									palette1=yellow;
+										palette2=red;
+											palette3=black;
+												palette4=black;
+								break;
+									
+																		case 3:
+									palette1=blue;
+										palette2=black;
+											palette3=navy;
+												palette4=snowblue;
+								break;
+									
+																		case 4:
+									palette1=junkyard;
+										palette2=green;
+											palette3=yellow;
+												palette4=black;
+								break;
+									
+																		case 5:
+									palette1=red;
+										palette2=yellow;
+											palette3=blue;
+												palette4=blue;
+								break;
+									
+																		case 6:
+									palette1=blue;
+										palette2=yellow;
+											palette3=red;
+												palette4=black;
+								break;
+									
+									case 7:
+									switch(roll2)
+										{
+																							case 0:
+												palette1=black;
+													palette2=black;
+														palette3=black;
+															palette4=black;
+										break;
+																							case 1:
+											palette1=white;
+												palette2=white;
+													palette3=white;
+														palette4=white;
+										break;
+																							case 2:
+											palette1=junkyard;
+												palette2=junkyard;
+													palette3=junkyard;
+														palette4=junkyard;
+										break;
+										}
+								break;
+									
+															case 8:
+									palette1=blue;
+										palette2=white;
+											palette3=green;
+												palette4=yellow;
+								break;
+									
+															default:
+									palette1=white;
+										palette2=white;
+											palette3=white;
+												palette4=white;
+								break;
+								}
+		
+		int roll = UnityEngine.Random.Range(0,4);
+								
+								switch (roll)
+								{
+									case 0:
+										id = palette1;
+										break;
+									case 1:
+										id = palette2;
+										break;
+									case 2:
+										id = palette3;
+										break;
+									case 3:
+										id = palette4;
+										break;
+								}
+		return id;
+	}
+	
+	public static uint ScrambleContainer(uint containerID, int palette)
+	{
+	uint id = containerID;
+	
+				uint yellow = 2337881356;
+				uint white = 2269472079;
+				uint red = 579459297;
+				uint navy = 241986762;
+				uint junkyard = 1115909638;
+				uint green = 1776925867;
+				uint snowblue = 2600171998;
+				uint blue = 2473172851;
+				uint black = 2722544497;
+				
+				
+					
+					if(containerID == blue || containerID == red ||
+							containerID == yellow || containerID == black ||
+							containerID == white || containerID == snowblue || 
+							containerID == green || containerID == navy ||
+							containerID == junkyard)
+							{
+								id = GetPalette(palette);
+							}
+		return id;
+	}
+
+	public static void deletePrefabsOffArid(PrefabDataHolder[] prefabs)
+	{
+		int count = 0;
+		int xCheck =0;
+		int yCheck =0;
+		float[,,] biomeMap = TerrainManager.BiomeArray;
+		int res = biomeMap.GetLength(0);
+		float ratio = 1f* TerrainManager.TerrainSize.x / res;
+		
+		for (int k = 0; k < prefabs.Length; k++)
+		{
+			if (prefabs[k] != null)
+			{
+								xCheck = (int)((prefabs[k].prefabData.position.z/ratio)+res/2f);
+								yCheck = (int)((prefabs[k].prefabData.position.x/ratio)+res/2f);
+								if (xCheck > 0 && yCheck > 0 && xCheck < res && yCheck < res)
+								{
+									if (biomeMap[xCheck,yCheck,0] < 1f)
+									{
+										GameObject.DestroyImmediate(prefabs[k].gameObject);
+										prefabs[k] = null;
+										count ++;
+									}
+								}
+			}
+		}
+		Debug.LogError(count + " prefabs removed");
+	}
 
 	public static void deletePrefabIDs(PrefabDataHolder[] prefabs, uint ID)
 	{

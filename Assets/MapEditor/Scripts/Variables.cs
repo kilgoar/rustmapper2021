@@ -3,17 +3,7 @@ using System;
 
 namespace RustMapEditor.Variables
 {
-	public struct monumentData
-	{
-		public monumentData(int X, int Y, int Width, int Height)
-		{
-			x=X;
-			y=Y;
-			width=Width;
-			height=Height;
-		}
-		public int x,y,width,height;
-	}
+
 	
 	public struct Point
 	{
@@ -180,6 +170,18 @@ namespace RustMapEditor.Variables
             Topology = 1 << 3,
         }
     }
+	
+	public struct monumentData
+	{
+		public monumentData(int X, int Y, int Width, int Height)
+		{
+			x=X;
+			y=Y;
+			width=Width;
+			height=Height;
+		}
+		public int x,y,width,height;
+	}
 		
 	[Serializable]
 	public class GeologyPresetCollection
@@ -234,6 +236,8 @@ namespace RustMapEditor.Variables
 		public bool perlin;
 	}
 	//int radius, int gradient, float seafloor, int xOffset, int yOffset, bool perlin, int s
+	
+	
 	
 	[Serializable]
 	public struct ReplacerPreset
@@ -293,10 +297,22 @@ namespace RustMapEditor.Variables
 				public uint prefabID6;
 				public uint prefabID7;
 				public int density, frequency, floor, ceiling, biomeIndex;
-				public bool avoidTopo, flipping, tilting, normalizeY, biomeExclusive;
+				public bool avoidTopo, flipping, tilting, normalizeX, normalizeY, normalizeZ, biomeExclusive; 
 				public Vector3 scalesLow, scalesHigh, rotationsLow, rotationsHigh;
 				public float zOffset, slopeLow, slopeHigh;
 	}
+	
+	[Serializable]
+	public struct RustCityPreset
+	{
+		public string title;
+		public int size, alley, street, start;
+		public float flatness;
+		public float zOff;
+		public int x, y;
+	}
+	
+	
     public class PrefabExport
     {
         public int PrefabNumber

@@ -8,82 +8,84 @@
     "style": false,
     "crazing": {
         "title": "",
-        "zones": 1000,
-        "minSize": 2000,
-        "maxSize": 3000,
+        "zones": 200,
+        "minSize": 15000,
+        "maxSize": 20000,
         "splatLayer": 5
     },
     "perlinSplat": {
         "scale": 50,
-        "splatLayer": 0,
-        "biomeLayer": 1,
-        "strength": 1.0,
-        "invert": true,
-        "paintBiome": false
+        "splatLayer": 1,
+        "biomeLayer": 8,
+        "strength": 2.0,
+        "invert": false,
+        "paintBiome": true
     },
     "ripple": {
-        "size": 270,
-        "density": 70,
-        "weight": 0.20000000298023225
+        "size": 2200,
+        "density": 125,
+        "weight": 0.25
     },
     "ocean": {
         "title": "",
-        "radius": 400,
-        "gradient": 300,
+        "radius": 450,
+        "gradient": 1900,
         "xOffset": 10,
         "yOffset": 20,
         "s": 200,
-        "seafloor": 480,
-        "perlin": true
+        "seafloor": 475,
+        "perlin": false
     },
     "terracing": {
-        "flatten": true,
-        "perlinBanks": false,
+        "flatten": false,
+        "perlinBanks": true,
         "circular": true,
-        "weight": 0.09009009599685669,
-        "zStart": 670,
-        "gateBottom": 20,
-        "gateTop": 25,
-        "gates": 20,
-        "descaleFactor": 4,
-        "perlinDensity": 40
+        "weight": 0.8095238208770752,
+        "zStart": 511,
+        "gateBottom": 13,
+        "gateTop": 13,
+        "gates": 1,
+        "descaleFactor": 3,
+        "perlinDensity": 200
     },
     "perlin": {
         "layers": 3,
-        "period": 70,
-        "scale": 200,
+        "period": 20,
+        "scale": 225,
         "simple": true
     },
     "geology": {
-        "title": "",
-        "prefabID": 0,
+        "title": "newcliffsArid",
+        "prefabID": 2494642805,
         "prefabID0": 0,
-        "prefabID1": 0,
-        "prefabID2": 0,
-        "prefabID3": 0,
-        "prefabID4": 0,
-        "prefabID5": 0,
+        "prefabID1": 3934282489,
+        "prefabID2": 3897867041,
+        "prefabID3": 3008655077,
+        "prefabID4": 2595862078,
+        "prefabID5": 183291403,
         "prefabID6": 0,
         "prefabID7": 0,
-        "density": 0,
-        "frequency": 0,
+        "density": 225,
+        "frequency": 60,
         "floor": 0,
-        "ceiling": 0,
-        "biomeIndex": 1,
-        "avoidTopo": false,
+        "ceiling": 1000,
+        "biomeIndex": 0,
+        "avoidTopo": true,
         "flipping": false,
         "tilting": false,
-        "normalizeY": false,
+        "normalizeX": false,
+        "normalizeY": true,
+        "normalizeZ": false,
         "biomeExclusive": false,
         "scalesLow": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
+            "x": 1.013292908668518,
+            "y": 1.0120309591293336,
+            "z": 0.9644119143486023
         },
         "scalesHigh": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
+            "x": 1.4353857040405274,
+            "y": 1.42722487449646,
+            "z": 1.4149413108825684
         },
         "rotationsLow": {
             "x": 0.0,
@@ -95,15 +97,15 @@
             "y": 0.0,
             "z": 0.0
         },
-        "zOffset": 0.0,
-        "slopeLow": 0.0,
-        "slopeHigh": 0.0
+        "zOffset": -10.0,
+        "slopeLow": 36.67580032348633,
+        "slopeHigh": 90.0
     },
     "replacer": {
-        "prefabID0": 2494642805,
-        "prefabID1": 3934282489,
-        "prefabID2": 3897867041,
-        "prefabID3": 3008655077,
+        "prefabID0": 0,
+        "prefabID1": 0,
+        "prefabID2": 0,
+        "prefabID3": 0,
         "prefabID4": 0,
         "prefabID5": 0,
         "prefabID6": 0,
@@ -117,10 +119,10 @@
         "prefabID14": 0,
         "prefabID15": 0,
         "prefabID16": 0,
-        "replaceID0": 140564594,
-        "replaceID1": 140564594,
-        "replaceID2": 214336632,
-        "replaceID3": 214336632,
+        "replaceID0": 0,
+        "replaceID1": 0,
+        "replaceID2": 0,
+        "replaceID3": 0,
         "replaceID4": 0,
         "replaceID5": 0,
         "replaceID6": 0,
@@ -134,11 +136,11 @@
         "replaceID14": 0,
         "replaceID15": 0,
         "replaceID16": 0,
-        "rotateToTerrain": true,
-        "rotateToX": true,
-        "rotateToY": true,
-        "rotateToZ": true,
-        "title": "testRotations"
+        "rotateToTerrain": false,
+        "rotateToX": false,
+        "rotateToY": false,
+        "rotateToZ": false,
+        "title": ""
     },
     "prefabPaths": [
         "assets/bundled/prefabs/autospawn/",
@@ -158,5 +160,16 @@
         "assets/prefabs/deployable/",
         "assets/prefabs/misc/",
         "assets/prefabs/resource/"
-    ]
+    ],
+    "city": {
+        "title": "",
+        "size": 800,
+        "alley": 20,
+        "street": 20,
+        "start": 600,
+        "flatness": 0.003000000026077032,
+        "zOff": -0.000699999975040555,
+        "x": 0,
+        "y": 0
+    }
 }

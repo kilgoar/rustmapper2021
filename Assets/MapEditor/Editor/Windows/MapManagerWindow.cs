@@ -51,6 +51,7 @@ public class MapManagerWindow : EditorWindow
 	TerracingPreset terracing = new TerracingPreset();
 	PerlinPreset perlin = new PerlinPreset();
 	ReplacerPreset replacer = new ReplacerPreset();
+	RustCityPreset city = new RustCityPreset();
 	
 	string macroDisplay;
 	
@@ -244,7 +245,8 @@ public class MapManagerWindow : EditorWindow
 						break;
 						
 						case 2:
-								Functions.RustCity();
+								city = SettingsManager.city;
+								Functions.RustCity(ref city);
 						break;
 
 				

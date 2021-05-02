@@ -41,7 +41,7 @@ public static class WorldConverter
         terrains.pathData = paths.ToArray();
         terrains.prefabData = prefabs.ToArray();
 
-        terrains.terrainRes = Mathf.NextPowerOfTwo((int)(size * 0.50f)) + 1;
+        terrains.terrainRes = Mathf.NextPowerOfTwo((int)(size)) + 1;
         terrains.size = new Vector3(size, 1000, size);
 
         terrains.land.heights = SetValues(new float[terrains.terrainRes, terrains.terrainRes], landHeight / 1000f, new Dimensions(0, terrains.terrainRes, 0, terrains.terrainRes));

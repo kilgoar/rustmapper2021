@@ -28,7 +28,7 @@ public static class SettingsManager
     public static string[] PrefabPaths { get; private set; }
 	
 	public static GeologyPreset[] macro {get; set; }
- 	
+ 	public static RustCityPreset city {get; set; }
 
     [InitializeOnLoadMethod]
     private static void Init()
@@ -47,7 +47,7 @@ public static class SettingsManager
         {
             EditorSettings editorSettings = new EditorSettings
             (
-                RustDirectory, PrefabRenderDistance, PathRenderDistance, WaterTransparency, LoadBundleOnLaunch, TerrainTextureSet, style, crazing, perlinSplat, ripple, ocean, terracing, perlin, geology, replacer
+                RustDirectory, PrefabRenderDistance, PathRenderDistance, WaterTransparency, LoadBundleOnLaunch, TerrainTextureSet, style, crazing, perlinSplat, ripple, ocean, terracing, perlin, geology, replacer, city
             );
             write.Write(JsonUtility.ToJson(editorSettings, true));
         }
@@ -171,6 +171,7 @@ public static class SettingsManager
 			perlin = editorSettings.perlin;
 			geology = editorSettings.geology;
 			replacer = editorSettings.replacer;
+			city = editorSettings.city;
         }
 
 		LoadPresets();
@@ -236,13 +237,14 @@ public struct EditorSettings
 	public GeologyPreset geology;
 	public ReplacerPreset replacer;
 	public string[] prefabPaths;
+	public RustCityPreset city;
 
     public EditorSettings
     (
         string rustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust", float prefabRenderDistance = 700f, float pathRenderDistance = 200f, 
         float waterTransparency = 0.2f, bool loadbundleonlaunch = false, bool terrainTextureSet = false, bool style = true, CrazingPreset crazing = new CrazingPreset(), PerlinSplatPreset perlinSplat = new PerlinSplatPreset(),
 		RipplePreset ripple = new RipplePreset(), OceanPreset ocean = new OceanPreset(), TerracingPreset terracing = new TerracingPreset(), PerlinPreset perlin = new PerlinPreset(), GeologyPreset geology = new GeologyPreset(), 
-		ReplacerPreset replacer = new ReplacerPreset())
+		ReplacerPreset replacer = new ReplacerPreset(), RustCityPreset city = new RustCityPreset())
         {
             this.rustDirectory = rustDirectory;
             this.prefabRenderDistance = prefabRenderDistance;
@@ -260,5 +262,6 @@ public struct EditorSettings
 			this.perlin = perlin;
 			this.geology = geology;
 			this.replacer = replacer;
+			this.city = city;
         }
 }

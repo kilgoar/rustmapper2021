@@ -596,7 +596,7 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetRange(GetSplatMap(landLayerToPaint, topology), GetSlopes(), t, slopeLow, slopeHigh), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                SetLayer(LandLayers.Topology, topology);
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
@@ -638,7 +638,7 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetRiver(GetSplatMap(landLayerToPaint, topology), GetHeights(), GetWaterHeights(), aboveTerrain, t), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                SetLayer(LandLayers.Topology, topology);
                 break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;

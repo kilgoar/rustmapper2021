@@ -432,7 +432,7 @@ namespace RustMapEditor.UI
 							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID6);
 							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID7);
 						}
-					GUILayout.Label("Rotation range:", EditorStyles.boldLabel);
+					GUILayout.Label("Rotation range:", EditorStyles.boldLabel);					
 					
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.LabelField("x",GUILayout.MaxWidth(10));
@@ -453,7 +453,9 @@ namespace RustMapEditor.UI
 					EditorGUILayout.EndHorizontal();
 					
 					EditorGUILayout.BeginHorizontal();
-					activePreset.normalizeY = EditorGUILayout.ToggleLeft("Align to slope", activePreset.normalizeY, GUILayout.MaxWidth(250));
+					activePreset.normalizeX = EditorGUILayout.ToggleLeft("Align to X", activePreset.normalizeX, GUILayout.MaxWidth(250));
+					activePreset.normalizeY = EditorGUILayout.ToggleLeft("Align to Y", activePreset.normalizeY, GUILayout.MaxWidth(250));
+					activePreset.normalizeZ = EditorGUILayout.ToggleLeft("Align to Z", activePreset.normalizeZ, GUILayout.MaxWidth(250));
 					EditorGUILayout.EndHorizontal();
 					
 					GUILayout.Label("Scale range:", EditorStyles.boldLabel);
@@ -828,6 +830,11 @@ namespace RustMapEditor.UI
                 MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
             autoUpdate = Elements.ToolbarToggle(ToolTips.autoUpdateNormalise, autoUpdate);
             Elements.EndToolbarHorizontal();
+			
+			if (GUILayout.Button("Flip"))
+							{
+                                GenerativeManager.FlipHeightmap();
+							}
         }
 
         public static void SetHeight(ref float height)
@@ -1358,20 +1365,45 @@ namespace RustMapEditor.UI
 						GenerativeManager.pasteMonument(blob, 0,0,0f);
 					}
 			
+			
+			
+			if (GUILayout.Button("Delete Prefabs not on Arid"))
+					{
+						PrefabManager.deletePrefabsOffArid(PrefabManager.CurrentMapPrefabs);
+					}
 		}
 
-		public static void RustCity()
+		public static void RustCity(ref RustCityPreset city)
 		{
+			EditorGUI.BeginChangeCheck();
+						
+									
+						
+			city.start = EditorGUILayout.IntField("Start:", city.start);
+			city.size = EditorGUILayout.IntField("City Size:", city.size);
+			city.alley = EditorGUILayout.IntField("Alley width:", city.alley);
+			city.street = EditorGUILayout.IntField("Street width:", city.street);
+			city.flatness =  EditorGUILayout.FloatField("Steepness:", city.flatness);
+			city.zOff = EditorGUILayout.FloatField("Z Offset:", city.zOff);
+			
+			if (EditorGUI.EndChangeCheck())
+						{
+							SettingsManager.city = city;
+							SettingsManager.SaveSettings();
+						}
 					if (GUILayout.Button("Rust City"))
 					{
+						SettingsManager.city = city;
+						SettingsManager.SaveSettings();
 						var monumentBlob = new WorldSerialization();
-						string loadFile = "highrise.monuments.generated.map";
+						string loadFile = "highrise.monuments.generated.highres.map";
 						monumentBlob.Load(loadFile);
-						GenerativeManager.createRustCity(monumentBlob);
+						GenerativeManager.createRustCity(monumentBlob, city);
 					}
 					
 					if (GUILayout.Button("Rust City Buildings"))
 					{
+						
 						GenerativeManager.rustBuildings();
 					}
 					
