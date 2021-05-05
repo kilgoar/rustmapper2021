@@ -224,6 +224,23 @@ public static class GenerativeManager
 	
 	}	
 	
+	public static Vector2 minmaxHeightmap()
+	{
+		Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+		float[,] baseMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution);
+		Vector2 minmax = new Vector2(0f,1000f);
+		for (int i = 0; i < baseMap.GetLength(0); i++)
+			{
+					
+				for (int j = 0; j < baseMap.GetLength(0); j++)
+				{
+					minmax.x = Math.Max(minmax.x, baseMap[i,j]);
+					minmax.y = Math.Min(minmax.y, baseMap[i,j]);
+				}
+			}
+			return minmax;
+	}
+	
 	public static void randomTerracing(TerracingPreset terracing)
 	{
 			bool flatten = terracing.flatten;
@@ -1081,6 +1098,7 @@ public static class GenerativeManager
 	{
 		uint industrialglassnt = 1048750230;
 		uint yellow = 2337881356;
+		uint sewerCorner = 2032918088;
 		int glassScale = 6;
 		float z = 9.36f;
 		float yRotation;
@@ -1092,9 +1110,12 @@ public static class GenerativeManager
 		Vector3 scale = new Vector3(glassScale,glassScale,glassScale);
 		
 		Vector3 containerScale = new Vector3(.689f, .510f, .675f);
+		Vector3 sewerScale = new Vector3(1f,1f,1f);
+		Vector3 sewerRotation = new Vector3(0f,0f,0f);
+		Vector3 sewerRotation2 = new Vector3(0f,180f,0f);
 		float containerYoffset = 1.511f;
 		float containerZoffset = 2.03f;
-		float foundationYoffset = -4.476f;
+		float foundationOffset = 2.9f;
 		//PrefabManager.createPrefab("Decor", foliage, foliageLocation, foliageRotation, foliageScale);
 		
 		
@@ -1117,14 +1138,20 @@ public static class GenerativeManager
 					position.z = position.z - (containerZoffset * 2f);
 					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
 					if (k==0)
-					{
-					position.z = position.z + containerZoffset;
-					position.y = position.y - containerYoffset + foundationYoffset;
-					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
-					position.z = position.z + containerZoffset;
-					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
-					position.z = position.z - (containerZoffset * 2f);
-					PrefabManager.createPrefab("Decor", yellow, position, containerRotation, containerScale);
+					{					
+					position.x = i*glassScale+y-foundationOffset;
+					position.z = j*glassScale+x-foundationOffset;
+					position.y = k*glassScale+z-foundationOffset;
+					
+					PrefabManager.createPrefab("Decor", sewerCorner, position, sewerRotation2, sewerScale);
+					
+					position.x = i*glassScale+y+foundationOffset;
+					position.z = j*glassScale+x+foundationOffset;
+					position.y = k*glassScale+z-foundationOffset;
+					
+					PrefabManager.createPrefab("Decor", sewerCorner, position, sewerRotation, sewerScale);
+					
+					
 					}
 				}
 			}
@@ -1223,8 +1250,8 @@ public static class GenerativeManager
 		int res = pasteMap.GetLength(0);
 		int splatRes = pSplat.GetLength(0);
 		
-		TerrainMap<int> pTopoMap = terrains.topology;
-		TerrainMap<int> topTerrainMap = TopologyData.GetTerrainMap();
+		//TerrainMap<int> pTopoMap = terrains.topology;
+		//TerrainMap<int> topTerrainMap = TopologyData.GetTerrainMap();
 		
 		land.transform.position = terrainPosition;
         float[,] baseMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution);
@@ -1242,12 +1269,13 @@ public static class GenerativeManager
 		float[,,] newGround = TerrainManager.GroundArray;
 		float[,,] newBiome = TerrainManager.BiomeArray;
 		bool[,] newAlpha = TerrainManager.AlphaArray;
-		float[][,,] topologyArray  = TerrainManager.TopologyArray;
-		float[][,,] pTopologyArray =  new float[TerrainTopology.COUNT][,,];
+		//float[][,,] topologyArray  = TerrainManager.TopologyArray;
+		//float[][,,] pTopologyArray =  new float[TerrainTopology.COUNT][,,];
 		
-		float splatRatio = terrains.size.x / newBiome.GetLength(0);
+		float splatRatio = terrains.size.x / pBiome.GetLength(0);
 		
-		pTopologyArray = TopomapToArray(pTopoMap, splatRes);
+		float mapSplatRatio = splatRes / newBiome.GetLength(0);
+		//pTopologyArray = TopomapToArray(pTopoMap, splatRes);
 		
 		EditorUtility.ClearProgressBar();
 		
@@ -1303,14 +1331,15 @@ public static class GenerativeManager
 
 		if (zDiff<steepness)
 		{
-			for (int i = 0; i < (int)(width * ratioMaps); i++)
+			for (int i = 0; i < width; i++)
 					{
 						
 						
 						EditorUtility.DisplayProgressBar("Loading", "Heightmap", (i*1f/heightmapDim));
 						
-						for (int j = 0; j < (int)(height * ratioMaps); j++)
+						for (int j = 0; j < height; j++)
 						{
+							/*
 							heightMapsX = (int)(1f*i+(x * ratioMaps));
 							heightMapsY = (int)(1f*j+(y * ratioMaps));
 							
@@ -1318,7 +1347,8 @@ public static class GenerativeManager
 							heightMapsY1 = (int)(1f*j+(monumentY * ratioMaps));
 							biomeMaskX = (int)(1f*(i/ ratioMaps)+monumentX);
 							biomeMaskY = (int)(1f*(j/ ratioMaps)+monumentY);
-							baseMap[heightMapsX, heightMapsY] = Mathf.Lerp(baseMap[heightMapsX, heightMapsY], pasteMap[heightMapsX1,heightMapsY1]+zOffset, pBiome[biomeMaskX,biomeMaskY,0]);
+							*/
+							baseMap[i+x, j+y] = Mathf.Lerp(baseMap[i+x, j+y], pasteMap[i+monumentX,j+monumentY]+zOffset, pBiome[i+monumentX,j+monumentY,0]);
 						}
 					}
 					
@@ -1326,18 +1356,18 @@ public static class GenerativeManager
 					//height = (int)(height / ratioMaps);
 					
 					EditorUtility.ClearProgressBar();
-					for (int i = 0; i < width; i++)
+					for (int i = 0; i < (int)(width/mapSplatRatio); i++)
 					{
 						EditorUtility.DisplayProgressBar("Loading", "Monument Layers", (i*1f/dim));
-						for (int j = 0; j < height; j++)
+						for (int j = 0; j < (int)(height/mapSplatRatio); j++)
 						{
 							
 							
 							for (int k = 0; k < 8; k++)
 							{
-								newGround[i + x, j + y, k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[i+monumentX,j+monumentY,k], pBiome[i+monumentX,j+monumentY,0]);
+								newGround[i + (int)(x/mapSplatRatio), j + (int)(y/mapSplatRatio), k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[(int)(i*mapSplatRatio)+monumentX,(int)(j*mapSplatRatio)+monumentY,k], pBiome[(int)(i*mapSplatRatio)+monumentX,(int)(j*mapSplatRatio)+monumentY,0]);
 							}
-							
+							/*
 							if (pBiome[i,j,0] > 0f)
 							{
 								for(int k = 0; k < TerrainTopology.COUNT; k++)
@@ -1348,24 +1378,25 @@ public static class GenerativeManager
 								
 								newAlpha[i + x, j + y] = pAlpha[i+monumentX, j+monumentY];
 							}
-						
+							*/
 						}
 						
 						
 					}
 				
-				
+						
 				land.terrainData.SetHeights(0,0,baseMap);
 				TerrainManager.SetData(newGround, LandLayers.Ground, 0);
-				TerrainManager.SetData(newBiome, LandLayers.Biome, 0);
-				TerrainManager.SetData(newAlpha, LandLayers.Alpha);
+				TerrainManager.SetLayer(LandLayers.Ground, 0);
 				
+				//TerrainManager.SetData(newBiome, LandLayers.Biome, 0);
+				//TerrainManager.SetData(newAlpha, LandLayers.Alpha);
+				/*
 				for (int i = 0; i < TerrainTopology.COUNT; i++)
 				{
 					TerrainManager.SetData(topologyArray[i], LandLayers.Topology, i);
 				}
-				
-				TerrainManager.SetLayer(TerrainManager.LandLayer, 0);
+				*/
 				
 				Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
 				GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
@@ -1382,8 +1413,8 @@ public static class GenerativeManager
 				
 				for (int i = 0; i < terrains.prefabData.Length; i++)
 				{
-					xCheck = (int)((terrains.prefabData[i].position.z/splatRatio)+splatRes/2f);
-					yCheck = (int)((terrains.prefabData[i].position.x/splatRatio)+splatRes/2f);
+					xCheck = (int)((terrains.prefabData[i].position.z/splatRatio)+res/2f);
+					yCheck = (int)((terrains.prefabData[i].position.x/splatRatio)+res/2f);
 					
 					
 					if( xCheck > monumentX && xCheck < monumentX+width && yCheck > monumentY && yCheck < monumentY+height )
@@ -1397,7 +1428,6 @@ public static class GenerativeManager
 							
 							if(terrains.prefabData[i].id == industrialglassnt)
 							{	
-								
 								PrefabManager.FoliageCube(holderPosition, terrains.prefabData[i].scale);
 							}
 

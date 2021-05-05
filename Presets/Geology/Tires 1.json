@@ -1,13 +1,26 @@
 {
     "title": "Tires 1",
     "prefabID": 766753890,
+    "prefabID0": 0,
+    "prefabID1": 477532245,
+    "prefabID2": 3007326564,
+    "prefabID3": 0,
+    "prefabID4": 0,
+    "prefabID5": 0,
+    "prefabID6": 0,
+    "prefabID7": 0,
     "density": 300,
     "frequency": 40,
     "floor": 500,
     "ceiling": 1000,
+    "biomeIndex": 1,
     "avoidTopo": true,
     "flipping": false,
     "tilting": false,
+    "normalizeX": true,
+    "normalizeY": true,
+    "normalizeZ": true,
+    "biomeExclusive": false,
     "scalesLow": {
         "x": 0.9782608151435852,
         "y": 0.9782608151435852,
@@ -19,16 +32,16 @@
         "z": 0.9782605171203613
     },
     "rotationsLow": {
-        "x": 0.0,
+        "x": 90.84745788574219,
         "y": 0.0,
         "z": 0.0
     },
     "rotationsHigh": {
-        "x": 0.0,
-        "y": 360.0,
+        "x": 90.84745788574219,
+        "y": 0.0,
         "z": 0.0
     },
-    "zOffset": -0.15000000596046449,
+    "zOffset": 0.0,
     "slopeLow": 0.0,
     "slopeHigh": 10.416658401489258
 }

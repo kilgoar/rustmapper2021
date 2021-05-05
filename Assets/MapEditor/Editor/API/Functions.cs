@@ -820,15 +820,20 @@ namespace RustMapEditor.UI
             Elements.MiniBoldLabel(ToolTips.normaliseLabel);
 
             EditorGUI.BeginChangeCheck();
-            normaliseLow = Elements.ToolbarSlider(ToolTips.normaliseLow, normaliseLow, 0f, normaliseHigh);
-            normaliseHigh = Elements.ToolbarSlider(ToolTips.normaliseHigh, normaliseHigh, normaliseLow, 1000f);
-            if (EditorGUI.EndChangeCheck() && autoUpdate == true)
+            normaliseLow = Elements.ToolbarSlider(ToolTips.normaliseLow, normaliseLow, 0f, 1000f);
+            normaliseHigh = Elements.ToolbarSlider(ToolTips.normaliseHigh, normaliseHigh, 0f, 1000f);
+            
+			Elements.BeginToolbarHorizontal();
+			if (GUILayout.Button("Normalise"))
                 MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
-
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.normaliseMap))
-                MapManager.NormaliseHeightmap(normaliseLow, normaliseHigh, Selections.Terrains.Land, Dimensions.HeightMapDimensions());
-            autoUpdate = Elements.ToolbarToggle(ToolTips.autoUpdateNormalise, autoUpdate);
+            
+            if (GUILayout.Button("Snap to map"))
+			{
+				Vector2 minmax = new Vector2(0f,1000f);
+                minmax = GenerativeManager.minmaxHeightmap();				
+				normaliseHigh = minmax.x*1000f;
+				normaliseLow = minmax.y*1000f;
+			}
             Elements.EndToolbarHorizontal();
 			
 			if (GUILayout.Button("Flip"))
@@ -1396,7 +1401,7 @@ namespace RustMapEditor.UI
 						SettingsManager.city = city;
 						SettingsManager.SaveSettings();
 						var monumentBlob = new WorldSerialization();
-						string loadFile = "highrise.monuments.generated.highres.map";
+						string loadFile = "highrise.monuments.generated.highres.v3.map";
 						monumentBlob.Load(loadFile);
 						GenerativeManager.createRustCity(monumentBlob, city);
 					}

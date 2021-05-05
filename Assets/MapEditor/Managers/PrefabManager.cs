@@ -679,90 +679,60 @@ public static class PrefabManager
 		switch (index)
 								{
 																		case 0:
-									palette1=green;
+									palette1=yellow;
 										palette2=yellow;
-											palette3=red;
-												palette4=blue;
+											palette3=yellow;
+												palette4=yellow;
 								break;
 									
 																		case 1:
 									palette1=white;
-										palette2=navy;
-											palette3=red;
-												palette4=navy;
+										palette2=white;
+											palette3=white;
+												palette4=white;
 								break;
 									
 																		case 2:
-									palette1=yellow;
+									palette1=red;
 										palette2=red;
-											palette3=black;
-												palette4=black;
+											palette3=red;
+												palette4=red;
 								break;
 									
 																		case 3:
-									palette1=blue;
-										palette2=black;
+									palette1=navy;
+										palette2=navy;
 											palette3=navy;
-												palette4=snowblue;
+												palette4=navy;
 								break;
 									
 																		case 4:
 									palette1=junkyard;
-										palette2=green;
-											palette3=yellow;
-												palette4=black;
+										palette2=junkyard;
+											palette3=junkyard;
+												palette4=junkyard;
 								break;
 									
 																		case 5:
-									palette1=red;
-										palette2=yellow;
-											palette3=blue;
-												palette4=blue;
+									palette1=green;
+										palette2=green;
+											palette3=green;
+												palette4=green;
 								break;
 									
 																		case 6:
 									palette1=blue;
-										palette2=yellow;
-											palette3=red;
-												palette4=black;
+										palette2=blue;
+											palette3=blue;
+												palette4=blue;
 								break;
-									
-									case 7:
-									switch(roll2)
-										{
-																							case 0:
-												palette1=black;
-													palette2=black;
-														palette3=black;
-															palette4=black;
-										break;
-																							case 1:
-											palette1=white;
-												palette2=white;
-													palette3=white;
-														palette4=white;
-										break;
-																							case 2:
-											palette1=junkyard;
-												palette2=junkyard;
-													palette3=junkyard;
-														palette4=junkyard;
-										break;
-										}
-								break;
-									
-															case 8:
-									palette1=blue;
-										palette2=white;
-											palette3=green;
-												palette4=yellow;
-								break;
+
 									
 															default:
-									palette1=white;
-										palette2=white;
-											palette3=white;
-												palette4=white;
+									palette1=black;
+										palette2=black;
+											palette3=black;
+												palette4=black;
 								break;
 								}
 		
@@ -830,7 +800,7 @@ public static class PrefabManager
 								yCheck = (int)((prefabs[k].prefabData.position.x/ratio)+res/2f);
 								if (xCheck > 0 && yCheck > 0 && xCheck < res && yCheck < res)
 								{
-									if (biomeMap[xCheck,yCheck,0] < 1f)
+									if (biomeMap[xCheck,yCheck,0] == 0f)
 									{
 										GameObject.DestroyImmediate(prefabs[k].gameObject);
 										prefabs[k] = null;

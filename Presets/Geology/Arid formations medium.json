@@ -1,0 +1,47 @@
+{
+    "title": "Arid formations medium",
+    "prefabID": 2591072256,
+    "prefabID0": 0,
+    "prefabID1": 4064290979,
+    "prefabID2": 3817899359,
+    "prefabID3": 2639118309,
+    "prefabID4": 0,
+    "prefabID5": 0,
+    "prefabID6": 0,
+    "prefabID7": 0,
+    "density": 1250,
+    "frequency": 200,
+    "floor": 510,
+    "ceiling": 550,
+    "biomeIndex": 1,
+    "avoidTopo": true,
+    "flipping": false,
+    "tilting": false,
+    "normalizeX": true,
+    "normalizeY": true,
+    "normalizeZ": true,
+    "biomeExclusive": false,
+    "scalesLow": {
+        "x": 1.0326086282730103,
+        "y": 1.0326087474822999,
+        "z": 1.0326083898544312
+    },
+    "scalesHigh": {
+        "x": 1.0326086282730103,
+        "y": 1.0326087474822999,
+        "z": 1.0326083898544312
+    },
+    "rotationsLow": {
+        "x": 89.49152374267578,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "rotationsHigh": {
+        "x": 90.84745788574219,
+        "y": 360.0,
+        "z": 0.0
+    },
+    "zOffset": -0.15000000596046449,
+    "slopeLow": 0.0,
+    "slopeHigh": 3.8510022163391115
+}
