@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using RustMapEditor.Variables;
 using static WorldSerialization;
+using static TerrainManager;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
 using System.Linq;
@@ -555,7 +556,6 @@ public static class GenerativeManager
 				}
 			}
 		}
-		TerrainManager.SetData(analysisMap, LandLayers.Topology,  0);
 		
 		Stack<Point> pixels = new Stack<Point>();
 		Point p;
@@ -1237,7 +1237,6 @@ public static class GenerativeManager
 		float zOff = city.zOff;
 		float steepness = city.flatness;
 		float zOffset=0;
-		//selectedLandLayer = null;
 		Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
 		var terrainPosition = 0.5f * terrains.size;
 		
@@ -1246,12 +1245,14 @@ public static class GenerativeManager
 		float[,,] pSplat = terrains.splatMap;
 		float[,,] pBiome = terrains.biomeMap;
 		bool[,] pAlpha = terrains.alphaMap;
-		//var topos = terrains.topology;
+		
 		int res = pasteMap.GetLength(0);
 		int splatRes = pSplat.GetLength(0);
 		
-		//TerrainMap<int> pTopoMap = terrains.topology;
-		//TerrainMap<int> topTerrainMap = TopologyData.GetTerrainMap();
+		TerrainMap<int> pTopoMap = terrains.topology;
+		float[][,,] pTopologyArray =  new float[TerrainTopology.COUNT][,,];
+		pTopologyArray = TopomapToArray(pTopoMap, splatRes);
+		float[][,,] topologyArray  = TerrainManager.TopologyArray;
 		
 		land.transform.position = terrainPosition;
         float[,] baseMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution);
@@ -1266,16 +1267,17 @@ public static class GenerativeManager
 		
 
 		
-		float[,,] newGround = TerrainManager.GroundArray;
-		float[,,] newBiome = TerrainManager.BiomeArray;
+		float[,,] newGround = TerrainManager.GetSplatMap(LandLayers.Ground, 0);
+		float[,,] newBiome = TerrainManager.GetSplatMap(LandLayers.Biome, 0);
 		bool[,] newAlpha = TerrainManager.AlphaArray;
-		//float[][,,] topologyArray  = TerrainManager.TopologyArray;
-		//float[][,,] pTopologyArray =  new float[TerrainTopology.COUNT][,,];
+		
+		
 		
 		float splatRatio = terrains.size.x / pBiome.GetLength(0);
 		
 		float mapSplatRatio = splatRes / newBiome.GetLength(0);
-		//pTopologyArray = TopomapToArray(pTopoMap, splatRes);
+		
+		
 		
 		EditorUtility.ClearProgressBar();
 		
@@ -1365,20 +1367,20 @@ public static class GenerativeManager
 							
 							for (int k = 0; k < 8; k++)
 							{
-								newGround[i + (int)(x/mapSplatRatio), j + (int)(y/mapSplatRatio), k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[(int)(i*mapSplatRatio)+monumentX,(int)(j*mapSplatRatio)+monumentY,k], pBiome[(int)(i*mapSplatRatio)+monumentX,(int)(j*mapSplatRatio)+monumentY,0]);
+								newGround[i + (int)(x/mapSplatRatio), j + (int)(y/mapSplatRatio), k] = Mathf.Lerp(newGround[i + (int)(x/mapSplatRatio), j + (int)(y/mapSplatRatio), k], pSplat[(int)(i*mapSplatRatio)+monumentX,(int)(j*mapSplatRatio)+monumentY,k], pBiome[(int)(i*mapSplatRatio)+monumentX,(int)(j*mapSplatRatio)+monumentY,0]);
 							}
-							/*
+							
 							if (pBiome[i,j,0] > 0f)
 							{
 								for(int k = 0; k < TerrainTopology.COUNT; k++)
 								{
-									topologyArray[k][i + x, j + y,0] = pTopologyArray[k][i+monumentX, j+monumentY,0];
-									topologyArray[k][i + x, j + y,1] = pTopologyArray[k][i+monumentX, j+monumentY,1];
+									topologyArray[k][i + (int)(x/mapSplatRatio), j + (int)(y/mapSplatRatio),0] = pTopologyArray[k][(int)(i*mapSplatRatio)+monumentX, (int)(j*mapSplatRatio)+monumentY,0];
+									topologyArray[k][i + (int)(x/mapSplatRatio), j + (int)(y/mapSplatRatio),1] = pTopologyArray[k][(int)(i*mapSplatRatio)+monumentX, (int)(j*mapSplatRatio)+monumentY,1];
 								}
 								
-								newAlpha[i + x, j + y] = pAlpha[i+monumentX, j+monumentY];
+								//newAlpha[i + x, j + y] = pAlpha[i+monumentX, j+monumentY];
 							}
-							*/
+							
 						}
 						
 						
@@ -1386,17 +1388,18 @@ public static class GenerativeManager
 				
 						
 				land.terrainData.SetHeights(0,0,baseMap);
-				TerrainManager.SetData(newGround, LandLayers.Ground, 0);
-				TerrainManager.SetLayer(LandLayers.Ground, 0);
+
+				Debug.LogError(topologyArray[0].GetLength(0)+" topology length");
+				SetData(newGround, LandLayers.Ground, 0);
 				
 				//TerrainManager.SetData(newBiome, LandLayers.Biome, 0);
 				//TerrainManager.SetData(newAlpha, LandLayers.Alpha);
-				/*
+				
 				for (int i = 0; i < TerrainTopology.COUNT; i++)
 				{
 					TerrainManager.SetData(topologyArray[i], LandLayers.Topology, i);
 				}
-				*/
+				SetLayer(TerrainManager.LandLayer, 0);
 				
 				Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
 				GameObject defaultObj = Resources.Load<GameObject>("Prefabs/DefaultPrefab");

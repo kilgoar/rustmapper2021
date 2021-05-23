@@ -341,6 +341,8 @@ public static class TerrainManager
                 case LandLayers.Topology:
                     LastTopologyLayer = topology;
                     Land.terrainData.terrainLayers = MiscTextures;
+					Debug.LogError(Land.terrainData.alphamapWidth);
+					Debug.LogError(TopologyArray[topology].GetLength(0));
                     Land.terrainData.SetAlphamaps(0, 0, TopologyArray[topology]);
                     LandLayer = layer;
                     break;

@@ -281,6 +281,8 @@ namespace RustMapEditor.Variables
 				
 				public bool rotateToTerrain, rotateToX, rotateToY, rotateToZ;
 				public string title;
+				public bool scale;
+				public Vector3 scaling;
 	}
 	
 	[Serializable]

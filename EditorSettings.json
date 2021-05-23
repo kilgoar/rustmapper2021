@@ -1,5 +1,5 @@
 {
-    "rustDirectory": "D:/Program Files (x86)/Steam/steamapps/common/RustStaging",
+    "rustDirectory": "D:/Program Files (x86)/Steam/steamapps/common/Rust",
     "prefabRenderDistance": 700.0,
     "pathRenderDistance": 250.0,
     "waterTransparency": 0.20000000298023225,
@@ -19,7 +19,7 @@
         "biomeLayer": 8,
         "strength": 2.0,
         "invert": false,
-        "paintBiome": true
+        "paintBiome": false
     },
     "ripple": {
         "size": 2200,
@@ -55,19 +55,19 @@
         "simple": true
     },
     "geology": {
-        "title": "Trashbags",
-        "prefabID": 222963432,
+        "title": "arid vehicles",
+        "prefabID": 3004602158,
         "prefabID0": 0,
-        "prefabID1": 0,
-        "prefabID2": 0,
-        "prefabID3": 0,
-        "prefabID4": 0,
-        "prefabID5": 0,
-        "prefabID6": 0,
-        "prefabID7": 0,
-        "density": 1250,
-        "frequency": 60,
-        "floor": 500,
+        "prefabID1": 3264578399,
+        "prefabID2": 2420618133,
+        "prefabID3": 246584577,
+        "prefabID4": 1837053258,
+        "prefabID5": 2832497307,
+        "prefabID6": 2300745015,
+        "prefabID7": 2082081653,
+        "density": 200,
+        "frequency": 40,
+        "floor": 0,
         "ceiling": 1000,
         "biomeIndex": 1,
         "avoidTopo": true,
@@ -78,14 +78,14 @@
         "normalizeZ": true,
         "biomeExclusive": false,
         "scalesLow": {
-            "x": 1.0326086282730103,
-            "y": 1.0326087474822999,
-            "z": 1.0326083898544312
+            "x": 1.0169490575790406,
+            "y": 1.073446273803711,
+            "z": 1.073446273803711
         },
         "scalesHigh": {
-            "x": 1.0326086282730103,
-            "y": 1.0326087474822999,
-            "z": 1.0326083898544312
+            "x": 1.0169490575790406,
+            "y": 1.073446273803711,
+            "z": 1.073446273803711
         },
         "rotationsLow": {
             "x": 89.49152374267578,
@@ -93,13 +93,13 @@
             "z": 0.0
         },
         "rotationsHigh": {
-            "x": 90.84745788574219,
-            "y": 360.0,
+            "x": 90.16948699951172,
+            "y": 0.0,
             "z": 0.0
         },
-        "zOffset": -0.15000000596046449,
-        "slopeLow": 0.0,
-        "slopeHigh": 3.8510022163391115
+        "zOffset": 0.0,
+        "slopeLow": 8.899521827697754,
+        "slopeHigh": 15.215309143066407
     },
     "replacer": {
         "prefabID0": 0,
@@ -140,7 +140,13 @@
         "rotateToX": false,
         "rotateToY": false,
         "rotateToZ": false,
-        "title": ""
+        "title": "",
+        "scale": false,
+        "scaling": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
     },
     "prefabPaths": [
         "assets/bundled/prefabs/autospawn/",
@@ -163,11 +169,11 @@
     ],
     "city": {
         "title": "",
-        "size": 100,
-        "alley": 30,
-        "street": 40,
-        "start": 700,
-        "flatness": 0.003000000026077032,
+        "size": 1200,
+        "alley": 40,
+        "street": 28,
+        "start": 1600,
+        "flatness": 0.0044999998062849049,
         "zOff": -0.0007800000021234155,
         "x": 0,
         "y": 0

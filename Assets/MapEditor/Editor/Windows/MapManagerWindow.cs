@@ -52,7 +52,7 @@ public class MapManagerWindow : EditorWindow
 	PerlinPreset perlin = new PerlinPreset();
 	ReplacerPreset replacer = new ReplacerPreset();
 	RustCityPreset city = new RustCityPreset();
-	
+
 	string macroDisplay;
 	
 	int mapSize = 3000;

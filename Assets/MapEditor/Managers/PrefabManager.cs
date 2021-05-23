@@ -206,6 +206,9 @@ public static class PrefabManager
 		Vector3 preRotate;
 		Vector3 rRotate = new Vector3(0,0,0);
 		Vector3 normal = new Vector3(0,0,0);
+		Vector3 position = new Vector3(0,0,0);
+		Vector3 scale = new Vector3(0,0,0);
+		
 		float xCheck =0f;
 		float yCheck =0f;
 		int count = 0;
@@ -302,8 +305,16 @@ public static class PrefabManager
 					flag = true;
 				}
 				
+
+				
 				if(flag && replace.rotateToTerrain)
 				{
+					position.x = prefabs[k].prefabData.position.x;
+					position.y = prefabs[k].prefabData.position.y;
+					position.z = prefabs[k].prefabData.position.z;
+					scale.x = prefabs[k].prefabData.scale.x;
+					scale.y = prefabs[k].prefabData.scale.y;
+					scale.z = prefabs[k].prefabData.scale.z;
 					count++;
 					xCheck = ((prefabs[k].prefabData.position.z/ratio)+res/2f);
 					yCheck = ((prefabs[k].prefabData.position.x/ratio)+res/2f);
@@ -326,19 +337,38 @@ public static class PrefabManager
 						rRotate.z = preRotate.z;
 					}
 					
-					createPrefab("Decor", prefabs[k].prefabData.id, prefabs[k].prefabData.position, rRotate, prefabs[k].prefabData.scale);
+					if(replace.scale)
+					{
+						scale = Vector3.Scale(prefabs[k].prefabData.scale, replace.scaling);
+					}
+
+					createPrefab("Decor", prefabs[k].prefabData.id, position, rRotate, scale);
 					
 					GameObject.DestroyImmediate(prefabs[k].gameObject);
 								prefabs[k] = null;
+
 								
 				}
 				else if(flag && !replace.rotateToTerrain)
 				{
-					createPrefab("Decor", prefabs[k].prefabData.id, prefabs[k].prefabData.position, prefabs[k].prefabData.rotation, prefabs[k].prefabData.scale);
+					position.x = prefabs[k].prefabData.position.x;
+					position.y = prefabs[k].prefabData.position.y;
+					position.z = prefabs[k].prefabData.position.z;
+					scale.x = prefabs[k].prefabData.scale.x;
+					scale.y = prefabs[k].prefabData.scale.y;
+					scale.z = prefabs[k].prefabData.scale.z;
+					if(replace.scale)
+					{
+						scale = Vector3.Scale(prefabs[k].prefabData.scale, replace.scaling);
+					}
 					
+					createPrefab("Decor", prefabs[k].prefabData.id, position, prefabs[k].prefabData.rotation, scale);
+					
+
 					GameObject.DestroyImmediate(prefabs[k].gameObject);
 								prefabs[k] = null;
 								count1++;
+
 				}
 			}
 		}
@@ -756,6 +786,58 @@ public static class PrefabManager
 		return id;
 	}
 	
+	public static void VehicleScrambler(PrefabDataHolder[] prefabs)
+	{
+		Vector3 position, rotation, scale;
+		uint prefabID=0;
+		int count=0;
+		for (int k = 0; k < prefabs.Length; k++)
+		{
+			if (prefabs[k] != null)
+			{
+				prefabID = prefabs[k].prefabData.id;
+				if (prefabID == 79597103 || prefabID == 3004602158|| prefabID == 3264578399|| prefabID == 2420618133|| prefabID == 246584577|| prefabID == 1837053258
+				|| prefabID == 2832497307|| prefabID == 2300745015|| prefabID == 2082081653)
+				{
+					position = prefabs[k].prefabData.position;
+					rotation = prefabs[k].prefabData.rotation;
+					scale = prefabs[k].prefabData.scale;
+					prefabID = scrambleVehicles(prefabID);
+					createPrefab("Decor",prefabID,position,rotation,scale);	
+						
+						GameObject.DestroyImmediate(prefabs[k].gameObject);
+						prefabs[k] = null;
+						count ++;
+				}
+			}
+		}
+		Debug.LogError(count + "vehicles scrambled");
+	}
+	
+	public static uint scrambleVehicles(uint prefabID)
+	{
+		//3273130215 - snow compact
+		//3527606348 - snow van
+		//3031482036 - snow pickup
+		uint[] vehicles = new uint[]{/*compact cars*/79597103,2515395145,1460121016,4193915652,786199644,3435737336,
+		2832497307,1896963608,3379016644,2722459803,2665725503,1837053258,677248866,1195466190,
+		4214970653,302351425,1247022702,2300745015,4144215382,3367157997,3273130215,
+		/*sedans*/3463123806,788274617,2784745032,836014881,3774700171,579044360,1677134398,1677134398,2420618133,
+		246584577,8081016,
+		/*vans*/2578743929,1236856645,3176682456,2587701539,3420081938,1680874363,946452295,1257336463,3234787709,
+		2009259066,3017742883,3489554649,2052946794,1989568183,201458809,696480706,3030494899,283413573,2824451945,
+		2076044469,647644014,3497012406,469377923,284962212,536546043,3293125979,3199560384,4048358114,1703786065,
+		3246835063,1877110501,1875099655,3674679932,3095093162,3137641591,1536042368,802735396,
+		/*pickuptrucks*/1304550409,1427838182,2636007931,997608629,3417439261,2353996331,2742523209,1660134405,
+		3539282559,2403566413,3990694053,3957097701,1357952166,1550102226,3899602347,3116567664,2804921169,700152619,
+		2661281391,1831500501,3264578399,3004602158,2082081653,1300485700,1779061701,165520484,1529531764,933232738,1047391926};
+		
+		int vehicleMax = vehicles.GetLength(0);
+		int index = UnityEngine.Random.Range(0, vehicleMax);
+		return vehicles[index];
+		
+	}
+	
 	public static uint ScrambleContainer(uint containerID, int palette)
 	{
 	uint id = containerID;
@@ -830,6 +912,8 @@ public static class PrefabManager
 		}
 		Debug.LogError(count + " prefabs removed");
 	}
+
+	
 
 	public static void deleteAllPrefabs(PrefabDataHolder[] prefabs)
 	{

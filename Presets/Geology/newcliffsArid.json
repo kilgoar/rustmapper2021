@@ -10,7 +10,7 @@
     "prefabID6": 2595862078,
     "prefabID7": 3008655077,
     "density": 225,
-    "frequency": 50,
+    "frequency": 45,
     "floor": 0,
     "ceiling": 1000,
     "biomeIndex": 1,
@@ -42,6 +42,6 @@
         "z": 0.0
     },
     "zOffset": -16.0,
-    "slopeLow": 31.93895721435547,
-    "slopeHigh": 48.22966766357422
+    "slopeLow": 26.340869903564454,
+    "slopeHigh": 90.0
 }

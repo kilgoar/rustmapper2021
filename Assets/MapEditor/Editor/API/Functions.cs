@@ -363,6 +363,9 @@ namespace RustMapEditor.UI
 			replacer.rotateToY = EditorGUILayout.ToggleLeft("Rotate to y", replacer.rotateToY, GUILayout.MaxWidth(250));
 			replacer.rotateToZ = EditorGUILayout.ToggleLeft("Rotate to z", replacer.rotateToZ, GUILayout.MaxWidth(250));
 			
+			replacer.scale = EditorGUILayout.ToggleLeft("Modify Scale", replacer.scale, GUILayout.MaxWidth(250));
+			replacer.scaling = EditorGUILayout.Vector3Field("Scaling multiplier", replacer.scaling);
+			
 			EditorGUI.BeginChangeCheck();
 						
 			replacerPresetIndex = EditorGUILayout.Popup("Presets:", replacerPresetIndex, replacerList);
@@ -1376,6 +1379,10 @@ namespace RustMapEditor.UI
 					{
 						PrefabManager.deletePrefabsOffArid(PrefabManager.CurrentMapPrefabs);
 					}
+			if (GUILayout.Button("Scramble Vehicles"))					
+			{
+					PrefabManager.VehicleScrambler(PrefabManager.CurrentMapPrefabs);
+			}
 		}
 
 		public static void RustCity(ref RustCityPreset city)
