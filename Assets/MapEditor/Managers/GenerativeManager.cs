@@ -957,9 +957,11 @@ public static class GenerativeManager
         float[,] baseMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution);
 		float ratio = terrains.size.x / (baseMap.GetLength(0));
 		
+		
 		int dim=pSplat.GetLength(0)-4;
 		int heightmapDim = baseMap.GetLength(0)-4;
 		float ratioMaps = 1f * heightmapDim / dim;
+		
 		
 		float x1 = x/2f;
 		float y1 = y/2f;
@@ -973,8 +975,10 @@ public static class GenerativeManager
 		float[][,,] topologyArray  = TerrainManager.TopologyArray;
 		float[][,,] pTopologyArray =  new float[30][,,];
 		
+		int res=newGround.GetLength(0)-4;
 		int splatMapsX=0;
 		int splatMapsY=0;
+		float ratioMaps2 = 1f * res / dim;
 		
 		pTopologyArray = TopomapToArray(pTopoMap,dim);
 			
@@ -991,29 +995,35 @@ public static class GenerativeManager
 				baseMap[i + x, j + y] = Mathf.Lerp(baseMap[i+x, j+y], pasteMap[i,j]+zOffset, pBiome[splatMapsX,splatMapsY,0]);
 			}
 		}
-		
+		Debug.LogError("No nulls 1");
 		EditorUtility.ClearProgressBar();
-		for (int i = 0; i < dim; i++)
+		for (int i = 0; i < res; i++)
 		{
-			EditorUtility.DisplayProgressBar("Loading", "Monument Layers", (i*1f/dim));
-			for (int j = 0; j < dim; j++)
+			EditorUtility.DisplayProgressBar("Loading", "Monument Layers", (i*1f/res));
+			for (int j = 0; j < res; j++)
 			{
-				for (int k = 0; k < 8; k++)
+				splatMapsX = (int)(1f* i / ratioMaps2);
+				splatMapsY = (int)(1f* j / ratioMaps2);
+				splatMapsX = (int)Mathf.Clamp(splatMapsX, 0f, heightmapDim *1f);
+				splatMapsY = (int)Mathf.Clamp(splatMapsY, 0f, heightmapDim *1f);
+				if(i+x  < newGround.GetLength(0) && j+y < newGround.GetLength(0))
 				{
-					newGround[i + x, j + y, k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[i,j,k], pBiome[i,j,0]);
-				}
-				
-				if (pBiome[i,j,0] > 0f)
-				{
-					for(int k = 0; k < TerrainTopology.COUNT; k++)
+					for (int k = 0; k < 8; k++)
 					{
-						topologyArray[k][i + x, j + y,0] = pTopologyArray[k][i, j,0];
-						topologyArray[k][i + x, j + y,1] = pTopologyArray[k][i, j,1];
+						newGround[i + x, j + y, k] = Mathf.Lerp(newGround[i+x,j+y,k], pSplat[splatMapsX,splatMapsY,k], pBiome[splatMapsX,splatMapsY,0]);
 					}
 					
-					newAlpha[i + x, j + y] = pAlpha[i, j];
+					if (pBiome[splatMapsX,splatMapsY,0] > .5f)
+					{
+						for(int k = 0; k < TerrainTopology.COUNT; k++)
+						{
+							topologyArray[k][i + x, j + y,0] = pTopologyArray[k][splatMapsX, splatMapsY,0];
+							topologyArray[k][i + x, j + y,1] = pTopologyArray[k][splatMapsX, splatMapsY,1];
+						}
+						
+						
+					}
 				}
-			
 			}
 			
 			

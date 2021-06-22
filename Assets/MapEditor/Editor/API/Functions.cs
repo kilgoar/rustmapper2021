@@ -1362,15 +1362,16 @@ namespace RustMapEditor.UI
             Elements.EndToolbarHorizontal();
         }
 		
-		public static void Merger()
+		public static void Merger(ref float zOffset)
 		{
+			zOffset = EditorGUILayout.FloatField("Map Z offset", zOffset);
 			if (GUILayout.Button("Merge Maps"))
 					{
 						var blob = new WorldSerialization();
 						string loadFile = "";
 						loadFile = UnityEditor.EditorUtility.OpenFilePanel("Merge with", loadFile, ".map");
 						blob.Load(loadFile);
-						GenerativeManager.pasteMonument(blob, 0,0,0f);
+						GenerativeManager.pasteMonument(blob, 0,0,zOffset);
 					}
 			
 			

@@ -15,9 +15,9 @@
     },
     "perlinSplat": {
         "scale": 50,
-        "splatLayer": 1,
-        "biomeLayer": 8,
-        "strength": 2.0,
+        "splatLayer": 0,
+        "biomeLayer": 4,
+        "strength": 0.5,
         "invert": false,
         "paintBiome": false
     },
@@ -28,8 +28,8 @@
     },
     "ocean": {
         "title": "",
-        "radius": 450,
-        "gradient": 1900,
+        "radius": 900,
+        "gradient": 700,
         "xOffset": 10,
         "yOffset": 20,
         "s": 200,
@@ -40,19 +40,19 @@
         "flatten": false,
         "perlinBanks": true,
         "circular": true,
-        "weight": 0.8095238208770752,
-        "zStart": 511,
-        "gateBottom": 13,
-        "gateTop": 13,
+        "weight": 0.7065972089767456,
+        "zStart": 499,
+        "gateBottom": 20,
+        "gateTop": 20,
         "gates": 1,
-        "descaleFactor": 3,
-        "perlinDensity": 200
+        "descaleFactor": 2,
+        "perlinDensity": 145
     },
     "perlin": {
         "layers": 3,
         "period": 20,
-        "scale": 225,
-        "simple": true
+        "scale": 80,
+        "simple": false
     },
     "geology": {
         "title": "arid vehicles",

@@ -8,6 +8,7 @@ public class MapManagerWindow : EditorWindow
     #region Values
     int mainMenuOptions = 0, mapToolsOptions = 0, heightMapOptions = 0, conditionalPaintOptions = 0, generatorOptions = 0;
     float offset = 0f, heightSet = 500f, heightLow = 450f, heightHigh = 750f;
+	float zOffset = 0f;
     bool clampOffset = true, autoUpdate = false;
     float normaliseLow = 450f, normaliseHigh = 1000f;
     Conditions conditions = new Conditions() 
@@ -56,7 +57,7 @@ public class MapManagerWindow : EditorWindow
 	string macroDisplay;
 	
 	int mapSize = 3000;
-	float landHeight = .505f;
+	float landHeight = 505f;
     #endregion
 
     public void OnGUI()
@@ -254,7 +255,7 @@ public class MapManagerWindow : EditorWindow
 		break;
 		
 		case 5:
-			Functions.Merger();
+			Functions.Merger(ref zOffset);
 		break;
 		
         }
