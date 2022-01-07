@@ -8,6 +8,7 @@ using LZ4;
 public class WorldSerialization
 {
     public const uint CurrentVersion = 9;
+	public const uint REPrefabVersion = 1;
 
     public static uint Version
     {
@@ -15,6 +16,7 @@ public class WorldSerialization
     }
 
     public WorldData world = new WorldData();
+	public REPrefabData rePrefab = new REPrefabData();
 
     public WorldSerialization()
     {
@@ -29,6 +31,22 @@ public class WorldSerialization
         [ProtoMember(3)] public List<PrefabData> prefabs = new List<PrefabData>();
         [ProtoMember(4)] public List<PathData> paths = new List<PathData>();
     }
+	
+	
+	[ProtoContract]
+	public class REPrefabData
+    {
+		[ProtoMember(1)] public string emptychunk = "";
+        [ProtoMember(3)] public List<PrefabData> prefabs = new List<PrefabData>();
+        [ProtoMember(5)] public CircuitDataHolder electric = new CircuitDataHolder();	
+		[ProtoMember(6)] public string emptychunk1 = "";		
+		[ProtoMember(7)] public string emptychunk2 = "";		
+		[ProtoMember(8)] public string emptychunk3 = "";		
+		[ProtoMember(9)] public string emptychunk4 = "";		
+		[ProtoMember(10)] public string buildingchunk = "";		
+		[ProtoMember(11)] public string checksum;
+    }
+	
 
     [ProtoContract]
     public class MapData
@@ -36,6 +54,91 @@ public class WorldSerialization
         [ProtoMember(1)] public string name;
         [ProtoMember(2)] public byte[] data;
     }
+
+	[Serializable]
+    [ProtoContract]
+	public class CircuitDataHolder
+	{
+		[ProtoMember(1)] public List<CircuitData> circuitData = new List<CircuitData>();
+		
+		public CircuitDataHolder() { }
+        public CircuitDataHolder(List<CircuitData> circuitData)
+        {
+            this.circuitData = circuitData;
+		}
+	}
+
+	[Serializable]
+    [ProtoContract]
+    public class CircuitData
+	{
+		[ProtoMember(1)] public string path;
+        [ProtoMember(2)] public VectorData wiring;
+		[ProtoMember(3)] public List<Circuit> branchIn = new List<Circuit>();
+		[ProtoMember(4)] public List<Circuit> branchOut = new List<Circuit>();
+		[ProtoMember(6)] public int flow1;
+		[ProtoMember(7)] public float setting;
+		//[ProtoMember(11)] public int flow2;
+		//[ProtoMember(14)] public int flow3;
+		
+		[ProtoMember(14)] public string cctv;
+		[ProtoMember(16)] public int flow2;
+		[ProtoMember(17)] public string phone;
+		//[ProtoMember(17)] public int flow5;
+		
+		public Circuit[] connectionsIn;
+		public Circuit[] connectionsOut;
+		
+		public CircuitData() { }
+        public CircuitData(string path, Vector3 wiring, List<Circuit> branchIn, List<Circuit> branchOut, int flow1, float setting, int flow2, string cctv, string phone)
+        {
+            this.path = path;
+            this.wiring = wiring;
+            this.branchIn = branchIn;
+			this.branchOut = branchOut;
+			this.flow1 = flow1;
+			this.setting = setting;
+			this.flow2 = flow2;
+			this.cctv = cctv;
+			this.phone = phone;
+        }
+		public CircuitData(string path, Vector3 wiring, Circuit[] connectionsIn, Circuit[] connectionsOut, int flow1, float setting, int flow2, string cctv, string phone)
+        {
+            this.path = path;
+            this.wiring = wiring;
+            this.connectionsIn = connectionsIn;
+			this.connectionsOut = connectionsOut;
+			this.flow1 = flow1;
+			this.setting = setting;
+			this.flow2 = flow2;
+			this.cctv = cctv;
+			this.phone = phone;
+        }
+		
+	}
+	
+	[Serializable]
+    [ProtoContract]
+    public class Circuit
+	{
+		[ProtoMember(1)] public string path;
+        [ProtoMember(2)] public VectorData wiring;
+        [ProtoMember(3)] public int flow1;
+        [ProtoMember(4)] public int flow2;
+        [ProtoMember(5)] public int fluid1;
+		
+		public Circuit() { }
+        public Circuit(string path, Vector3 wiring, int flow1, int flow2, int fluid1)
+        {
+            this.path = path;
+            this.wiring = wiring;
+			this.flow1 = flow1;
+			this.flow2 = flow2;
+			this.fluid1 = fluid1;
+
+        }
+	}
+	
 
     [Serializable]
     [ProtoContract]
@@ -79,6 +182,8 @@ public class WorldSerialization
         [ProtoMember(14)] public int topology;
         [ProtoMember(15)] public VectorData[] nodes;
     }
+
+	
 
     [Serializable]
     [ProtoContract]
@@ -157,6 +262,89 @@ public class WorldSerialization
             Debug.LogError(e.Message);
         }
     }
+	
+	public void SaveREPrefab(string fileName)
+    {
+		string checksum;
+
+        try
+        {
+            using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                using (var binaryWriter = new BinaryWriter(fileStream))
+                {
+                    binaryWriter.Write(REPrefabVersion);
+
+                    using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Compress))
+					{
+						
+                        Serializer.Serialize(compressionStream, rePrefab);
+					}
+                }
+            }
+			
+				using (var md5 = System.Security.Cryptography.MD5.Create())
+						{
+							using(var stream = System.IO.File.OpenRead(fileName))
+							{
+								var hash = md5.ComputeHash(stream);
+								checksum = BitConverter.ToString(hash).Replace("-", "").ToLower();
+								
+								Debug.LogError(checksum);
+								rePrefab.checksum = checksum;
+							}
+						}
+						
+		using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                using (var binaryWriter = new BinaryWriter(fileStream))
+                {
+                    binaryWriter.Write(REPrefabVersion);
+
+                    using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Compress))
+					{
+                        Serializer.Serialize(compressionStream, rePrefab);
+					}
+                }
+            }
+			
+			
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
+    }
+	
+	
+	//outputs decompressed lz4 binary file protobuftest
+	public void Decompress(string fileName)
+	{
+		try
+		{
+			using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+				using (var binaryReader = new BinaryReader(fileStream))
+                {
+						Version = binaryReader.ReadUInt32();
+						
+						using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
+							{
+								MemoryStream destination = new MemoryStream();
+								compressionStream.CopyTo(destination);
+								var b = new byte[destination.Length];
+								b = destination.ToArray();
+								File.WriteAllBytes("protobuftest", b);
+								Debug.LogError("Actually decompressed");
+							}
+				}
+			}
+		}	
+		catch (Exception e)
+		{
+			Debug.LogError(e.Message);
+		}
+	}
 
     public void Load(string fileName)
     {
@@ -172,7 +360,12 @@ public class WorldSerialization
                         Debug.LogWarning("Map Version is: " + Version + " whilst Rust is on: " + CurrentVersion);
 
                     using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
-                        world = Serializer.Deserialize<WorldData>(compressionStream);
+					{
+						
+						world = Serializer.Deserialize<WorldData>(compressionStream);
+						
+					}
+				
                 }
             }
         }
@@ -181,4 +374,42 @@ public class WorldSerialization
             Debug.LogError(e.Message);
         }
     }
+	
+	public void LoadREPrefab(string fileName)
+    {
+        try
+        {
+            using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+				using (var binaryReader = new BinaryReader(fileStream))
+                {
+					uint ver = binaryReader.ReadUInt32();
+					Debug.LogError(ver);
+					
+                    using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
+					{
+						
+						rePrefab = Serializer.Deserialize<REPrefabData>(compressionStream);
+						Debug.LogError(rePrefab.checksum);
+					}
+				}
+                
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e.Message);
+        }
+    }
+	
+	public void SavePrefabJSON(string fileName)
+    {
+		string rustedit = JsonUtility.ToJson(rePrefab, true);
+		
+		using (StreamWriter write = new StreamWriter(fileName, false))
+        {
+            write.Write(rustedit);
+        }
+    }
+	
 }

@@ -859,6 +859,22 @@ public static class GenerativeManager
         TerrainManager.SetLayer(LandLayers.Topology,  TerrainTopology.TypeToIndex((int)layer.Topologies));
 	}
 
+	public static void fillTopology(int topology)
+	{
+		float[,,] sourceMap = TerrainManager.GetSplatMap(LandLayers.Topology, topology);	
+		int res = sourceMap.GetLength(0);
+		for (int i = 0; i < sourceMap.GetLength(0); i++)
+			{
+				for (int j = 0; j < sourceMap.GetLength(1); j++)
+				{
+					sourceMap[i,j,0] = float.MaxValue;
+					sourceMap[i,j,1] = float.MinValue;
+				}
+			}
+		TerrainManager.SetData(sourceMap, LandLayers.Topology,  topology);
+        TerrainManager.SetLayer(LandLayers.Topology,  topology);
+	}
+
 	public static void notTopologyLayer(Layers layer, Layers sourceLayer)
 	{
 		float[,,] sourceMap = TerrainManager.GetSplatMap(LandLayers.Topology, TerrainTopology.TypeToIndex((int)sourceLayer.Topologies));
@@ -1169,7 +1185,6 @@ public static class GenerativeManager
 		
 		
 	}
-	
 	
 	public static void createRustCity(WorldSerialization blob, RustCityPreset city)
 	{

@@ -8,6 +8,7 @@ TagManager:
   - Paths
   - Land
   - Water
+  - Electrics
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - Prefabs
   - Paths
   - Land
-  - 
+  - Electrics
   - 
   - 
   - 

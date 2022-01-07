@@ -12,15 +12,15 @@
     "density": 1250,
     "frequency": 100,
     "floor": 505,
-    "ceiling": 515,
-    "biomeIndex": 1,
+    "ceiling": 1000,
+    "biomeIndex": 2,
     "avoidTopo": true,
     "flipping": false,
     "tilting": false,
     "normalizeX": true,
     "normalizeY": true,
     "normalizeZ": true,
-    "biomeExclusive": false,
+    "biomeExclusive": true,
     "scalesLow": {
         "x": 1.0326086282730103,
         "y": 1.0326087474822999,
@@ -42,6 +42,6 @@
         "z": 0.0
     },
     "zOffset": -0.15000000596046449,
-    "slopeLow": 0.0,
-    "slopeHigh": 0.8366482257843018
+    "slopeLow": 1.4600024223327637,
+    "slopeHigh": 3.4449758529663088
 }

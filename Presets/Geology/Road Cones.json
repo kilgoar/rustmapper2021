@@ -1,13 +1,26 @@
 {
     "title": "Road Cones",
     "prefabID": 2371334959,
+    "prefabID0": 0,
+    "prefabID1": 0,
+    "prefabID2": 0,
+    "prefabID3": 0,
+    "prefabID4": 0,
+    "prefabID5": 0,
+    "prefabID6": 0,
+    "prefabID7": 0,
     "density": 1000,
     "frequency": 10,
     "floor": 500,
     "ceiling": 1000,
+    "biomeIndex": 3,
     "avoidTopo": true,
     "flipping": false,
     "tilting": false,
+    "normalizeX": true,
+    "normalizeY": true,
+    "normalizeZ": true,
+    "biomeExclusive": false,
     "scalesLow": {
         "x": 1.7391303777694703,
         "y": 1.79347825050354,
@@ -19,16 +32,16 @@
         "z": 2.173912763595581
     },
     "rotationsLow": {
-        "x": 0.0,
+        "x": 91.01123809814453,
         "y": 0.0,
         "z": 0.0
     },
     "rotationsHigh": {
-        "x": 0.0,
-        "y": 360.0,
+        "x": 91.01123809814453,
+        "y": 0.0,
         "z": 0.0
     },
-    "zOffset": -0.25999999046325686,
+    "zOffset": 0.0,
     "slopeLow": 0.0,
     "slopeHigh": 9.305547714233399
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
 using static TerrainManager;
@@ -21,6 +22,8 @@ public static class WorldConverter
         public TerrainInfo water;
         public TerrainMap<int> topology;
         public PrefabData[] prefabData;
+		public CircuitDataHolder circuitDataHolder;
+		public CircuitData[] circuitData;
         public PathData[] pathData;
     }
 
@@ -29,17 +32,22 @@ public static class WorldConverter
         public float[,] heights;
     }
     
+	
     public static MapInfo EmptyMap(int size, float landHeight)
     {
-        MapInfo terrains = new MapInfo();
+		MapInfo terrains = new MapInfo();
+	
+        
 
         int splatRes = Mathf.Clamp(Mathf.NextPowerOfTwo((int)(size * 0.50f)), 16, 2048);
 
         List<PathData> paths = new List<PathData>();
         List<PrefabData> prefabs = new List<PrefabData>();
+		List<CircuitData> circuits = new List<CircuitData>();
 
         terrains.pathData = paths.ToArray();
         terrains.prefabData = prefabs.ToArray();
+		terrains.circuitData = circuits.ToArray();
 
         terrains.terrainRes = Mathf.NextPowerOfTwo((int)(size)) + 1;
         terrains.size = new Vector3(size, 1000, size);
@@ -58,6 +66,7 @@ public static class WorldConverter
         });
         terrains.topology = new TerrainMap<int>(new byte[(int)Mathf.Pow(splatRes, 2) * 4 * 1], 1);
         return terrains;
+		
     }
 
     /// <summary>Converts the MapInfo and TerrainMaps into a Unity map format.</summary>
@@ -105,6 +114,24 @@ public static class WorldConverter
         Task.WaitAll(groundTask, biomeTask, alphaTask);
         return terrains;
     }
+	
+	public static MapInfo WorldToREPrefab(WorldSerialization world)
+	{
+		MapInfo refab = new MapInfo();
+		//List<PrefabData> prefabs = new List<PrefabData>();
+		//List<ElectricData> electric = new List<ElectricData>();
+		refab.prefabData = world.rePrefab.prefabs.ToArray();
+		//refab.circuitDataHolder = world.rePrefab.electric;
+		refab.circuitData = world.rePrefab.electric.circuitData.ToArray();
+		
+		for (int k = 0; k < refab.circuitData.Length; k++)
+		{
+			refab.circuitData[k].connectionsIn = refab.circuitData[k].branchIn.ToArray();
+			refab.circuitData[k].connectionsOut = refab.circuitData[k].branchOut.ToArray();
+		}
+		return refab;
+	}
+	
 
     /// <summary>Parses World Serialization and converts into MapInfo struct.</summary>
     /// <param name="world">Serialization of the map file to parse.</param>
@@ -138,6 +165,32 @@ public static class WorldConverter
         terrains.land.heights = heightTask.Result;
         terrains.water.heights = waterTask.Result;
         return terrains;
+    }
+
+	public static WorldSerialization TerrainToCustomPrefab((int prefab, int circuit) ID) 
+    {
+        WorldSerialization world = new WorldSerialization();
+		
+        foreach (PrefabDataHolder p in PrefabManager.CurrentMapPrefabs)
+        {
+            if (p.prefabData != null)
+            {
+                p.AlwaysBreakPrefabs(); // Updates the prefabdata before saving.
+				world.rePrefab.prefabs.Insert(0, p.prefabData);
+            }
+        }
+		foreach (CircuitDataHolder p in PrefabManager.CurrentMapElectrics)
+        {
+            if (p.circuitData != null)
+            {
+                p.UpdateCircuitData(); // Updates the circuitdata before saving.
+				world.rePrefab.electric.circuitData.Insert(0, p.circuitData);
+            }
+        }
+        Progress.Report(ID.prefab, 0.99f, "Saved " + PrefabManager.CurrentMapPrefabs.Length + " prefabs.");
+		Progress.Report(ID.circuit, 0.99f, "Saved " + PrefabManager.CurrentMapPrefabs.Length + " circuits.");
+
+        return world;
     }
 
     /// <summary>Converts Unity terrains to WorldSerialization.</summary>
@@ -197,7 +250,7 @@ public static class WorldConverter
         {
             if (p.prefabData != null)
             {
-                p.UpdatePrefabData(); // Updates the prefabdata before saving.
+                p.AlwaysBreakPrefabs(); // Updates the prefabdata before saving.
                 world.world.prefabs.Insert(0, p.prefabData);
             }
         }
@@ -218,7 +271,7 @@ public static class WorldConverter
         }
         Progress.Report(ID.path, 0.99f, "Saved " + PathManager.CurrentMapPaths.Length + " paths.");
 
-        byte[] landHeightBytes = FloatArrayToByteArray(land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution));
+		byte[] landHeightBytes = FloatArrayToByteArray(land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution));
         byte[] waterHeightBytes = FloatArrayToByteArray(water.terrainData.GetHeights(0, 0, water.terrainData.heightmapResolution, water.terrainData.heightmapResolution));
 
         Task.WaitAll(splatTask, biomeTask, alphaTask, topologyTask);

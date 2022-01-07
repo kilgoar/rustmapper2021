@@ -15,7 +15,7 @@ public class MapManagerWindow : EditorWindow
     { 
         GroundConditions = new GroundConditions(TerrainSplat.Enum.Grass), BiomeConditions = new BiomeConditions(TerrainBiome.Enum.Temperate), TopologyConditions = new TopologyConditions(TerrainTopology.Enum.Beach)
     };
-    
+    string mark = ""; //oh hai
 	int texture = 0, smoothPasses = 0;
     Vector2 scrollPos = new Vector2(0, 0);
     Selections.Objects rotateSelection;
@@ -29,6 +29,9 @@ public class MapManagerWindow : EditorWindow
 	string macroTitle = "";
 	
 	float tttWeight = .7f;
+	float zBreaker = 100f;
+	bool destroy = false;
+	
 	
 	string [] geologyList = SettingsManager.GetPresetTitles("Presets/Geology/");
 	string [] replacerList = SettingsManager.GetPresetTitles("Presets/Replacer/");
@@ -54,6 +57,8 @@ public class MapManagerWindow : EditorWindow
 	ReplacerPreset replacer = new ReplacerPreset();
 	RustCityPreset city = new RustCityPreset();
 
+	Vector3 prefabsOffset = new Vector3();
+	
 	string macroDisplay;
 	
 	int mapSize = 3000;
@@ -84,17 +89,18 @@ public class MapManagerWindow : EditorWindow
                 Functions.EditorIO();
 				Functions.NewMapOptions(ref mapSize, ref landHeight, ref layers);
 				Functions.MapInfo();
+				Functions.CustomPrefab();
                 break;
             #endregion
             #region Prefabs
 			case 1:
 				Functions.EditorSettings();
 				Functions.EditorInfo();
-
                 Functions.EditorLinks();
 				break;
             case 2:
 				Functions.Replacer(ref replacer, ref replacerPresetIndex, ref replacerList);
+				Functions.refabs(ref prefabsOffset, ref mark);
 				break;
             #endregion
             case 3:
@@ -247,7 +253,7 @@ public class MapManagerWindow : EditorWindow
 						
 						case 2:
 								city = SettingsManager.city;
-								Functions.RustCity(ref city);
+								Functions.RustCity(ref city, ref zBreaker, ref destroy);
 						break;
 
 				

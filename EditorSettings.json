@@ -1,25 +1,25 @@
 {
     "rustDirectory": "D:/Program Files (x86)/Steam/steamapps/common/Rust",
     "prefabRenderDistance": 700.0,
-    "pathRenderDistance": 250.0,
+    "pathRenderDistance": 2735.0,
     "waterTransparency": 0.20000000298023225,
     "loadbundleonlaunch": false,
     "terrainTextureSet": false,
     "style": false,
     "crazing": {
         "title": "",
-        "zones": 200,
-        "minSize": 15000,
-        "maxSize": 20000,
+        "zones": 300,
+        "minSize": 5000,
+        "maxSize": 7000,
         "splatLayer": 5
     },
     "perlinSplat": {
-        "scale": 50,
-        "splatLayer": 0,
-        "biomeLayer": 4,
-        "strength": 0.5,
+        "scale": 65,
+        "splatLayer": 4,
+        "biomeLayer": 2,
+        "strength": 3.0,
         "invert": false,
-        "paintBiome": false
+        "paintBiome": true
     },
     "ripple": {
         "size": 2200,
@@ -28,48 +28,48 @@
     },
     "ocean": {
         "title": "",
-        "radius": 900,
-        "gradient": 700,
-        "xOffset": 10,
-        "yOffset": 20,
+        "radius": 800,
+        "gradient": 500,
+        "xOffset": 0,
+        "yOffset": 0,
         "s": 200,
-        "seafloor": 475,
-        "perlin": false
+        "seafloor": 450,
+        "perlin": true
     },
     "terracing": {
         "flatten": false,
         "perlinBanks": true,
         "circular": true,
-        "weight": 0.7065972089767456,
-        "zStart": 499,
-        "gateBottom": 20,
-        "gateTop": 20,
+        "weight": 0.02925989404320717,
+        "zStart": 498,
+        "gateBottom": 4,
+        "gateTop": 4,
         "gates": 1,
-        "descaleFactor": 2,
-        "perlinDensity": 145
+        "descaleFactor": 4,
+        "perlinDensity": 80
     },
     "perlin": {
         "layers": 3,
-        "period": 20,
-        "scale": 80,
+        "period": 40,
+        "scale": 220,
         "simple": false
     },
     "geology": {
-        "title": "arid vehicles",
-        "prefabID": 3004602158,
+        "title": "Road Cones",
+        "prefabID": 2371334959,
         "prefabID0": 0,
-        "prefabID1": 3264578399,
-        "prefabID2": 2420618133,
-        "prefabID3": 246584577,
-        "prefabID4": 1837053258,
-        "prefabID5": 2832497307,
-        "prefabID6": 2300745015,
-        "prefabID7": 2082081653,
-        "density": 200,
-        "frequency": 40,
-        "floor": 0,
+        "prefabID1": 0,
+        "prefabID2": 0,
+        "prefabID3": 0,
+        "prefabID4": 0,
+        "prefabID5": 0,
+        "prefabID6": 0,
+        "prefabID7": 0,
+        "density": 1000,
+        "frequency": 10,
+        "floor": 500,
         "ceiling": 1000,
-        "biomeIndex": 1,
+        "biomeIndex": 3,
         "avoidTopo": true,
         "flipping": false,
         "tilting": false,
@@ -78,31 +78,31 @@
         "normalizeZ": true,
         "biomeExclusive": false,
         "scalesLow": {
-            "x": 1.0169490575790406,
-            "y": 1.073446273803711,
-            "z": 1.073446273803711
+            "x": 1.7391303777694703,
+            "y": 1.79347825050354,
+            "z": 1.8478257656097413
         },
         "scalesHigh": {
-            "x": 1.0169490575790406,
-            "y": 1.073446273803711,
-            "z": 1.073446273803711
+            "x": 2.17391300201416,
+            "y": 2.11956524848938,
+            "z": 2.173912763595581
         },
         "rotationsLow": {
-            "x": 89.49152374267578,
+            "x": 91.01123809814453,
             "y": 0.0,
             "z": 0.0
         },
         "rotationsHigh": {
-            "x": 90.16948699951172,
+            "x": 91.01123809814453,
             "y": 0.0,
             "z": 0.0
         },
         "zOffset": 0.0,
-        "slopeLow": 8.899521827697754,
-        "slopeHigh": 15.215309143066407
+        "slopeLow": 0.0,
+        "slopeHigh": 9.305547714233399
     },
     "replacer": {
-        "prefabID0": 0,
+        "prefabID0": 2753681398,
         "prefabID1": 0,
         "prefabID2": 0,
         "prefabID3": 0,
@@ -119,7 +119,7 @@
         "prefabID14": 0,
         "prefabID15": 0,
         "prefabID16": 0,
-        "replaceID0": 0,
+        "replaceID0": 619264397,
         "replaceID1": 0,
         "replaceID2": 0,
         "replaceID3": 0,
@@ -169,12 +169,12 @@
     ],
     "city": {
         "title": "",
-        "size": 1200,
-        "alley": 40,
-        "street": 28,
-        "start": 1600,
-        "flatness": 0.0044999998062849049,
-        "zOff": -0.0007800000021234155,
+        "size": 2000,
+        "alley": 440,
+        "street": 50,
+        "start": 21,
+        "flatness": 0.05000000074505806,
+        "zOff": -0.019999999552965165,
         "x": 0,
         "y": 0
     }

@@ -20,6 +20,21 @@ public class PrefabDataHolder : MonoBehaviour
         prefabData.rotation = transform.rotation;
         prefabData.scale = transform.localScale;
     }
+	
+	public void AlwaysBreakPrefabs()
+    {
+		
+        prefabData.position = gameObject.transform.position - PrefabManager.PrefabParent.position;
+        prefabData.rotation = transform.rotation;
+        prefabData.scale = transform.localScale;
+    }
+	
+	public void CastPrefabData()
+	{
+		gameObject.transform.localPosition = prefabData.position;
+		transform.rotation = prefabData.rotation;
+		transform.localScale = prefabData.scale;
+	}
      
     public void SnapToGround()
     {

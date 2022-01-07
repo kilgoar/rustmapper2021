@@ -17,6 +17,44 @@ namespace RustMapEditor.UI
     {
         #region MainMenu
 	
+		public static void refabs(ref Vector3 prefabsOffset, ref string mark)
+		{
+			EditorGUILayout.BeginHorizontal();
+			if (GUILayout.Button("Add Monument Marker"))
+			{
+				PrefabManager.addMonumentMarker(mark);
+			}
+			mark = EditorGUILayout.TextField("Monument Name", mark);
+			EditorGUILayout.EndHorizontal();
+			if (GUILayout.Button("Remove All Electric Circuits"))
+			{
+				PrefabManager.removeElectrics(PrefabManager.CurrentMapPrefabs, PrefabManager.CurrentMapElectrics);
+				
+			}
+			if (GUILayout.Button("Keep Only Electric Circuits"))
+			{
+				PrefabManager.keepElectrics(PrefabManager.CurrentMapPrefabs, PrefabManager.CurrentMapElectrics);
+				
+			}
+
+			prefabsOffset = EditorGUILayout.Vector3Field("Offset:", prefabsOffset);
+			
+			
+			if (GUILayout.Button("Offset Prefabs"))
+			{
+				PrefabManager.Offset(PrefabManager.CurrentMapPrefabs, PrefabManager.CurrentMapElectrics, prefabsOffset);
+				
+			}
+			if (GUILayout.Button("Place .Prefab"))
+			{
+				MergeOffsetCustomPrefabPanel();
+			}
+			if (GUILayout.Button("Decompress lz4"))
+					DecompressMapPanel();
+				if (GUILayout.Button("Rip Custom Prefab into json"))
+					LoadCustomPrefabJSONPanel();
+		}
+	
 		public static void Combinator(ref Layers layers, ref Layers sourceLayers, ref float tttWeight, ref int thicc)
 		{
 			EditorGUILayout.Space();
@@ -358,6 +396,38 @@ namespace RustMapEditor.UI
 			replacer.replaceID16 = (uint)EditorGUILayout.LongField("Replace ID:", replacer.replaceID16);
 			EditorGUILayout.EndHorizontal();
 			
+			if (GUILayout.Button("Delete prefabs"))
+						{
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID0);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID1);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID2);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID3);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID4);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID5);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID6);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID7);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID8);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID9);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID10);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID11);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID12);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID13);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID14);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID15);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, replacer.prefabID16);
+						}
+			
+			if (GUILayout.Button("Keep prefabs"))
+						{
+							uint[] prefabList = new uint[]{replacer.prefabID0,replacer.prefabID1,
+							replacer.prefabID2,replacer.prefabID3,replacer.prefabID4,
+							replacer.prefabID5,replacer.prefabID6,replacer.prefabID7,
+							replacer.prefabID8,replacer.prefabID9,replacer.prefabID10,
+							replacer.prefabID11,replacer.prefabID12,replacer.prefabID13,
+							replacer.prefabID14,replacer.prefabID15,replacer.prefabID16};
+							PrefabManager.keepPrefabList(PrefabManager.CurrentMapPrefabs, prefabList);
+						}
+			
 			replacer.rotateToTerrain = EditorGUILayout.ToggleLeft("Rotate to terrain", replacer.rotateToTerrain, GUILayout.MaxWidth(250));
 			replacer.rotateToX = EditorGUILayout.ToggleLeft("Rotate to x", replacer.rotateToX, GUILayout.MaxWidth(250));
 			replacer.rotateToY = EditorGUILayout.ToggleLeft("Rotate to y", replacer.rotateToY, GUILayout.MaxWidth(250));
@@ -424,6 +494,7 @@ namespace RustMapEditor.UI
 					activePreset.prefabID5 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID5);
 					activePreset.prefabID6 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID6);
 					activePreset.prefabID7 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID7);
+					
 					if (GUILayout.Button("Delete prefabs"))
 						{
 							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID);
@@ -435,6 +506,7 @@ namespace RustMapEditor.UI
 							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID6);
 							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID7);
 						}
+					
 					GUILayout.Label("Rotation range:", EditorStyles.boldLabel);					
 					
 					EditorGUILayout.BeginHorizontal();
@@ -596,17 +668,46 @@ namespace RustMapEditor.UI
 					EditorGUILayout.EndHorizontal();
 		}
 		
-        public static void EditorIO(string mapName = "custommap")
+        public static void EditorIO(string mapName = "")
         {
             
             LoadMap();
             SaveMap(mapName);
+			
         }
 
         public static void LoadMap()
         {
             if (Elements.ToolbarButton(ToolTips.loadMap))
                 LoadMapPanel();
+			
+        }
+		
+		public static void CustomPrefab()
+		{
+			EditorGUILayout.Space();
+			GUILayout.Label("Custom Prefab Editor");
+			if (GUILayout.Button("Load"))
+				LoadCustomPrefabPanel();
+			
+			if (GUILayout.Button("Load Merge"))
+				MergeCustomPrefabPanel();
+			
+			if (GUILayout.Button("Save"))
+				SaveCustomPrefabPanel();
+			
+			
+				
+			
+		}
+
+        public static void SaveCustomPrefabPanel(string mapName = "customprefab")
+        {
+            string saveFile = "";
+            saveFile = EditorUtility.SaveFilePanel("Save Prefab File", saveFile, mapName, "prefab");
+            if (string.IsNullOrEmpty(saveFile))
+                return;
+            MapManager.SaveCustomPrefab(saveFile);
         }
 
         public static void LoadMapPanel()
@@ -619,15 +720,78 @@ namespace RustMapEditor.UI
             world.Load(loadFile);
             MapManager.Load(WorldConverter.WorldToTerrain(world), loadFile);
             ReloadTreeViews();
+
+        }
+		public static void LoadCustomPrefabPanel()
+        {
+            string loadFile = "";
+            loadFile = EditorUtility.OpenFilePanel("Import Custom Prefab", loadFile, "prefab");
+            if (string.IsNullOrEmpty(loadFile))
+                return;
+            var world = new WorldSerialization();
+            world.LoadREPrefab(loadFile);
+            MapManager.LoadREPrefab(WorldConverter.WorldToREPrefab(world), loadFile);
+            ReloadTreeViews();
+
         }
 
-        public static void SaveMap(string mapName = "custommap")
+		public static void MergeCustomPrefabPanel()
+        {
+            string loadFile = "";
+            loadFile = EditorUtility.OpenFilePanel("Import Custom Prefab", loadFile, "prefab");
+            if (string.IsNullOrEmpty(loadFile))
+                return;
+            var world = new WorldSerialization();
+            world.LoadREPrefab(loadFile);
+            MapManager.MergeREPrefab(WorldConverter.WorldToREPrefab(world), loadFile);
+            ReloadTreeViews();
+
+       }
+	   
+	   public static void MergeOffsetCustomPrefabPanel()
+        {
+            string loadFile = "";
+            loadFile = EditorUtility.OpenFilePanel("Import Custom Prefab", loadFile, "prefab");
+            if (string.IsNullOrEmpty(loadFile))
+                return;
+            var world = new WorldSerialization();
+            world.LoadREPrefab(loadFile);
+            MapManager.MergeOffsetREPrefab(WorldConverter.WorldToREPrefab(world), GameObject.Find("Placement").transform, loadFile);
+            ReloadTreeViews();
+
+       }
+	   
+	   
+		public static void DecompressMapPanel()
+		{
+			string loadFile = "";
+            loadFile = EditorUtility.OpenFilePanel("Decompress lz4 file", loadFile, "prefab");
+            if (string.IsNullOrEmpty(loadFile))
+                return;
+			var world = new WorldSerialization();
+            world.Decompress(loadFile);
+			ReloadTreeViews();
+		}
+		
+		public static void LoadCustomPrefabJSONPanel()
+		{
+			string loadFile = "";
+            loadFile = EditorUtility.OpenFilePanel("Decompress lz4 file", loadFile, "prefab");
+            if (string.IsNullOrEmpty(loadFile))
+                return;
+			var world = new WorldSerialization();
+            world.LoadREPrefab(loadFile);
+			world.SavePrefabJSON("test.json");
+			ReloadTreeViews();
+		}
+		
+        public static void SaveMap(string mapName = "")
         {
             if (Elements.ToolbarButton(ToolTips.saveMap))
                 SaveMapPanel(mapName);
         }
 
-        public static void SaveMapPanel(string mapName = "custommap")
+        public static void SaveMapPanel(string mapName = "")
         {
             string saveFile = "";
             saveFile = EditorUtility.SaveFilePanel("Save Map File", saveFile, mapName, "map");
@@ -1245,10 +1409,15 @@ namespace RustMapEditor.UI
             Elements.MiniBoldLabel(ToolTips.layerToolsLabel);
 
             Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.paintLayer))
-                MapManager.PaintLayer(landLayer, texture, topology);
-            if ((int)landLayer > 1)
+			if ((int)landLayer <= 1)
+			{
+				if (Elements.ToolbarButton(ToolTips.paintLayer))
+					MapManager.PaintLayer(landLayer, texture, topology);
+			}
+            else if ((int)landLayer > 1)
             {
+				if (Elements.ToolbarButton(ToolTips.paintLayer))
+					GenerativeManager.fillTopology(topology);
                 if (Elements.ToolbarButton(ToolTips.clearLayer))
                     MapManager.ClearLayer(landLayer, topology);
                 if (Elements.ToolbarButton(ToolTips.invertLayer))
@@ -1386,7 +1555,7 @@ namespace RustMapEditor.UI
 			}
 		}
 
-		public static void RustCity(ref RustCityPreset city)
+		public static void RustCity(ref RustCityPreset city, ref float breakerZ, ref bool destroy)
 		{
 			EditorGUI.BeginChangeCheck();
 						
@@ -1414,20 +1583,46 @@ namespace RustMapEditor.UI
 						GenerativeManager.createRustCity(monumentBlob, city);
 					}
 					
+					if (GUILayout.Button("RGB Plots"))
+					{
+						SettingsManager.city = city;
+						SettingsManager.SaveSettings();
+						var monumentBlob = new WorldSerialization();
+						string loadFile = "rgb.buildplots.map";
+						monumentBlob.Load(loadFile);
+						GenerativeManager.createRustCity(monumentBlob, city);
+					}
+					
 					if (GUILayout.Button("Rust City Buildings"))
 					{
 						
 						GenerativeManager.rustBuildings();
 					}
 					
-					if (GUILayout.Button("Destroy and Reconstruct Monuments"))
+					
+					
+					
+					breakerZ =  EditorGUILayout.FloatField("Height offset:", breakerZ);
+					destroy = EditorGUILayout.ToggleLeft("Destroy Originals", destroy);
+					if (GUILayout.Button("Break Monuments"))
 					{
-						PrefabManager.breakMonument(PrefabManager.CurrentMapPrefabs, 3903103539);
+						
+						PrefabManager.breakMonument(PrefabManager.CurrentMapPrefabs, breakerZ, destroy);
+						PrefabManager.deleteDuplicates(PrefabManager.CurrentMapPrefabs);
 					}
+					
+					if (GUILayout.Button("Delete Duplicates"))
+					{
+						PrefabManager.deleteDuplicates(PrefabManager.CurrentMapPrefabs);
+					}
+					
+					if (GUILayout.Button("Add player spawnpoints"))
+					{
+						PrefabManager.addSpawners();
+					}
+					
 		}
 		
-		
-
         public static void SelectPrefabPaths(PrefabsListTreeView treeView, ref bool showAllPrefabs)
         {
             Elements.MiniBoldLabel(ToolTips.optionsLabel);
@@ -1480,7 +1675,7 @@ namespace RustMapEditor.UI
 		
 		public static void NewMapOptions(ref int mapSize, ref float landHeight, ref Layers layers) 
         {
-            mapSize = Elements.ToolbarIntSlider(ToolTips.mapSize, mapSize, 1000, 6000);
+            mapSize = Elements.ToolbarIntSlider(ToolTips.mapSize, mapSize, 100, 6000);
             landHeight = Elements.ToolbarSlider(ToolTips.newMapHeight, landHeight, 0, 1000);
 
             Elements.BeginToolbarHorizontal();

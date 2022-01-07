@@ -99,7 +99,7 @@ public static class AssetManager
 				PrefabManager.Callbacks.OnPrefabLoaded(val);
 				return val;
             }
-            Debug.LogWarning("Prefab not loaded from bundle: " + filePath);
+            Debug.LogError("Prefab not loaded from bundle: " + filePath);
             return PrefabManager.DefaultPrefab;
         }
     }
@@ -171,17 +171,212 @@ public static class AssetManager
 		return i.ToString();
 	}
 
-	public static uint partialToID(string str)
+	public static uint partialToID(string str, string str2)
 	{
+		string path, prefab, folder;
+		string[] parse, parse2, parse3;
+		folder = "";
+
+		
+		if(str.Contains("SimpleSwitch_RCD_PressButton") || str.Contains("SimpleSwitch_garage") || str.Contains("SimpleSwitch_Lab") ||
+		str.Contains("SimpleSwitch_upstairs"))
+			{
+				Debug.LogError("SimpleSwitch++");
+				return 2055550712;				
+			}
+		else if(str.Contains("GCD1"))
+
+		{
+							parse = str.Split('_');
+							str = parse[1];
+							Debug.LogError(str);
+		}			
+		else if(str.Contains("GCD") || str.Contains("BCD") || str.Contains("RCD") || str.Contains("GDC"))
+					{
+							parse = str.Split('_');
+							if(str2 == "Oilrig 2")
+							{
+								str = parse[1];
+							}
+							else
+							{
+								str = parse[2];
+							}
+					}
+		
+		parse3 = str.Split(' ');
+		str = parse3[0].ToLower();
+		if(str == "simplelight_upstairs" || str == "simplelight_downstairs")
+		{
+			return 1797934483;
+		}
+		else if(str == "sentry.bandit.static")
+		{
+			return 1386184467;
+		}
+		else if(str == "Water_cull")
+		{
+			return 1206870171;
+		}
+		else if(str == "office_planter_300_brick")
+		{
+			return 217857271;
+		}
+		else if(str == "rocket_factory_tower_ledge_a")
+		{
+			return 366766480;
+		}
+		
+		else if(str == "office_planter_600_brick")
+		{
+			return 362425135;
+		}
+		else if(str == "fusebox")
+		{
+			return 3622071578;
+		}
+		else if(str == "industrial_bld_e_grey")
+		{
+			return 1926269204;
+		}
+		else if(str == "industrial_bld_f_grey")
+		{
+			return 2378803546;
+		}
+		else if(str == "industrial_bld_c_grey")
+		{
+			return 3218222784;
+		}
+		else if(str == "industrial_bld_h_grey")
+		{
+			return 4109921046;
+		}
+		else if(str == "industrial_bld_i_grey")
+		{
+			return 3947470407;
+		}
+		else if(str == "industrial_bld_j_grey")
+		{
+			return 239207260;
+		}
+		else if (str == "bunker.door")
+		{
+			return 4054330822;
+		}
+		else if (str == "patrol_helicopter_gibs")
+		{
+			return 893284419;
+		}
+		else if(str == "fusebox_armory" || str =="fusebox_surface" || str == "fusebox_control_room" || str == "fusebox_entrance" || str == "fusebox_a"
+		|| str == "FuseBox_armory" || str == "FuseBox_surface")
+		{
+			return 3622071578;
+		}
+		else if(str == "generator.static_armory" || str == "generator.static_main" || str == "generator.static_escape" || str == "generator.static_garage" || str == "generator.static_powerplant")
+		{
+			return 1331920001;
+		}
+		
+		else if(str == "train_crane_a_yellow")
+		{
+			return 1351652590;
+		}
+		else if(str == "train_crane_a_red")
+		{
+			return 1198689434;
+		}
+		else if(str == "water_tower_industrial_red")
+		{
+			return 128145233;
+		}
+		else if(str == "spheretank_storage_tank")
+		{
+			return 4289935487;
+		}
+		else if(str == "fx-fusebox-sparks")
+		{
+			return 0; //bye bye bitch
+		}
+		else if (str2 == "Oilrig 1")
+		{
+			folder = "prefabs_large_oilrig";
+		}
+		else if (str2 == "Oilrig 2")
+		{
+			folder = "prefabs_small_oilrig";
+		}
+		
+		
 		if (string.IsNullOrEmpty(str))
 			return 0;
-		foreach (KeyValuePair<string, uint> kvp in PathLookup)
+		
+
+		
+		if (string.IsNullOrEmpty(folder))
 		{
-			if (kvp.Key.Contains(str))
+
+			foreach (KeyValuePair<string, uint> kvp in PathLookup)
 			{
-				return kvp.Value;
+				path = kvp.Key;
+				parse = path.Split('/');
+				prefab = parse[parse.Length -1];
+				
+				if ((prefab == (str+".prefab")))
+				{
+					return kvp.Value;
+				}
 			}
+			
+			//if can't find the rowhouse or outbuilding try again, without color tags
+			if (str.Contains("outbuilding") || str.Contains("rowhouse"));
+			{
+				foreach (KeyValuePair<string, uint> kvp in PathLookup)
+				{
+					path = kvp.Key;
+						parse = path.Split('/');
+						prefab = parse[parse.Length -1];
+						
+						//remove color tags
+						parse2 = str.Split('-');
+						str = parse2[0];
+						if ((prefab == (str+".prefab")))
+						{
+							return kvp.Value;
+						}
+				}
+			}
+			
 		}
+		
+		else
+		{
+		
+			foreach (KeyValuePair<string, uint> kvp in PathLookup)
+			{
+				path = kvp.Key;
+				parse = path.Split('/');
+				prefab = parse[parse.Length -1];
+				
+				if ((prefab == (str+".prefab")) && path.Contains(folder))
+				{
+					return kvp.Value;
+				}
+			}
+			
+			foreach (KeyValuePair<string, uint> kvp in PathLookup)
+			{
+				path = kvp.Key;
+				parse = path.Split('/');
+				prefab = parse[parse.Length -1];
+				
+				if ((prefab == (str+".prefab")))
+				{
+					return kvp.Value;
+				}
+			}
+			
+		}
+		
 		return 0;
 	}
 

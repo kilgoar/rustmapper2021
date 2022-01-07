@@ -346,7 +346,7 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(Rotate(GetSplatMap(landLayerToPaint, topology), CW), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                SetLayer(LandLayer, topology);
                 break;
             case LandLayers.Alpha:
                 SetData(Rotate(AlphaArray, CW), landLayerToPaint);
@@ -455,8 +455,9 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetRange(GetSplatMap(landLayerToPaint, topology), GetHeights(), t, heightLow, heightHigh), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
-                break;
+                SetLayer(LandLayer, topology);
+                
+				break;
             case LandLayers.Alpha:
                 bool value = (t == 0) ? true : false;
                 SetData(SetRange(AlphaArray, GetHeights(), value, heightLow, heightHigh), landLayerToPaint);
@@ -495,7 +496,7 @@ public static class MapManager
             case LandLayers.Biome:
             case LandLayers.Topology:
                 SetData(SetValues(GetSplatMap(landLayerToPaint), t), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                SetLayer(LandLayer, topology);
                 break;
             case LandLayers.Alpha:
                 SetData(SetValues(AlphaArray, true), landLayerToPaint);
@@ -527,7 +528,7 @@ public static class MapManager
         {
             case LandLayers.Topology:
                 SetData(SetValues(GetSplatMap(landLayerToPaint, topology), 1), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                SetLayer(LandLayer, topology);
                 break;
             case LandLayers.Alpha:
                 SetData(SetValues(AlphaArray, false), landLayerToPaint);
@@ -559,7 +560,7 @@ public static class MapManager
         {
             case LandLayers.Topology:
                 SetData(Invert(GetSplatMap(landLayerToPaint, topology)), landLayerToPaint, topology);
-                SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer));
+                SetLayer(LandLayer, topology);
                 break;
             case LandLayers.Alpha:
                 SetData(Invert(AlphaArray), landLayerToPaint);
@@ -653,6 +654,7 @@ public static class MapManager
     static void CentreSceneObjects(MapInfo mapInfo)
     {
         PrefabManager.PrefabParent.GetComponent<LockObject>().SetPosition(new Vector3(mapInfo.size.x / 2, 500, mapInfo.size.z / 2));
+		PrefabManager.ElectricsParent.GetComponent<LockObject>().SetPosition(new Vector3(mapInfo.size.x / 2, 500, mapInfo.size.z / 2));
         PathManager.PathParent.GetComponent<LockObject>().SetPosition(new Vector3(mapInfo.size.x / 2, 500, mapInfo.size.z / 2));
     }
 
@@ -661,12 +663,68 @@ public static class MapManager
     {
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.Load(mapInfo, loadPath));
     }
+	
+	public static void LoadREPrefab(MapInfo mapInfo, string loadPath = "")
+    {
+		//EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.LoadREPrefab(mapInfo, loadPath));
+		
+		int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
+		int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+        int spwCircuit = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);
+		PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs);
+        PrefabManager.DeleteCircuits(PrefabManager.CurrentMapElectrics);
+		PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
+		PrefabManager.SpawnCircuits(mapInfo.circuitData, spwCircuit);
+		
+    }
+	
+	public static void MergeREPrefab(MapInfo mapInfo, string loadPath = "")
+    {
+		//EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.LoadREPrefab(mapInfo, loadPath));
+		
+		int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
+		int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+        int spwCircuit = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);
+		PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
+		PrefabManager.SpawnCircuits(mapInfo.circuitData, spwCircuit);
+		
+    }
+	
+	public static void MergeOffsetREPrefab(MapInfo mapInfo, Transform parent, string loadPath = "")
+    {
+		//EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.LoadREPrefab(mapInfo, loadPath));
+		GameObject obj = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/PrefabCategory"), PrefabManager.PrefabParent, false);
+		
+		
+		obj.name = loadPath.Split('/').Last().Split('.')[0] + " " + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10);
+		PrefabManager.PrefabCategories.Add(obj.name, obj.transform);
+		
+		int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(),  "Preparing Map", Progress.Options.Sticky);
+		int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+        //int spwCircuit = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);
+		PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab, obj.transform);
+		//PrefabManager.SpawnCircuits(mapInfo.circuitData, spwCircuit);
+		obj.transform.localPosition = parent.position;
+		obj.transform.rotation = parent.rotation;
+		obj.transform.localScale = parent.localScale;
+    }
 
     /// <summary>Saves the map.</summary>
     /// <param name="path">The path to save to.</param>
     public static void Save(string path)
     {
+		string name = path.Split('/').Last().Split('.')[0];
+		PrefabManager.RenamePrefabCategories(PrefabManager.CurrentMapPrefabs, name);
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.Save(path));
+    }
+	
+	public static void SaveCustomPrefab(string path)
+    {
+		//PrefabManager.RenamePrefabCategories(PrefabManager.CurrentMapPrefabs, path.Split('/').Last().Split('.')[0] + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10));
+		string name = path.Split('/').Last().Split('.')[0];
+		PrefabManager.RenamePrefabCategories(PrefabManager.CurrentMapPrefabs, ":" + name + "::");
+		
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SaveCustomPrefab(path));
     }
 
     /// <summary>Creates a new flat terrain.</summary>
@@ -678,40 +736,24 @@ public static class MapManager
 
     private class Coroutines
     {
-        public static IEnumerator Load(MapInfo mapInfo, string path = "")
+		public static IEnumerator LoadREPrefab(MapInfo mapInfo, string path = "")
         {
             ProgressManager.RemoveProgressBars("Load:");
-
-            int progressID = Progress.Start("Load: " + path.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
+			
+			int progressID = Progress.Start("Load: " + path.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
             int delPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
             int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
-            int delPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
-            int spwPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
-            int terrainID = Progress.Start("Terrain", null, Progress.Options.Sticky, progressID);
-
-            var splatMapTask = Task.Run(() => SetSplatMaps(mapInfo));
-
-            PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, delPrefab);
-            PathManager.DeletePaths(PathManager.CurrentMapPaths, delPath);
-            CentreSceneObjects(mapInfo);
-            SetTerrain(mapInfo, terrainID);
-            PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
-            PathManager.SpawnPaths(mapInfo.pathData, spwPath);
-
-            var sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
-            while (!splatMapTask.IsCompleted)
-            {
-                if (sw.Elapsed.TotalMilliseconds > 0.05f)
-                {
-                    sw.Restart();
-                    yield return null;
-                }
-            }
-
-            SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to the currently selected.
-
-            while (Progress.GetProgressById(spwPrefab).running)
+			int spwCircuit = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);
+            //int spwElectric = Progress.Start("Electrical", null, Progress.Options.Sticky, progressID);
+			
+			PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, delPrefab);
+			PrefabManager.DeleteCircuits(PrefabManager.CurrentMapElectrics);
+			CentreSceneObjects(mapInfo);
+			PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
+			PrefabManager.SpawnCircuits(mapInfo.circuitData, spwCircuit);
+			
+			var sw = new System.Diagnostics.Stopwatch();
+			while (Progress.GetProgressById(spwPrefab).running)
             {
                 if (sw.Elapsed.TotalMilliseconds > 0.05f)
                 {
@@ -721,11 +763,65 @@ public static class MapManager
             }
 
             Progress.Report(progressID, 0.99f, "Loaded");
-            Progress.Finish(terrainID, Progress.Status.Succeeded);
-            Progress.Finish(progressID, Progress.Status.Succeeded);
+			Progress.Finish(progressID, Progress.Status.Succeeded);
 
             Callbacks.OnMapLoaded(path);
         }
+		
+		
+        public static IEnumerator Load(MapInfo mapInfo, string path = "")
+        {
+			
+				ProgressManager.RemoveProgressBars("Load:");
+			
+				int progressID = Progress.Start("Load: " + path.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
+				int delPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+				int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+				int delPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
+				int spwPath = Progress.Start("Paths", null, Progress.Options.Sticky, progressID);
+				int terrainID = Progress.Start("Terrain", null, Progress.Options.Sticky, progressID);
+				
+				
+				var splatMapTask = Task.Run(() => SetSplatMaps(mapInfo));
+
+				PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, delPrefab);
+				PathManager.DeletePaths(PathManager.CurrentMapPaths, delPath);
+				CentreSceneObjects(mapInfo);
+				SetTerrain(mapInfo, terrainID);
+				PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
+				PathManager.SpawnPaths(mapInfo.pathData, spwPath);
+				
+				var sw = new System.Diagnostics.Stopwatch();
+				sw.Start();
+				while (!splatMapTask.IsCompleted)
+				{
+					if (sw.Elapsed.TotalMilliseconds > 0.05f)
+					{
+						sw.Restart();
+						yield return null;
+					}
+				}
+
+				SetLayer(LandLayer, TerrainTopology.TypeToIndex((int)TopologyLayer)); // Sets the alphamaps to the currently selected.
+
+				while (Progress.GetProgressById(spwPrefab).running)
+				{
+					if (sw.Elapsed.TotalMilliseconds > 0.05f)
+					{
+						sw.Restart();
+						yield return null;
+					}
+				}
+
+				Progress.Report(progressID, 0.99f, "Loaded");
+				Progress.Finish(terrainID, Progress.Status.Succeeded);
+				Progress.Finish(progressID, Progress.Status.Succeeded);
+
+				Callbacks.OnMapLoaded(path);
+			
+				
+			
+		}
 
         public static IEnumerator Save(string path)
         {
@@ -738,12 +834,40 @@ public static class MapManager
 
             SaveLayer();
             yield return null;
+			
             TerrainToWorld(Land, Water, (prefabID, pathID, terrainID)).Save(path);
 
             Progress.Report(progressID, 0.99f, "Saved");
             Progress.Finish(prefabID, Progress.Status.Succeeded);
             Progress.Finish(pathID, Progress.Status.Succeeded);
             Progress.Finish(terrainID, Progress.Status.Succeeded);
+            Progress.Finish(progressID, Progress.Status.Succeeded);
+
+            Callbacks.OnMapSaved(path);
+        }
+		
+		public static IEnumerator SaveCustomPrefab(string path)
+        {
+            ProgressManager.RemoveProgressBars("Save:");
+
+            int progressID = Progress.Start("Save: " + path.Split('/').Last(), "Saving Map", Progress.Options.Sticky);
+            int prefabID = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
+            int circuitID = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);			
+            
+			//SaveLayer();
+            Debug.LogError(path);
+			
+			yield return null;
+
+			
+			
+			
+			
+            TerrainToCustomPrefab((prefabID, circuitID)).SaveREPrefab(path);
+
+            Progress.Report(progressID, 0.99f, "Saved");
+            Progress.Finish(prefabID, Progress.Status.Succeeded);
+			Progress.Finish(circuitID, Progress.Status.Succeeded);
             Progress.Finish(progressID, Progress.Status.Succeeded);
 
             Callbacks.OnMapSaved(path);
