@@ -9,6 +9,8 @@ TagManager:
   - Land
   - Water
   - Electrics
+  - NPC
+  - Modifiers
   layers:
   - Default
   - TransparentFX

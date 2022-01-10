@@ -24,10 +24,14 @@ public static class PrefabManager
     public static Transform PrefabParent { get; private set; }
 	public static Transform CustomPrefabParent { get; private set; }
 	public static Transform ElectricsParent { get; private set; }
+	public static Transform ModifiersParent { get; private set; }
+	public static Transform NPCsParent { get; private set; }
     public static GameObject PrefabToSpawn;
 
     public static PrefabDataHolder[] CurrentMapPrefabs { get => PrefabParent.gameObject.GetComponentsInChildren<PrefabDataHolder>(); }
 	public static CircuitDataHolder[] CurrentMapElectrics { get => ElectricsParent.gameObject.GetComponentsInChildren<CircuitDataHolder>(); }
+	public static NPCDataHolder[] CurrentMapNPCs { get => NPCsParent.gameObject.GetComponentsInChildren<NPCDataHolder>(); }
+	public static ModifierDataHolder CurrentModifiers { get => ModifiersParent.gameObject.GetComponentInChildren<ModifierDataHolder>(); }
 	
 		
     public static Dictionary<string, Transform> PrefabCategories = new Dictionary<string, Transform>();
@@ -45,7 +49,9 @@ public static class PrefabManager
         DefaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
 		
 		ElectricsParent = GameObject.FindGameObjectWithTag("Electrics").transform;
-        PrefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
+        NPCsParent = GameObject.FindGameObjectWithTag("NPC").transform;
+		PrefabParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
+		ModifiersParent = GameObject.FindGameObjectWithTag("Modifiers").transform;
         if (DefaultPrefab != null && PrefabParent != null)
         {
             EditorApplication.update -= OnProjectLoad;
@@ -154,6 +160,29 @@ public static class PrefabManager
 		
 	}
 	
+	public static void Spawn(GameObject go, ModifierData modifiers, Transform parent)
+	{
+		
+		GameObject newObj = GameObject.Instantiate(go, parent);
+		ModifierDataHolder mod = newObj.AddComponent<ModifierDataHolder>();
+		mod.modifierData = modifiers;
+        newObj.SetActive(true);
+		Debug.LogError("modifier data found");
+	}
+	
+	public static void Spawn(GameObject go, NPCData bots, Transform parent)
+	{
+		
+		GameObject newObj = GameObject.Instantiate(go, parent);
+        newObj.transform.localPosition = new Vector3(bots.scientist.x, bots.scientist.y, bots.scientist.z);
+		
+		NPCDataHolder npcs = newObj.AddComponent<NPCDataHolder>();
+		npcs.bots = bots;
+		newObj.GetComponent<NPCDataHolder>().bots = bots;
+        newObj.SetActive(true);
+		
+	}
+	
 	
     /// <summary>Spawns a prefab, updates the PrefabData and parents to the selected transform.</summary>
     
@@ -209,6 +238,15 @@ public static class PrefabManager
         if (!IsChangingPrefabs)
             EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SpawnCircuits(circuits, progressID));
     }
+	public static void SpawnModifiers(ModifierData modifiers)
+	{
+		Spawn(DefaultPrefab, modifiers, ModifiersParent);
+	}
+	public static void SpawnNPCs(NPCData[] bots, int progressID)
+    {
+        if (!IsChangingPrefabs)
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SpawnNPCs(bots, progressID));
+    }
     /// <summary>Deletes prefabs from scene.</summary>
     public static void DeletePrefabs(PrefabDataHolder[] prefabs, int progressID = 0)
     {
@@ -220,6 +258,20 @@ public static class PrefabManager
     {
         if (!IsChangingPrefabs)
             EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.DeleteCircuits(circuits, progressID));
+    }
+	
+	public static void DeleteModifiers(ModifierDataHolder modifiers)
+    {
+		if (modifiers != null)
+		{
+			GameObject.DestroyImmediate(modifiers.gameObject);
+		}
+    }
+	
+	public static void DeleteNPCs(NPCDataHolder[] npcs, int progressID = 0)
+    {
+        if (!IsChangingPrefabs)
+            EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.DeleteNPCs(npcs, progressID));
     }
 	
 	public static GameObject SpawnPrefab(GameObject g, PrefabData prefabData, Transform parent = null)
@@ -1263,7 +1315,7 @@ public static class PrefabManager
 										}
 										else if(category == "ShredableSpawner")
 										{
-											replaceID = 962565779;
+											replaceID = 1995839277;
 											blacklistedCreatePrefab("Decor", replaceID, adjuster, spawnItem);
 										}
 										else if(category == "blocker")
@@ -2479,11 +2531,18 @@ public static class PrefabManager
     {
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenamePrefabCategories(prefabs, name));
     }
+	
+	public static void RenameNPCs(NPCDataHolder[] bots, string name)
+    {
+        EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenameNPCs(bots, name));
+    }
 
     public static void RenamePrefabIDs(PrefabDataHolder[] prefabs, uint id, bool replace)
     {
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenamePrefabIDs(prefabs, id, replace));
     }
+	
+	
 
     private static class Coroutines
     {
@@ -2546,6 +2605,25 @@ public static class PrefabManager
             Progress.Finish(progressID, Progress.Status.Succeeded);
         }
 
+		public static IEnumerator SpawnNPCs(NPCData[] bots, int progressID)
+        {
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+			
+            for (int i = 0; i < bots.Length; i++)
+            {
+                if (sw.Elapsed.TotalSeconds > 4f)
+                {
+                    yield return null;
+                    Progress.Report(progressID, (float)i / bots.Length, "Spawning NPCs: " + i + " / " + bots.Length);
+                    sw.Restart();
+                }
+                Spawn(DefaultPrefab, bots[i], NPCsParent);
+            }
+            Progress.Report(progressID, 0.99f, "Spawned " + bots.Length + " npcs.");
+            Progress.Finish(progressID, Progress.Status.Succeeded);
+        }
+
         public static IEnumerator DeletePrefabs(PrefabDataHolder[] prefabs, int progressID = 0)
         {
             var sw = new System.Diagnostics.Stopwatch();
@@ -2587,6 +2665,28 @@ public static class PrefabManager
                 GameObject.DestroyImmediate(circuits[i].gameObject);
             }
             Progress.Report(progressID, 0.99f, "Deleted " + circuits.Length + " circuits.");
+            Progress.Finish(progressID, Progress.Status.Succeeded);
+        }
+		
+		public static IEnumerator DeleteNPCs(NPCDataHolder[] npcs, int progressID = 0)
+        {
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            if (progressID == 0)
+                progressID = Progress.Start("Delete NPCs", null, Progress.Options.Sticky);
+
+            for (int i = 0; i < npcs.Length; i++)
+            {
+                if (sw.Elapsed.TotalSeconds > 0.25f)
+                {
+                    yield return null;
+                    Progress.Report(progressID, (float)i / npcs.Length, "Deleting Circuits: " + i + " / " + npcs.Length);
+                    sw.Restart();
+                }
+                GameObject.DestroyImmediate(npcs[i].gameObject);
+            }
+            Progress.Report(progressID, 0.99f, "Deleted " + npcs.Length + " NPCs.");
             Progress.Finish(progressID, Progress.Status.Succeeded);
         }
 
@@ -2634,6 +2734,35 @@ public static class PrefabManager
 
             IsChangingPrefabs = false;
         }
+		
+		
+        public static IEnumerator RenameNPCs(NPCDataHolder[] bots, string name)
+        {
+		
+			ProgressManager.RemoveProgressBars("Rename NPC Categories");
+            int progressId = Progress.Start("Rename NPC Categories", null, Progress.Options.Sticky);
+
+            var sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
+
+            for (int i = 0; i < bots.Length; i++)
+            {
+				bots[i].bots.category = name;
+				if (sw.Elapsed.TotalSeconds > 0.2f)
+                {
+                    yield return null;
+                    Progress.Report(progressId, (float)i / bots.Length, "Renaming NPC Categories: " + i + " / " + bots.Length);
+                    sw.Restart();
+                }
+			}
+			
+			
+            
+
+            Progress.Report(progressId, 0.99f, "Renamed: " + bots.Length + " npcs.");
+            Progress.Finish(progressId);
+        }
+           
 
         public static IEnumerator RenamePrefabCategories(PrefabDataHolder[] prefabs, string name)
         {

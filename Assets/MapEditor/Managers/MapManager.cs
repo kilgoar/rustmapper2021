@@ -671,10 +671,15 @@ public static class MapManager
 		int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
 		int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
         int spwCircuit = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);
+		int spwNPCs = Progress.Start("NPCs", null, Progress.Options.Sticky, progressID);
 		PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs);
         PrefabManager.DeleteCircuits(PrefabManager.CurrentMapElectrics);
+		PrefabManager.DeleteNPCs(PrefabManager.CurrentMapNPCs);
+		PrefabManager.DeleteModifiers(PrefabManager.CurrentModifiers);
 		PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
 		PrefabManager.SpawnCircuits(mapInfo.circuitData, spwCircuit);
+		PrefabManager.SpawnNPCs(mapInfo.npcData, spwNPCs);
+		PrefabManager.SpawnModifiers(mapInfo.modifierData);
 		
     }
 	
@@ -685,9 +690,10 @@ public static class MapManager
 		int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(), "Preparing Map", Progress.Options.Sticky);
 		int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
         int spwCircuit = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);
+		int spwNPCs = Progress.Start("NPCs", null, Progress.Options.Sticky, progressID);
 		PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
 		PrefabManager.SpawnCircuits(mapInfo.circuitData, spwCircuit);
-		
+		PrefabManager.SpawnNPCs(mapInfo.npcData, spwNPCs);
     }
 	
 	public static void MergeOffsetREPrefab(MapInfo mapInfo, Transform parent, string loadPath = "")
@@ -723,7 +729,7 @@ public static class MapManager
 		//PrefabManager.RenamePrefabCategories(PrefabManager.CurrentMapPrefabs, path.Split('/').Last().Split('.')[0] + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10));
 		string name = path.Split('/').Last().Split('.')[0];
 		PrefabManager.RenamePrefabCategories(PrefabManager.CurrentMapPrefabs, ":" + name + "::");
-		
+		PrefabManager.RenameNPCs(PrefabManager.CurrentMapNPCs, ":" + name + "::");
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.SaveCustomPrefab(path));
     }
 
@@ -744,13 +750,18 @@ public static class MapManager
             int delPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
             int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
 			int spwCircuit = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);
-            //int spwElectric = Progress.Start("Electrical", null, Progress.Options.Sticky, progressID);
+			int spwNPCs = Progress.Start("NPCs", null, Progress.Options.Sticky, progressID);
+			
 			
 			PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, delPrefab);
 			PrefabManager.DeleteCircuits(PrefabManager.CurrentMapElectrics);
+			PrefabManager.DeleteNPCs(PrefabManager.CurrentMapNPCs);
+			
 			CentreSceneObjects(mapInfo);
 			PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);
 			PrefabManager.SpawnCircuits(mapInfo.circuitData, spwCircuit);
+			Debug.LogError("OK, boomer.");
+			PrefabManager.SpawnNPCs(mapInfo.npcData, spwNPCs);
 			
 			var sw = new System.Diagnostics.Stopwatch();
 			while (Progress.GetProgressById(spwPrefab).running)
@@ -785,7 +796,10 @@ public static class MapManager
 				var splatMapTask = Task.Run(() => SetSplatMaps(mapInfo));
 
 				PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs, delPrefab);
+				
+				
 				PathManager.DeletePaths(PathManager.CurrentMapPaths, delPath);
+				
 				CentreSceneObjects(mapInfo);
 				SetTerrain(mapInfo, terrainID);
 				PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab);

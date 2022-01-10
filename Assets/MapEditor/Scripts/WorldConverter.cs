@@ -25,6 +25,8 @@ public static class WorldConverter
 		public CircuitDataHolder circuitDataHolder;
 		public CircuitData[] circuitData;
         public PathData[] pathData;
+		public NPCData[] npcData;
+		public ModifierData modifierData;
     }
 
     public struct TerrainInfo
@@ -123,6 +125,8 @@ public static class WorldConverter
 		refab.prefabData = world.rePrefab.prefabs.ToArray();
 		//refab.circuitDataHolder = world.rePrefab.electric;
 		refab.circuitData = world.rePrefab.electric.circuitData.ToArray();
+		refab.npcData = world.rePrefab.npcs.bots.ToArray();
+		refab.modifierData = world.rePrefab.modifiers;
 		
 		for (int k = 0; k < refab.circuitData.Length; k++)
 		{
@@ -170,6 +174,18 @@ public static class WorldConverter
 	public static WorldSerialization TerrainToCustomPrefab((int prefab, int circuit) ID) 
     {
         WorldSerialization world = new WorldSerialization();
+		
+		world.rePrefab.modifiers = PrefabManager.CurrentModifiers.modifierData;
+		
+		
+		foreach(NPCDataHolder p in PrefabManager.CurrentMapNPCs)
+		{
+			if (p.bots != null)
+			{
+				world.rePrefab.npcs.bots.Insert(0, p.bots);
+			}
+		}
+		
 		
         foreach (PrefabDataHolder p in PrefabManager.CurrentMapPrefabs)
         {

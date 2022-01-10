@@ -36,17 +36,40 @@ public class WorldSerialization
 	[ProtoContract]
 	public class REPrefabData
     {
-		[ProtoMember(1)] public string emptychunk = "";
+		[ProtoMember(1)] public ModifierData modifiers = new ModifierData();
         [ProtoMember(3)] public List<PrefabData> prefabs = new List<PrefabData>();
         [ProtoMember(5)] public CircuitDataHolder electric = new CircuitDataHolder();	
 		[ProtoMember(6)] public string emptychunk1 = "";		
-		[ProtoMember(7)] public string emptychunk2 = "";		
+		[ProtoMember(7)] public NPCDataHolder npcs = new NPCDataHolder();		
 		[ProtoMember(8)] public string emptychunk3 = "";		
 		[ProtoMember(9)] public string emptychunk4 = "";		
 		[ProtoMember(10)] public string buildingchunk = "";		
 		[ProtoMember(11)] public string checksum;
     }
+
+	[Serializable]
+    [ProtoContract]
+	public class ModifierData
+	{
+		[ProtoMember(1)] public int size;
+		[ProtoMember(2)] public int fade;
+		[ProtoMember(3)] public int fill;
+		[ProtoMember(4)] public int counter;
+		[ProtoMember(5)] public uint id;
+	}
 	
+	[Serializable]
+    [ProtoContract]
+	public class NPCDataHolder
+	{
+		[ProtoMember(1)] public List<NPCData> bots = new List<NPCData>();
+		
+		public NPCDataHolder() { }
+        public NPCDataHolder(List<NPCData> bots)
+        {
+            this.bots = bots;
+		}
+	}
 
     [ProtoContract]
     public class MapData
@@ -113,8 +136,29 @@ public class WorldSerialization
 			this.flow2 = flow2;
 			this.cctv = cctv;
 			this.phone = phone;
-        }
+		}
 		
+	}
+	
+	[Serializable]
+    [ProtoContract]
+    public class NPCData
+	{
+		[ProtoMember(1)] public int type;
+		[ProtoMember(2)] public int respawnMin;
+		[ProtoMember(3)] public int respawnMax;
+		[ProtoMember(4)] public VectorData scientist;
+		[ProtoMember(5)] public string category;
+		
+		public NPCData() { }
+		public NPCData(int type, int respawnMin, int respawnMax, VectorData scientist, string category)
+		{
+			this.type = type;
+			this.respawnMin = respawnMin;
+			this.respawnMax = respawnMax;
+			this.scientist = scientist;
+			this.category = category;
+		}
 	}
 	
 	[Serializable]
@@ -390,7 +434,7 @@ public class WorldSerialization
 					{
 						
 						rePrefab = Serializer.Deserialize<REPrefabData>(compressionStream);
-						Debug.LogError(rePrefab.checksum);
+						
 					}
 				}
                 
