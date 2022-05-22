@@ -43,6 +43,7 @@ types = {
      2:("Vector3", "wiring"),
      3:("subcircuit", "connection"),
      4:("subcircuit", "connection"),
+     5:("int32", "cardcolor"),
      6:("int32", "flow"),
      7:("float", "setting"),
      11:("chunk", "flow"),

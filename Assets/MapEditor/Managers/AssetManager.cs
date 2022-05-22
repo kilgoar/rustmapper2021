@@ -32,6 +32,7 @@ public static class AssetManager
 
 	public static Dictionary<uint, string> IDLookup { get; private set; } = new Dictionary<uint, string>();
 	public static Dictionary<string, uint> PathLookup { get; private set; } = new Dictionary<string, uint>();
+	public static Dictionary<string, uint> PrefabLookup { get; private set; } = new Dictionary<string, uint>();
 	public static Dictionary<string, AssetBundle> BundleLookup { get; private set; } = new Dictionary<string, AssetBundle>();
 
 	public static Dictionary<string, AssetBundle> BundleCache { get; private set; } = new Dictionary<string, AssetBundle>(System.StringComparer.OrdinalIgnoreCase);
@@ -83,6 +84,7 @@ public static class AssetManager
 		}
 		return asset;
 	}
+
 
 	public static GameObject LoadPrefab(string filePath)
     {
@@ -171,25 +173,140 @@ public static class AssetManager
 		return i.ToString();
 	}
 
-	public static uint partialToID(string str, string str2)
+	public static uint fragmentToID(string fragment, string parent, string monument)
+	{
+		string[] parseFragment;
+		string newFragment;
+		uint parentID = 0;
+		uint ID = 0;
+		uint returnID = 0;
+			
+		if (SettingsManager.fragmentIDs.fragmentNamelist.TryGetValue("/" + parent + "/", out parentID))
+		{		}
+		else
+		{		}
+		
+		parseFragment = fragment.Split(' ');
+		newFragment = parseFragment[0].ToLower();
+		
+		if (monument == "Oilrig 1")
+		{
+			if (PrefabLookup.TryGetValue("plo#"+newFragment, out ID))
+			{ returnID=ID;	}
+			else
+			{	}
+		}
+		else if (monument == "Oilrig 2")
+		{
+			if (PrefabLookup.TryGetValue("pso#"+newFragment, out ID))
+			{	returnID=ID;	}
+			else
+			{		}
+		}
+		
+		
+
+		if (PrefabLookup.TryGetValue(newFragment, out ID))
+		{	returnID = ID;	}
+		else
+		{	
+			newFragment = specialParse(newFragment, monument); 
+			if (PrefabLookup.TryGetValue(newFragment, out ID))
+			{	returnID = ID;	}
+		}
+		
+		
+		if (parentID!=0)
+		{	returnID = parentID;	}
+		
+		if (SettingsManager.fragmentIDs.fragmentNamelist.TryGetValue(fragment, out ID))
+			{	
+				return ID;		
+			}
+		else
+		{	return returnID;	}
+	}
+
+	public static string specialParse(string str, string str2)
 	{
 		string path, prefab, folder;
 		string[] parse, parse2, parse3;
 		folder = "";
 
 		
-		if(str.Contains("SimpleSwitch_RCD_PressButton") || str.Contains("SimpleSwitch_garage") || str.Contains("SimpleSwitch_Lab") ||
-		str.Contains("SimpleSwitch_upstairs"))
-			{
-				Debug.LogError("SimpleSwitch++");
-				return 2055550712;				
-			}
-		else if(str.Contains("GCD1"))
+	
+		if(str.Contains("GCD1"))
 
 		{
 							parse = str.Split('_');
 							str = parse[1];
+		}			
+		else if(str.Contains("GCD") || str.Contains("BCD") || str.Contains("RCD") || str.Contains("GDC"))
+		{
+							parse = str.Split('_');
+							if(str2 == "Oilrig 2")
+							{
+								str = parse[1];
+							}
+							else
+							{
+								str = parse[2];
+							}
+		}
+		else if (str.Contains("outbuilding") || str.Contains("rowhouse"))
+			{
+						//remove color tags
+						parse2 = str.Split('-');
+						str = parse2[0];
+			}
+		else
+		{			
+			if (str2 == "arctic research base a")
+			{
+				string[] parse4;
+				int trash = 0;
+				parse4 = str.Split('_');
+													
+					if (int.TryParse(parse4[parse4.GetLength(0)-1], out trash))
+					{
+						if ((!str.Contains("trail") && trash != 300 && trash != 600 && trash != 900))
+						{
+							str = str.Replace("_" + trash.ToString(), "");
+										//parse4[parse4.GetLength(0)-1] = "";
+										//str = string.Join("_",parse4);
+										//str = str.Remove(str.Length-1);
+						}
+						else if (str.Contains("rock"))
+						{
+							str = str.Replace("_" + trash.ToString(), "");
 							Debug.LogError(str);
+							//parse4[parse4.GetLength(0)-1] = "";
+							//str = string.Join("_",parse4);
+							//str = str.Remove(str.Length-1);
+							
+						}
+					}
+			}
+		}
+			
+		
+		
+		return str;
+	}
+
+public static uint partialToID(string str, string str2)
+	{
+		string path, prefab, folder;
+		string[] parse, parse2, parse3;
+		folder = "";
+
+		
+	
+		if(str.Contains("GCD1"))
+
+		{
+							parse = str.Split('_');
+							str = parse[1];
 		}			
 		else if(str.Contains("GCD") || str.Contains("BCD") || str.Contains("RCD") || str.Contains("GDC"))
 					{
@@ -204,98 +321,27 @@ public static class AssetManager
 							}
 					}
 		
+		
+		
 		parse3 = str.Split(' ');
 		str = parse3[0].ToLower();
-		if(str == "simplelight_upstairs" || str == "simplelight_downstairs")
-		{
-			return 1797934483;
-		}
-		else if(str == "sentry.bandit.static")
-		{
-			return 1386184467;
-		}
-		else if(str == "Water_cull")
-		{
-			return 1206870171;
-		}
-		else if(str == "office_planter_300_brick")
-		{
-			return 217857271;
-		}
-		else if(str == "rocket_factory_tower_ledge_a")
-		{
-			return 366766480;
-		}
+		//remove most number tags
 		
-		else if(str == "office_planter_600_brick")
+		if (str2 == "arctic research base a")
 		{
-			return 362425135;
-		}
-		else if(str == "fusebox")
-		{
-			return 3622071578;
-		}
-		else if(str == "industrial_bld_e_grey")
-		{
-			return 1926269204;
-		}
-		else if(str == "industrial_bld_f_grey")
-		{
-			return 2378803546;
-		}
-		else if(str == "industrial_bld_c_grey")
-		{
-			return 3218222784;
-		}
-		else if(str == "industrial_bld_h_grey")
-		{
-			return 4109921046;
-		}
-		else if(str == "industrial_bld_i_grey")
-		{
-			return 3947470407;
-		}
-		else if(str == "industrial_bld_j_grey")
-		{
-			return 239207260;
-		}
-		else if (str == "bunker.door")
-		{
-			return 4054330822;
-		}
-		else if (str == "patrol_helicopter_gibs")
-		{
-			return 893284419;
-		}
-		else if(str == "fusebox_armory" || str =="fusebox_surface" || str == "fusebox_control_room" || str == "fusebox_entrance" || str == "fusebox_a"
-		|| str == "FuseBox_armory" || str == "FuseBox_surface")
-		{
-			return 3622071578;
-		}
-		else if(str == "generator.static_armory" || str == "generator.static_main" || str == "generator.static_escape" || str == "generator.static_garage" || str == "generator.static_powerplant")
-		{
-			return 1331920001;
-		}
-		
-		else if(str == "train_crane_a_yellow")
-		{
-			return 1351652590;
-		}
-		else if(str == "train_crane_a_red")
-		{
-			return 1198689434;
-		}
-		else if(str == "water_tower_industrial_red")
-		{
-			return 128145233;
-		}
-		else if(str == "spheretank_storage_tank")
-		{
-			return 4289935487;
-		}
-		else if(str == "fx-fusebox-sparks")
-		{
-			return 0; //bye bye bitch
+			string[] parse4;
+			int trash = 0;
+			parse4 = str.Split('_');
+												
+				if (int.TryParse(parse4[parse4.GetLength(0)-1], out trash))
+				{
+					if (!str.Contains("trail") && trash != 300 && trash != 600 && trash != 900)
+					{
+									parse4[parse4.GetLength(0)-1] = "";
+									str = string.Join("_",parse4);
+									str = str.Remove(str.Length-1);
+					}
+				}
 		}
 		else if (str2 == "Oilrig 1")
 		{
@@ -551,10 +597,42 @@ public static class AssetManager
 
 			var setLookups = Task.Run(() =>
 			{
+				string[] parse;
+				string name;
+				string monumentTag = "";
 				for (uint i = 0; i < Manifest.pooledStrings.Length; ++i)
 				{
 					IDLookup.Add(Manifest.pooledStrings[i].hash, Manifest.pooledStrings[i].str);
 					PathLookup.Add(Manifest.pooledStrings[i].str, Manifest.pooledStrings[i].hash);
+					
+					monumentTag = "";
+					
+					if(Manifest.pooledStrings[i].str.EndsWith(".prefab"))
+					{
+						if(Manifest.pooledStrings[i].str.Contains("prefabs_large_oilrig"))
+						{
+							monumentTag = "plo#";
+						}
+						else if(Manifest.pooledStrings[i].str.Contains("prefabs_small_oilrig"))
+						{
+							monumentTag = "pso#";
+						}
+						
+						parse = Manifest.pooledStrings[i].str.Split('/');
+						name = parse[parse.Length -1];
+						name = name.Replace(".prefab", "");
+						name = monumentTag + name;
+						
+						try
+						{
+							PrefabLookup.Add(name, Manifest.pooledStrings[i].hash);
+						}
+						catch
+						{
+							
+						}
+					}
+					
 					if (ToID(Manifest.pooledStrings[i].str) != 0)
 						AssetPaths.Add(Manifest.pooledStrings[i].str);
 				}

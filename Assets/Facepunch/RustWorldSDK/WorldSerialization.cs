@@ -99,9 +99,10 @@ public class WorldSerialization
         [ProtoMember(2)] public VectorData wiring;
 		[ProtoMember(3)] public List<Circuit> branchIn = new List<Circuit>();
 		[ProtoMember(4)] public List<Circuit> branchOut = new List<Circuit>();
+		[ProtoMember(5)] public int cardType;
 		[ProtoMember(6)] public int flow1;
 		[ProtoMember(7)] public float setting;
-		//[ProtoMember(11)] public int flow2;
+		//[ProtoMember(11)] public int manipulator;
 		//[ProtoMember(14)] public int flow3;
 		
 		[ProtoMember(14)] public string cctv;
@@ -113,7 +114,7 @@ public class WorldSerialization
 		public Circuit[] connectionsOut;
 		
 		public CircuitData() { }
-        public CircuitData(string path, Vector3 wiring, List<Circuit> branchIn, List<Circuit> branchOut, int flow1, float setting, int flow2, string cctv, string phone)
+        public CircuitData(string path, Vector3 wiring, List<Circuit> branchIn, List<Circuit> branchOut, int flow1, float setting,int flow2, string cctv, string phone)
         {
             this.path = path;
             this.wiring = wiring;

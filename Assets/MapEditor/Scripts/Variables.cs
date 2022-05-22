@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.IMGUI.Controls;
 
 namespace RustMapEditor.Variables
 {
@@ -197,6 +200,7 @@ namespace RustMapEditor.Variables
 		public int zStart, gateBottom, gateTop, gates, descaleFactor, perlinDensity;
 	}
 	
+	
 	[Serializable]
 	public struct PerlinPreset
 	{
@@ -229,6 +233,13 @@ namespace RustMapEditor.Variables
 	}
 	
 	[Serializable]
+	public struct BreakerPreset
+	{
+		public string title;
+		public MonumentData monument;
+	}
+	
+	[Serializable]
 	public struct OceanPreset
 	{
 		public string title;
@@ -237,7 +248,309 @@ namespace RustMapEditor.Variables
 	}
 	//int radius, int gradient, float seafloor, int xOffset, int yOffset, bool perlin, int s
 	
+	[Serializable]
+	public struct Colliders
+	{
+		public Vector3 box, sphere, capsule;
+	}
 	
+	[Serializable]
+	public struct BreakingData
+	{
+		public string name;
+		public uint id;
+		public bool ignore;
+		public int treeID;
+		public Colliders colliderScales;
+		public WorldSerialization.PrefabData prefabData;
+		public string parent;
+		
+	}
+	
+	[Serializable]
+	public class MonumentData
+	{
+		public List<CategoryData> category = new List<CategoryData>();
+		public string monumentName;
+	}
+	
+	[Serializable]
+	public class GreatGreatGrandchildrenData
+	{
+		public BreakingData breakingData = new BreakingData();
+		
+		public GreatGreatGrandchildrenData(BreakingData breakingData)
+		{
+			this.breakingData = breakingData;
+		}
+	}
+	
+	[Serializable]
+	public class GreatGrandchildrenData
+	{
+		public BreakingData breakingData = new BreakingData();
+		public List<GreatGreatGrandchildrenData> greatgreatgrandchild = new List<GreatGreatGrandchildrenData>();
+		
+		public GreatGrandchildrenData(BreakingData breakingData)
+		{
+			this.breakingData = breakingData;
+		}
+	}
+	
+	[Serializable]
+	public class GrandchildrenData
+	{
+		public BreakingData breakingData = new BreakingData();
+		public List<GreatGrandchildrenData> greatgrandchild = new List<GreatGrandchildrenData>();
+		
+		public GrandchildrenData(BreakingData breakingData)
+		{
+			this.breakingData = breakingData;
+		}
+	}
+	
+	[Serializable]
+	public class ChildrenData
+	{
+		public BreakingData breakingData = new BreakingData();
+		public List<GrandchildrenData> grandchild = new List<GrandchildrenData>();
+		
+		public ChildrenData(BreakingData breakingData)
+		{
+			this.breakingData = breakingData;
+		}
+	}
+	
+	[Serializable]
+	public class CategoryData
+	{
+		public BreakingData breakingData = new BreakingData();
+		public List<ChildrenData> child = new List<ChildrenData>();
+		
+		public CategoryData(BreakingData breakingData)
+		{
+			this.breakingData = breakingData;
+		}
+	}
+
+	public class IconTextures
+	{
+		public Texture2D gears;
+		public Texture2D scrap;
+		public Texture2D stop;
+		public Texture2D tarp;
+		public Texture2D trash;
+		public IconTextures(Texture2D gears, Texture2D scrap, Texture2D stop, Texture2D tarp, Texture2D trash)
+		{
+			this.gears = gears; this.scrap = scrap; this.stop = stop; this.tarp = tarp; this.trash = trash;
+		}
+	}
+	
+	public class BreakingItem : TreeViewItem 
+	{
+		public BreakingData breakingData;
+		
+		public BreakingItem(TreeViewItem treeItem, BreakingData breakingData)
+		{
+			this.displayName = breakingData.name;
+			
+			this.breakingData = breakingData;
+		}
+	}
+	
+	public class BreakerTreeView : TreeView
+	{
+		public MonumentData monumentFragments;
+		public IconTextures icons;
+		public List<BreakingData> fragment = new List<BreakingData>();
+		
+		public IList<int> ChildList(int ID)
+		{
+			IList<int> IDlist = new List<int>();
+			TreeViewItem parent =  this.FindItem(ID, rootItem);
+			
+			if (parent.hasChildren)
+			{
+				
+				List<TreeViewItem> childList =  parent.children;
+				foreach (TreeViewItem item in this.FindItem(ID, rootItem).children)
+				{
+					IDlist.Add(item.id);
+				}
+			}
+			else
+			{
+				IDlist.Add(parent.id);
+			}
+			return IDlist;
+		}
+		
+		public void ClearSelection()
+		{
+			IList<int> IDlist = new List<int>();
+			this.SetSelection(IDlist);
+		}
+		
+		public void ConcatSelection(IList<int> newSelection)
+		{
+			this.SetSelection(this.GetSelection().Concat(newSelection).ToList());
+		}
+		
+		public void LoadFragments(MonumentData fragments)
+		{
+			monumentFragments = fragments;
+			Reload();
+		}
+		
+		public void LoadIcons(IconTextures iconLoader)
+		{
+			icons = iconLoader;
+		}
+		
+		public void Update()
+		{	
+			if (monumentFragments != null)
+			{
+					for (int i = 0; i < monumentFragments.category.Count; i++) 
+					{
+						
+						monumentFragments.category[i].breakingData = fragment[monumentFragments.category[i].breakingData.treeID];
+						
+						for (int j = 0; j <monumentFragments.category[i].child.Count; j++)
+						{
+							monumentFragments.category[i].child[j].breakingData = fragment[monumentFragments.category[i].child[j].breakingData.treeID];
+								
+							for (int k = 0; k <monumentFragments.category[i].child[j].grandchild.Count; k++)
+							{
+								monumentFragments.category[i].child[j].grandchild[k].breakingData = fragment[monumentFragments.category[i].child[j].grandchild[k].breakingData.treeID];
+								
+								for (int m = 0; m <monumentFragments.category[i].child[j].grandchild[k].greatgrandchild.Count; m++)
+								{
+									monumentFragments.category[i].child[j].grandchild[k].greatgrandchild[m].breakingData = fragment[monumentFragments.category[i].child[j].grandchild[k].greatgrandchild[m].breakingData.treeID];
+								}
+							}
+						}
+					}
+			}
+			Reload();
+		}
+		
+		public BreakerTreeView(TreeViewState treeViewState)
+			: base(treeViewState)
+		{
+			Reload();
+		}
+		
+		
+		
+		protected override TreeViewItem BuildRoot ()
+		{
+			// BuildRoot is called every time Reload is called to ensure that TreeViewItems 
+			// are created from data. Here we create a fixed set of items. In a real world example,
+			// a data model should be passed into the TreeView and the items created from the model.
+
+			// This section illustrates that IDs should be unique. The root item is required to 
+			// have a depth of -1, and the rest of the items increment from that.
+			var root = new TreeViewItem {id = 0, depth = -1, displayName = "Root"};
+			int idCount = 0;
+			fragment = new List<BreakingData>();
+			
+			BreakingItem childTree, grandchildTree, greatgrandchildTree, greatgreatgrandchildTree;
+			if (monumentFragments != null)
+			{
+					for (int i = 0; i < monumentFragments.category.Count; i++) 
+					{
+						monumentFragments.category[i].breakingData.treeID = idCount;						
+						childTree = new BreakingItem (new TreeViewItem {id = idCount, displayName = monumentFragments.category[i].breakingData.name}, monumentFragments.category[i].breakingData);
+						fragment.Add(monumentFragments.category[i].breakingData);
+						childTree.id = idCount;
+						childTree.icon = PrefabManager.GetIcon(monumentFragments.category[i].breakingData, icons);
+						childTree.displayName = monumentFragments.category[i].breakingData.name;
+						root.AddChild (childTree);
+						idCount++;
+						
+						for (int j = 0; j <monumentFragments.category[i].child.Count; j++)
+						{
+							monumentFragments.category[i].child[j].breakingData.treeID = idCount;
+							grandchildTree = new BreakingItem (new TreeViewItem {id = idCount, displayName = monumentFragments.category[i].child[j].breakingData.name}, monumentFragments.category[i].child[j].breakingData);
+							fragment.Add(monumentFragments.category[i].child[j].breakingData);
+							grandchildTree.id = idCount;
+							grandchildTree.icon = PrefabManager.GetIcon(monumentFragments.category[i].child[j].breakingData, icons);
+							childTree.AddChild(grandchildTree);
+							idCount++;
+							
+							for (int k = 0; k <monumentFragments.category[i].child[j].grandchild.Count; k++)
+							{
+								monumentFragments.category[i].child[j].grandchild[k].breakingData.treeID = idCount;
+								greatgrandchildTree = new BreakingItem(new TreeViewItem {id = idCount, displayName = monumentFragments.category[i].child[j].grandchild[k].breakingData.name}, monumentFragments.category[i].child[j].grandchild[k].breakingData);
+								fragment.Add(monumentFragments.category[i].child[j].grandchild[k].breakingData);
+								greatgrandchildTree.id = idCount;
+								greatgrandchildTree.icon = PrefabManager.GetIcon(monumentFragments.category[i].child[j].grandchild[k].breakingData, icons);
+								grandchildTree.AddChild(greatgrandchildTree);
+								idCount++;
+								
+								for (int m = 0; m <monumentFragments.category[i].child[j].grandchild[k].greatgrandchild.Count; m++)
+								{
+									monumentFragments.category[i].child[j].grandchild[k].greatgrandchild[m].breakingData.treeID = idCount;
+									greatgreatgrandchildTree = new BreakingItem(new TreeViewItem {id = idCount, displayName = monumentFragments.category[i].child[j].grandchild[k].greatgrandchild[m].breakingData.name}, monumentFragments.category[i].child[j].grandchild[k].greatgrandchild[m].breakingData);
+									fragment.Add(monumentFragments.category[i].child[j].grandchild[k].greatgrandchild[m].breakingData);
+									greatgreatgrandchildTree.id = idCount;
+									greatgreatgrandchildTree.icon = PrefabManager.GetIcon(monumentFragments.category[i].child[j].grandchild[k].greatgrandchild[m].breakingData, icons);
+									greatgrandchildTree.AddChild(greatgreatgrandchildTree);
+									idCount++;
+								}
+							}
+							
+						}
+						
+					}
+			}
+			else
+			{
+				root.AddChild(new TreeViewItem   { id = 1, displayName = " " });
+			}
+			
+			SetupDepthsFromParentsAndChildren(root);
+
+			return root;
+		}
+	}
+	
+	[Serializable]
+	public struct FragmentPair
+	{
+		public string fragment;
+		public uint id;
+		
+		public FragmentPair(string fragment,uint id)
+		{
+			this.fragment = fragment;
+			this.id = id;
+		}
+	}
+	
+	[Serializable]
+	public class FragmentLookup
+	{
+		public List<FragmentPair> fragmentPairs = new List<FragmentPair>();
+		public Dictionary<string,uint> fragmentNamelist = new Dictionary<string,uint>();
+		
+		public void LoadPairList(List<FragmentPair> fragmentPairs)
+		{
+			this.fragmentPairs = fragmentPairs;
+		}
+		
+		public void Deserialize()
+		{
+			this.fragmentNamelist = SettingsManager.ListToDict(this.fragmentPairs);
+		}
+		
+		public void Serialize()
+		{
+			this.fragmentPairs = SettingsManager.DictToList(this.fragmentNamelist);
+		}
+		
+	}
 	
 	[Serializable]
 	public struct ReplacerPreset

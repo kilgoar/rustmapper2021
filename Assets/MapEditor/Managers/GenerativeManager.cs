@@ -5,6 +5,7 @@ using static WorldSerialization;
 using static TerrainManager;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System;
@@ -97,6 +98,126 @@ public static class GenerativeManager
 			EditorUtility.ClearProgressBar();
 			land.terrainData.SetHeights(0, 0, puckeredMap);
 	}
+	
+	public static float[,] loadHeightmap(string path)
+	{
+		
+		
+		byte[] sample = File.ReadAllBytes(path);
+		Texture2D sampleTexture = new Texture2D(2,2);
+		sampleTexture.LoadRawTextureData(sample);
+		Color[] colorMap = sampleTexture.GetPixels();
+		int res = colorMap.GetLength(0); 
+		res=(int)Math.Sqrt(res);
+		float[,] heightMap = new float[res,res];
+		
+		for (int i = 0; i < res; i++)
+			{
+					
+				for (int j = 0; j < res; j++)
+				{
+					heightMap[i,j] = colorMap[i + j * res].grayscale;
+				}
+			}
+		
+		
+		return heightMap;
+	}
+	
+	public static void diamondSquareNoise(int roughness, int height, int weight)
+	{
+			Terrain land = GameObject.FindGameObjectWithTag("Land").GetComponent<Terrain>();
+			float[,] baseMap = land.terrainData.GetHeights(0, 0, land.terrainData.heightmapResolution, land.terrainData.heightmapResolution);			
+			int res = baseMap.GetLength(0);
+			float[,] newMap = new float[res,res];
+			
+			//copied from robert stivanson's 'unity-diamond-square'
+			//https://github.com/RobertStivanson
+			
+			//initialize corners
+			
+			newMap[0,0] = UnityEngine.Random.Range(475,525)/1000f;
+			newMap[res-1,0] = UnityEngine.Random.Range(475,525)/1000f;
+			newMap[0,res-1] = UnityEngine.Random.Range(475,525)/1000f;
+			newMap[res-1, res-1] = UnityEngine.Random.Range(475,525)/1000f;
+			
+			
+			int j, j2, x, y;
+			float avg = 0.5f;
+			float range = 1f;			
+			
+			for (j = res - 1; j > 1; j /= 2) 
+			{
+				j2 = j / 2;
+			
+				//diamond
+				for (x = 0; x < res - 1; x += j) 
+				{
+					for (y = 0; y < res - 1; y += j) 
+					{
+						avg = newMap[x, y];
+						avg += newMap[x + j, y];
+						avg += newMap[x, y + j];
+						avg += newMap[x + j, y + j];
+						avg /= 4.0f;
+
+						avg += (UnityEngine.Random.Range(0,height)/1000f - height/1500f) * range;
+						newMap[x + j2, y + j2] = avg;
+					}
+				}
+				
+				//square
+				for (x = 0; x < res - 1; x += j2) 
+				{
+					for (y = (x + j2) % j; y < res - 1; y += j) 
+					{
+						avg = newMap[(x - j2 + res - 1) % (res - 1), y];
+						avg += newMap[(x + j2) % (res - 1), y];
+						avg += newMap[x, (y + j2) % (res - 1)];
+						avg += newMap[x, (y - j2 + res - 1) % (res - 1)];
+						avg /= 4.0f;
+
+						
+						avg += (UnityEngine.Random.Range(0,height)/1000f - height/1500f) * range;
+						
+						
+						newMap[x, y] = avg;
+
+						
+						if (x == 0)
+						{							
+							newMap[res - 1, y] = avg;
+						}
+						
+
+						if (y == 0) 
+						{
+							newMap[x, res - 1] = avg;
+						}
+						
+	
+					}
+				}
+				
+				range -= (float)(Math.Log10(1+roughness/100f)*range);
+			
+			
+			
+			}
+
+			
+			for(int h = 0; h < res; h++)
+			{
+				for(int i = 0; i < res; i++)
+				{
+					//hi
+					newMap[h,i] = (newMap[h,i] * (weight/100f)) + (baseMap[h,i] * (1f-(weight/100f)));
+				}
+			}
+	
+			land.terrainData.SetHeights(0, 0, newMap);
+	
+	}	
 	
 	public static void perlinRidiculous(PerlinPreset perlin)
 	{
@@ -948,6 +1069,35 @@ public static class GenerativeManager
             }
         }
 		EditorUtility.ClearProgressBar();
+		TerrainManager.SetData(newGround, TerrainManager.LandLayer, 0);
+		TerrainManager.SetLayer(TerrainManager.LandLayer, 0);
+	}
+	
+	public static void splatDitherFill(int t)
+	{
+		
+		float[,,] newGround = TerrainManager.GroundArray;
+		int dim = newGround.GetLength(0);
+		
+		for (int x = 0; x < dim; x++)
+        {
+            for (int y = 0; y < dim; y++)
+            {
+				if (x%2==0 && y%2 ==0)
+				{
+					newGround[x, y, 0] = 0;
+					newGround[x, y, 1] = 0;
+					newGround[x, y, 2] = 0;
+					newGround[x, y, 3] = 0;
+					newGround[x, y, 4] = 0;
+					newGround[x, y, 5] = 0;
+					newGround[x, y, 6] = 0;
+					newGround[x, y, 7] = 0;
+					newGround[x, y, t] = 1;	
+				}
+			}
+		}
+		
 		TerrainManager.SetData(newGround, TerrainManager.LandLayer, 0);
 		TerrainManager.SetLayer(TerrainManager.LandLayer, 0);
 	}

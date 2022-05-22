@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using UnityEditor;
 using System.Linq;
 using static WorldSerialization;
 using Unity.EditorCoroutines.Editor;
 using System.Collections;
+using System.IO;
+using System;
 using System.Collections.Generic;
 using RustMapEditor.Variables;
 
@@ -44,6 +47,8 @@ public static class PrefabManager
         EditorApplication.update += OnProjectLoad;
     }
 
+	
+
     private static void OnProjectLoad()
     {
         DefaultPrefab = Resources.Load<GameObject>("Prefabs/DefaultPrefab");
@@ -75,8 +80,33 @@ public static class PrefabManager
     {
         return Load(AssetManager.ToPath(id));
     }
-
-
+	
+	public static float[,] LoadHeightmap(string path)
+	{
+		
+		byte[] sample = File.ReadAllBytes(path);
+		
+		Texture2D tex = new Texture2D(2,2);
+		tex.LoadImage(sample);
+		
+		Color[] colorMap = tex.GetPixels(0);
+		int res = colorMap.GetLength(0);
+		Debug.LogError(res);
+		res=(int)Math.Sqrt(res);
+		float[,] heightMap = new float[res,res];
+		
+		for (int i = 0; i < res; i++)
+			{
+					
+				for (int j = 0; j < res; j++)
+				{
+					heightMap[i,j] = colorMap[i + j * res].maxColorComponent;
+				}
+			}
+		
+		return heightMap;
+	}
+	
     /// <summary>Gets the parent prefab category transform from the hierachy.</summary>
    
 	public static Transform GetParent(string category)
@@ -294,6 +324,75 @@ public static class PrefabManager
 			MapManager.MergeOffsetREPrefab(WorldConverter.WorldToREPrefab(world), spawnItem, loadPath);
 	}
 	
+	public static Colliders ItemToColliders(Transform item)
+	{
+		Colliders colliderScales = new Colliders();
+		
+		if (item.TryGetComponent(typeof(SphereCollider), out Component comp))
+				{
+					SphereCollider collider = item.GetComponent(typeof(SphereCollider)) as SphereCollider;
+					colliderScales.sphere.x = collider.radius*2f;
+					colliderScales.sphere.y = collider.radius*2f;
+					colliderScales.sphere.z = collider.radius*2f;
+				}
+				
+		if (item.TryGetComponent(typeof(BoxCollider), out Component compt))
+				{
+					BoxCollider collider = item.GetComponent(typeof(BoxCollider)) as BoxCollider;
+					colliderScales.box = collider.size;
+				}
+				
+		if (item.TryGetComponent(typeof(CapsuleCollider), out Component compy))
+				{
+					CapsuleCollider collider = item.GetComponent(typeof(CapsuleCollider)) as CapsuleCollider;
+					colliderScales.capsule.x = collider.radius*2f;
+					colliderScales.capsule.z = collider.radius*2f;
+					colliderScales.capsule.y = collider.height;
+				}
+				
+		return colliderScales;
+	}
+	
+	public static Texture2D GetIcon(BreakingData breakingData, IconTextures icons)
+	{
+		//stop scrap tarp gears trash
+		if (breakingData.ignore)
+		{
+			return icons.trash;
+		}
+		else if (breakingData.prefabData.id == 0)
+		{
+			return icons.stop;
+		}
+		else if((breakingData.colliderScales.box != Vector3.zero) || (breakingData.colliderScales.sphere != Vector3.zero) || (breakingData.colliderScales.capsule != Vector3.zero))
+		{
+			return icons.tarp;
+		}
+		else
+		{
+			return icons.gears;
+		}
+	}
+	
+	
+	public static PrefabData ItemToPrefab(Transform item, string monumentName)
+	{
+		var prefab = new PrefabData();
+		Vector3 scale = new Vector3();
+		scale = item.lossyScale;
+		
+		prefab.category = "";
+		
+		prefab.position = item.position;
+		prefab.rotation = item.eulerAngles;
+		//prefab.id = AssetManager.partialToID(item.name, monumentName);
+		
+		
+		prefab.scale = scale;
+		
+		return prefab;
+	}
+	
 	public static void blacklistedCreatePrefab(string category, uint id, Vector3 adjuster, Transform spawnItem)
     {
 		/*
@@ -318,47 +417,31 @@ public static class PrefabManager
 			parse = spawnItem.name.Split(' ');
 			string itemName = parse[0];
 			
-			if (spawnItem.name.Contains("ball") || spawnItem.name.Contains("mound"))
-			{
-				//do not remove  snowballs or snowmounds of ice lakes
-			}
-			else
-			{
-					if (spawnItem.name.Contains("temperate") || spawnItem.name.Contains("arid") || spawnItem.name.Contains("tundra") || spawnItem.name.Contains("snow"))
+			
+
+
+				//pass over duplicate bushes etc
+					if (spawnItem.name.Contains("temperate") || spawnItem.name.Contains("tundra"))
 					{
 						return;
 					}
-			}
-			if (spawnItem.name == "sentry.bandit.static")
-			{
-				id = 1386184467;
-			}
-			if (spawnItem.name == "sliding_blast_door_WheelSwitch")
-			{
-				id = 3767520300;
-			}
-			if (spawnItem.name == "sliding_blast_door_PressButton")
-			{
-				id = 4224395968;
-			}
-			
-			if (itemName == "ladder_trigger_sewers" || itemName == "ladder_volume" || itemName == "ladder_volume_dock" || itemName == "ladder_volume_tower_c" || itemName == "ladder_volume_tower_b" 
-			|| itemName == "ladder_trigger_chimney" || itemName == "ladder" || itemName == "ladder (1)" || itemName == "ladder_volume_core (2)" ||
-			itemName == "ladder_volume (1)" ||
-			itemName == "ladder_volume (2)"||
-			itemName == "ladder_volume (3)"||
-			itemName == "ladder_volume (4)")
-			{
-				Debug.LogError(spawnItem.name);
-				id = 3381066643;
-				
-			}
-			
-			if (spawnItem.name == "collider_helper" || spawnItem.name == "collider_helper (1)" || spawnItem.name == "collider_helper (2)" || spawnItem.name == "stairs_colider"
-			|| spawnItem.name == "windowhack")
-			{
-				id = 3000049339;
-			}
+					else if (spawnItem.name.Contains("snow") || spawnItem.name.Contains("arid") )
+					{
+							if (spawnItem.name.Contains("ball") || spawnItem.name.Contains("mound")
+								|| spawnItem.name.Contains("shipping") || spawnItem.name.Contains("rock")
+								|| spawnItem.name.Contains("drum") || spawnItem.name.Contains("crate")
+								|| spawnItem.name.Contains("boxes") || spawnItem.name.Contains("Cliff"))
+								{
+									//do not remove  snowballs or snowmounds of ice lakes etc
+									
+								}
+							else
+								{
+									return;
+								}
+					}
+
+
 
 			
 		Vector3 rotation = spawnItem.eulerAngles;
@@ -398,6 +481,7 @@ public static class PrefabManager
 					if (id == 4190049974){ id = 3224970585;}
 					
 				}
+				
 				else if (spawnItem.TryGetComponent(typeof(BoxCollider), out Component compt))
 				{
 					BoxCollider collider = spawnItem.GetComponent(typeof(BoxCollider)) as BoxCollider;
@@ -405,6 +489,7 @@ public static class PrefabManager
 					scale = collider.size;
 					if(id ==3224970585){ id = 4190049974;}
 				}
+				
 				else if (spawnItem.TryGetComponent(typeof(CapsuleCollider), out Component compy))
 				{
 					CapsuleCollider collider = spawnItem.GetComponent(typeof(CapsuleCollider)) as CapsuleCollider;
@@ -448,7 +533,39 @@ public static class PrefabManager
 		SpawnPrefab(defaultObj, prefab, prefabsParent);
 		/*}*/
     }
+	//1537983469
 	
+	public static void placeCube(Vector3 position, Vector3 scale, float scaleDown)
+	{
+			float offset = scale.x / 2f;
+			Vector3 newPosition = new Vector3(position.x, position.y, position.z);
+			
+			createPrefab("cubeVillage", 1537983469, position, new Vector3(0,0,0), scale);
+			scale = scale / scaleDown;
+			
+			if (scale.x < .25f)
+			{
+				return;
+			}
+			
+			newPosition = new Vector3(position.x + offset, position.y + offset, position.z + offset);
+			placeCube(newPosition, scale, scaleDown);
+			newPosition = new Vector3(position.x + offset, position.y + offset , position.z - offset);
+			placeCube(newPosition, scale, scaleDown);
+			newPosition = new Vector3(position.x + offset, position.y - offset, position.z - offset);
+			placeCube(newPosition, scale, scaleDown);
+			newPosition = new Vector3(position.x - offset, position.y - offset, position.z - offset);
+			placeCube(newPosition, scale, scaleDown);
+			newPosition = new Vector3(position.x - offset, position.y + offset, position.z - offset);
+			placeCube(newPosition, scale, scaleDown);
+			newPosition = new Vector3(position.x - offset, position.y - offset, position.z + offset);
+			placeCube(newPosition, scale, scaleDown);
+			newPosition = new Vector3(position.x - offset, position.y + offset, position.z + offset);
+			placeCube(newPosition, scale, scaleDown);
+			newPosition = new Vector3(position.x + offset, position.y - offset, position.z + offset);
+			placeCube(newPosition, scale, scaleDown);
+			
+	}
 	
 	public static void createPrefab(string category, uint id, Vector3 position, Vector3 rotation, Vector3 scale)
     {
@@ -833,6 +950,141 @@ public static class PrefabManager
 		
 	}
 
+	public static bool isLOD(string name)
+	{
+		return (name.Contains("LOD") || (name.Contains("shadow_proxy")));
+	}
+
+	public static MonumentData deLOD(MonumentData monument)
+	{
+		MonumentData fragments = new MonumentData();
+
+
+	
+					for (int i = 0; i < monument.category.Count; i++)
+						{
+							if (!isLOD(monument.category[i].breakingData.name))
+								fragments.category.Add(monument.category[i]);
+							
+							for (int j = 0; j < monument.category[i].child.Count; j++)
+							{
+								if (!isLOD(monument.category[i].child[j].breakingData.name))
+									fragments.category[i].child.Add(monument.category[i].child[j]);
+								
+									for (int m = 0; m < monument.category[i].child[j].grandchild.Count; m++)
+									{
+										if (!isLOD(monument.category[i].child[j].grandchild[m].breakingData.name))
+											fragments.category[i].child[j].grandchild.Add(monument.category[i].child[j].grandchild[m]);									
+										
+										for (int n = 0; n < monument.category[i].child[j].grandchild[m].greatgrandchild.Count; n++)
+											{
+												if (!isLOD(monument.category[i].child[j].grandchild[m].greatgrandchild[n].breakingData.name))
+													fragments.category[i].child[j].grandchild[m].greatgrandchild.Add(monument.category[i].child[j].grandchild[m].greatgrandchild[n]);
+
+												for (int o = 0; o < monument.category[i].child[j].grandchild[m].greatgrandchild[n].greatgreatgrandchild.Count ; o++)
+												{
+													if (!isLOD(monument.category[i].child[j].grandchild[m].greatgrandchild[n].greatgreatgrandchild[o].breakingData.name))
+														fragments.category[i].child[j].grandchild[m].greatgrandchild[n].greatgreatgrandchild.Add(monument.category[i].child[j].grandchild[m].greatgrandchild[n].greatgreatgrandchild[o]);
+												}
+											
+											}
+											
+									}
+									
+							}
+						}
+			
+		
+		return fragments;
+	}
+
+	public static MonumentData monumentFragments(PrefabDataHolder[] prefabs)
+	{
+		MonumentData fragments = new MonumentData();
+		BreakingData breaking = new BreakingData();
+		Transform categoryItem, childItem, grandchildItem, greatGrandchildItem,greatgreatGrandchildItem;
+		int idCount = 0;
+		
+		
+		for (int k = 0; k < prefabs.Length; k++)
+		{
+			if (prefabs[k] != null)
+			{
+				fragments.monumentName = prefabs[k].name;
+	
+					for (int i = 0; i < prefabs[k].transform.childCount; i++)
+						{
+							categoryItem = prefabs[k].transform.GetChild(i);
+							breaking.name = categoryItem.name;
+							breaking.parent = fragments.monumentName;
+							breaking.treeID = idCount;
+							breaking.prefabData  = ItemToPrefab(categoryItem, fragments.monumentName);
+							breaking.colliderScales = ItemToColliders(categoryItem);
+							fragments.category.Add(new CategoryData(breaking));
+							idCount++;
+							
+							for (int j = 0; j < categoryItem.childCount; j++)
+							{
+								
+								childItem = categoryItem.GetChild(j);
+								breaking.name = childItem.name;
+								breaking.parent = categoryItem.name;
+								breaking.treeID = idCount;
+								breaking.prefabData  = ItemToPrefab(childItem, fragments.monumentName);
+								breaking.colliderScales = ItemToColliders(childItem);
+								fragments.category[i].child.Add(new ChildrenData(breaking));
+								idCount++;
+								
+									for (int m = 0; m < childItem.childCount; m++)
+									{
+										grandchildItem = childItem.GetChild(m);
+										breaking.name = grandchildItem.name;
+										breaking.parent = childItem.name;
+										breaking.treeID = idCount;
+										breaking.prefabData  = ItemToPrefab(grandchildItem, fragments.monumentName);
+										breaking.colliderScales = ItemToColliders(grandchildItem);
+										fragments.category[i].child[j].grandchild.Add(new GrandchildrenData(breaking));
+										idCount++;
+										
+										for (int n = 0; n < grandchildItem.childCount; n++)
+											{
+												greatGrandchildItem = grandchildItem.GetChild(n);
+												breaking.name = greatGrandchildItem.name;
+												breaking.parent = grandchildItem.name;
+												breaking.treeID = idCount;
+												breaking.prefabData  = ItemToPrefab(greatGrandchildItem, fragments.monumentName);
+												breaking.colliderScales = ItemToColliders(greatGrandchildItem);
+												fragments.category[i].child[j].grandchild[m].greatgrandchild.Add(new GreatGrandchildrenData(breaking));
+												idCount++;
+
+												for (int o = 0; o < greatGrandchildItem.childCount; o++)
+												{
+													greatgreatGrandchildItem = greatGrandchildItem.GetChild(o);
+													breaking.name = greatgreatGrandchildItem.name;
+													breaking.parent = greatGrandchildItem.name;
+													breaking.treeID = idCount;
+													breaking.prefabData  = ItemToPrefab(greatgreatGrandchildItem, fragments.monumentName);
+													breaking.colliderScales = ItemToColliders(greatgreatGrandchildItem);
+													fragments.category[i].child[j].grandchild[m].greatgrandchild[n].greatgreatgrandchild.Add(new GreatGreatGrandchildrenData(breaking));
+													idCount++;
+												}
+											
+											}
+											
+									}
+									
+							}
+						}
+			}
+		}
+		return fragments;
+	}
+	
+	public static void loadFragments(MonumentData monumentFragments, BreakerTreeView breakerTree)
+	{
+		breakerTree.LoadFragments(monumentFragments);
+	}
+
 	public static void breakMonument(PrefabDataHolder[] prefabs, float z, bool destroy)
 	{
 		//spawner IDs
@@ -858,7 +1110,7 @@ public static class PrefabManager
 		uint randomOre = 1654744457;
 		uint minecart = 2913715266;
 		
-		
+		uint fuel = 1604081969;
 		
 		int count = 0;
 		Transform scanItem;
@@ -887,251 +1139,9 @@ public static class PrefabManager
 							Debug.LogError(category);
 										
 										replaceID = 0;
-										if(monumentName == "power sub big 1" || monumentName == "power sub big 2" || 
-										monumentName == "power sub small 1" || monumentName == "power sub small 2")
-										{
-											
-											for (int j = 0; j < scanItem.transform.childCount; j++)
-											{
-												spawnItem = scanItem.transform.GetChild(j);
-												if(category == "Loot Spawner")
-													{
-														replaceID = normalCrate;
-														blacklistedCreatePrefab("Decor", replaceID, adjuster, spawnItem);
-														
-													}
-													else if(category == "Barrel Spawner")
-													{
-														replaceID = barrel;
-														blacklistedCreatePrefab("Decor", replaceID, adjuster, spawnItem);
-													}
-													else if(category == "Prevent Building")
-													{
-														replaceID = 3224970585;
-														blacklistedCreatePrefab("Decor", replaceID, adjuster, spawnItem);
-													}
-													
-											}
-											
-											
-											if(category != "Loot Spawner" && category != "Barrel Spawner" && category != "Prevent Building")
-											{
-												itemName = scanItem.name;
-												replaceID = AssetManager.partialToID(itemName, monumentName);
-												blacklistedCreatePrefab("Decor", replaceID, adjuster, scanItem);
-											}
-										}
+										
 										//stairs doors wrong chairs ladders excavator list
-										if(category == "SafeZoneLarge")
-										{
-											replaceID = 316558065;
-										}
-										if(category == "MissionProvider_Stables_A")
-										{
-											replaceID = 930153435;
-										}
-										if(category == "MissionProvider_Stables_B")
-										{
-											replaceID = 3892089538;
-										}
-										if(category == "MissionProvider_Fishing_A")
-										{
-											replaceID = 350957926;
-										}
-										if(category == "MissionProvider_Fishing_B")
-										{
-											replaceID = 322083179;
-										}
-										if(category == "shop-music")
-										{
-											
-										}
-										if(category == "AlarmSystem")
-										{
-											replaceID = 680397581;
-										}
-										if(category == "stables_shopkeeper")
-										{
-											
-											replaceID =7488435;
-										}
 										
-										if(category == "boat_shopkeeper")
-										{
-											replaceID =2913617060;
-										}
-										if(category == "NPCVendingMachine_FishExchange")
-										{
-											replaceID = 712757139;
-										}
-										if(category == "Shopkeeper_VM_Invis (4)")
-										{
-											replaceID = 858853278;
-										}
-										if(category == "SafeZone")
-										{
-											replaceID = 316558065;
-										}
-										if(category == "recycler_static")
-										{
-											replaceID = 1729604075;
-										}
-										if(category == "Water_cull")
-										{
-											replaceID = 1206870171;
-										}
-										if(category == "Excavator_Lights")
-										{
-											replaceID = 863874129;
-										}
-										/*
-										if(category == "AI" && monumentName == "excavator 1")
-										{
-											replaceID = 3083644891;
-										}//
-										*/
-
-										if(category == "Engine")
-										{
-											replaceID = 2982299738;
-										}
-										if(category == "Excavator_Output_Pile" || category == "Excavator_Output_Pile (1)")
-										{
-											replaceID = 673116596;
-										}
-										
-									
-										
-										
-										/*
-										if(category == "military_tunnel_coverpoints2")
-										{
-											replaceID = 2236147019;
-										}
-										if(category == "TriggerWakeAIZ")
-										{
-											replaceID = 4041251023;
-										}
-										if(category == "military_tunnel_patrolpoints")
-										{
-											replaceID = 2619674770;
-										}
-										*/
-										if(category == "ReinforcementsListener")
-										{
-											replaceID = 667569163;
-										}
-										if(category == "LandingTrigger")
-										{
-											replaceID = 1594218189;
-										}
-										if(category == "SlotMachine" ||category == "SlotMachine (1)" ||category == "SlotMachine (2)")
-										{
-											replaceID = 2230162530;
-										}
-										if(category == "small_refinery_static")
-										{
-											replaceID = 919097516;
-										}
-								
-										if(category == "carshredder.entity")
-										{
-											replaceID = 1114045676;
-										}
-										else if(category == "Water Trigger")
-										{
-											replaceID = 1165979067;
-										}
-										else if(category == "prevent_movement" || category == "prevent_movement (1)" || category == "prevent_movement (2)" || category == "prevent_movement (3)" ||
-										category == "prevent_movement (4)" )
-										{
-											replaceID = 3521578167;										
-										}
-										else if (category == "DropZone")
-										{
-											replaceID = 4069184361; 
-										}
-										else if (category == "prevent_building" || category == "PreventBuilding (1)" || category == "Prevent_building")
-										{
-											replaceID = 3224970585;  //could be either sphere or cube who knows
-										}
-										else if (category == "ReclaimContainerStatic")
-										{
-											replaceID = 3273404916;
-										}
-										else if (category == "PlayerRespawnSpawner")
-										{
-											if(monumentName == "Bandit town")
-											{
-												replaceID = 3810400291;
-											}
-											else
-											{
-												replaceID = 1919922518;
-											}
-										}
-										
-										else if (category == "PreventBuilding")
-										{
-											replaceID = 3224970585;
-										}
-										else if (category == "window_hack" || category == "Cube"|| category == "Cube (1)"|| category == "Cube (2)"|| category == "Cube (3)"|| category == "Cube (4)"
-										|| category == "Cube (5)"|| category == "Cube (6)"|| category == "Cube (7)"|| category == "Cube (8)"|| category == "Cube (9)")
-										{
-											replaceID = 3000049339;
-										}
-										else if (category == "airwolf_compound")
-										{
-											replaceID = 3614389919;
-										}
-										else if (category == "elevator.static.top")
-										{
-											replaceID = 1033358365;
-										}
-										else if (category == "corridor_train_tunnel_entrance")
-										{
-											replaceID = 840796039;
-										}
-										else if (category == "entrance_monuments_b")
-										{
-											replaceID = 3604512213;
-										}
-										else if (category == "entrance_monuments_a")
-										{
-											replaceID = 856899687;
-										}
-										else if (category == "Water_Culling_Volume")
-										{
-											replaceID = 1206870171;
-										}
-										else if(category == "phonebooth.static")
-										{
-												replaceID = 1009655496;
-										}
-										else if(category == "Bandit Swamp Fog FX")
-										{
-												replaceID = 393956209;
-										}
-										else if(category == "bandit_conversationalist")
-										{
-											replaceID = 251735616;
-										}
-										else if (category == "Marketplace")
-										{
-											replaceID = 3953076030;
-										}
-										else if(category == "pavement_6x6_nocurb"|| category == "pavement_6x6_nocurb (1)"|| category == "pavement_6x6_nocurb (2)"|| category == "pavement_6x6_nocurb (3)")
-										{
-											replaceID = 1771757602;
-										}
-										else if(category == "ExcavatorSignalComputer")
-										{
-											replaceID = 3268004142;
-										}
-										else if(category == "exhaust_colliders")
-										{
-											replaceID = 3000049339;
-										}
 										
 
 										blacklistedCreatePrefab("Decor", replaceID, adjuster, scanItem);
@@ -1171,7 +1181,27 @@ public static class PrefabManager
 															{
 																grandchildSpawnItem = childSpawnItem.transform.GetChild(o);
 																if (spawnItem.name == "ScientistSpawners")
+																
 																{
+																	replaceID = 2359528520;
+																	blacklistedCreatePrefab("Decor", replaceID, adjuster, grandchildSpawnItem);
+																}
+															}
+													}
+										}
+										else if(category == "ArcticBaseAI")
+										{
+											for (int n = 0; n < spawnItem.transform.childCount; n++)
+													{
+														childSpawnItem = spawnItem.transform.GetChild(n);
+														
+														for (int o = 0; o < childSpawnItem.transform.childCount; o++)
+															{
+																grandchildSpawnItem = childSpawnItem.transform.GetChild(o);
+																if (grandchildSpawnItem.name == "ScientistSpawnPoint")
+																{
+																
+																
 																	replaceID = 2359528520;
 																	blacklistedCreatePrefab("Decor", replaceID, adjuster, grandchildSpawnItem);
 																}
@@ -1376,6 +1406,43 @@ public static class PrefabManager
 													
 												}
 										}
+										/*
+										else if(category == "Rocks")
+										{
+											itemName = spawnItem.name;
+											
+											if ( itemName.Contains("rock_formation_medium_e"))
+											{
+												itemName = "rock_formation_medium_e";
+											}
+											
+											
+												string[] parse4;
+												parse4 = spawnItem.name.Split('_');
+												
+												if (parse4[parse4.GetLength(0)-2] == "snow")
+												{
+													parse4[parse4.GetLength(0)-1] = "";
+													itemName = String.Join("_",parse4);
+													
+													itemName = itemName.Remove(itemName.Length-1);
+												}
+												
+											replaceID = AssetManager.partialToID(itemName, monumentName);
+											
+											//createPrefab("Decor", replaceID, spawnItem.position - adjuster, spawnItem.eulerAngles, spawnItem.lossyScale);
+											blacklistedCreatePrefab("Decor", replaceID, adjuster, spawnItem);
+										}
+										*/
+										else if(category == "Walkways" || category == "Rocks")
+										{
+											itemName = spawnItem.name;
+											
+											Debug.LogError(itemName);
+											replaceID = AssetManager.partialToID(itemName, monumentName);
+											Debug.LogError(replaceID);
+											blacklistedCreatePrefab("Decor", replaceID, adjuster, spawnItem);
+										}
 										else if(category == "Train Tracks")
 										{											
 											if (spawnItem.name == "crane_tracks")
@@ -1428,7 +1495,9 @@ public static class PrefabManager
 												}
 											}
 											else if (spawnItem.name == "Crate Spawner Office" 
-											|| spawnItem.name == "Crate Spawner Office (1)")
+											|| spawnItem.name == "Crate Spawner Office (1)" ||
+											spawnItem.name == "Crate Spawner Tier2" || spawnItem.name == 
+											"Crate Spawner Tier2 (1)")
 											{
 												for (int n = 0; n < spawnItem.transform.childCount; n++)
 												{
@@ -1650,19 +1719,30 @@ public static class PrefabManager
 											
 										}
 										
-										else if (category == "LootSpawners" || category == "Spawners")
+										else if (category == "LootSpawners" || category == "Spawners" 
+										|| category == "Loot")
 										{
 											for (int n = 0; n < spawnItem.transform.childCount; n++)
 											{
 												childSpawnItem = spawnItem.transform.GetChild(n);
 												itemName = spawnItem.name;
-												if (itemName=="Barrel Spawner" || itemName=="Barrel Spawner (1)"|| itemName=="Barrel Spawner (2)")
+												if (itemName=="Barrel Spawner" || itemName=="Barrel Spawner (1)"|| itemName=="Barrel Spawner (2)" || itemName =="BarrelSpawner")
 												{
 													
 														replaceID = barrel;
 														createPrefab("Decor", replaceID, childSpawnItem.position - adjuster, childSpawnItem.eulerAngles, childSpawnItem.lossyScale);
 													
 													
+												}
+												if (itemName=="Food Spawner")
+												{
+													replaceID = foodCrate;
+													createPrefab("Decor", replaceID, childSpawnItem.position - adjuster, childSpawnItem.eulerAngles, childSpawnItem.lossyScale);
+												}
+												if (itemName == "Fuel")
+												{
+													replaceID = fuel;
+													createPrefab("Decor", replaceID, childSpawnItem.position - adjuster, childSpawnItem.eulerAngles, childSpawnItem.lossyScale);
 												}
 												if (itemName=="Oil Barrel Spawner")
 												{
@@ -1673,7 +1753,7 @@ public static class PrefabManager
 													
 													
 												}
-												if (itemName=="Crate Spawner_Average" || itemName == "Crate Spawner Average")
+												if (itemName=="Crate Spawner_Average" || itemName == "Crate Spawner Average" || itemName=="Low Crate Spawner")
 												{
 													
 														replaceID = normalCrate;
@@ -1681,7 +1761,7 @@ public static class PrefabManager
 													
 													
 												}
-												if (itemName=="Crate Spawner_Blend")
+												if (itemName=="Crate Spawner_Blend" || itemName=="Crate Spawner")
 												{
 													
 														replaceID = randomCrate;
@@ -1745,7 +1825,8 @@ public static class PrefabManager
 												
 												 if (spawnItem.name == "buildings" || spawnItem.name == "vendors_hut" || spawnItem.name == "helipad"
 												 || spawnItem.name == "vegetation" || spawnItem.name == "Props" || spawnItem.name == "perimeter_wall" || spawnItem.name == "props"
-												 || spawnItem.name == "BigWheel" || spawnItem.name == "Dish1" || spawnItem.name == "Dish2" || spawnItem.name == "Dish3")
+												 || spawnItem.name == "BigWheel" || spawnItem.name == "Dish1" || spawnItem.name == "Dish2" || spawnItem.name == "Dish3"
+												 || spawnItem.name == "dome_radar_a" || spawnItem.name == "wind_turbine" || spawnItem.name.Contains("arctic_portacabin_building")|| spawnItem.name.Contains("arctic_base_module") || spawnItem.name == "dome_radar_a")
 												 {
 													 
 														
@@ -1974,6 +2055,12 @@ public static class PrefabManager
 											itemName = spawnItem.name;
 											
 											replaceID = AssetManager.partialToID(itemName, monumentName);
+											
+											if (replaceID == 0)
+											{
+													Debug.LogError(itemName + " " + replaceID);
+											}
+												
 											blacklistedCreatePrefab("Decor", replaceID, adjuster, spawnItem);
 											/*
 											for (int n = 0; n < spawnItem.transform.childCount; n++)
@@ -2506,6 +2593,27 @@ public static class PrefabManager
 		}
 		Debug.LogError(count + " prefabs removed");
 	}
+	
+	public static void SpawnPrefabs(List<BreakingData> fragment)
+        {
+		
+			float adjustZ = 500f;
+			float adjustXY = TerrainManager.TerrainSize.x / 2f;
+			Vector3 adjuster = new Vector3(adjustXY,adjustZ,adjustXY);
+			
+            for (int i = 0; i < fragment.Count; i++)
+            {
+				if(!fragment[i].ignore)
+				{
+					if (fragment[i].prefabData.id != 0)
+					{
+						fragment[i].prefabData.position -= adjuster;
+						Spawn(Load(fragment[i].prefabData.id), fragment[i].prefabData, GetParent(fragment[i].prefabData.category));	
+					}
+				}
+            }
+        }
+	
 
     /// <summary>Replaces the selected prefabs with ones from the Rust bundles.</summary>
     public static void ReplaceWithLoaded(PrefabDataHolder[] prefabs, int progressID)
@@ -2591,7 +2699,7 @@ public static class PrefabManager
             var sw = new System.Diagnostics.Stopwatch();
             sw.Start();
 
-            for (int i = 0; i < circuitData.Length; i++)
+            for (int i = circuitData.Length-1; i > -1; i--)
             {
                 if (sw.Elapsed.TotalSeconds > 4f)
                 {

@@ -1,6 +1,6 @@
 {
     "rustDirectory": "D:/Program Files (x86)/Steam/steamapps/common/Rust",
-    "prefabRenderDistance": 700.0,
+    "prefabRenderDistance": 1644.0,
     "pathRenderDistance": 2735.0,
     "waterTransparency": 0.20000000298023225,
     "loadbundleonlaunch": false,
@@ -9,20 +9,20 @@
     "crazing": {
         "title": "",
         "zones": 300,
-        "minSize": 5000,
-        "maxSize": 7000,
-        "splatLayer": 5
+        "minSize": 1000,
+        "maxSize": 200,
+        "splatLayer": 4
     },
     "perlinSplat": {
-        "scale": 65,
+        "scale": 25,
         "splatLayer": 4,
         "biomeLayer": 2,
-        "strength": 3.0,
+        "strength": 1.0,
         "invert": false,
         "paintBiome": true
     },
     "ripple": {
-        "size": 2200,
+        "size": 1200,
         "density": 125,
         "weight": 0.25
     },
@@ -52,54 +52,54 @@
         "layers": 3,
         "period": 40,
         "scale": 220,
-        "simple": false
+        "simple": true
     },
     "geology": {
-        "title": "Road Cones",
-        "prefabID": 2371334959,
+        "title": "Arid formations medium",
+        "prefabID": 2591072256,
         "prefabID0": 0,
-        "prefabID1": 0,
-        "prefabID2": 0,
-        "prefabID3": 0,
-        "prefabID4": 0,
+        "prefabID1": 4064290979,
+        "prefabID2": 3817899359,
+        "prefabID3": 4064290979,
+        "prefabID4": 3817899359,
         "prefabID5": 0,
         "prefabID6": 0,
         "prefabID7": 0,
-        "density": 1000,
-        "frequency": 10,
-        "floor": 500,
-        "ceiling": 1000,
-        "biomeIndex": 3,
+        "density": 1250,
+        "frequency": 100,
+        "floor": 555,
+        "ceiling": 590,
+        "biomeIndex": 1,
         "avoidTopo": true,
         "flipping": false,
         "tilting": false,
-        "normalizeX": true,
-        "normalizeY": true,
-        "normalizeZ": true,
+        "normalizeX": false,
+        "normalizeY": false,
+        "normalizeZ": false,
         "biomeExclusive": false,
         "scalesLow": {
-            "x": 1.7391303777694703,
-            "y": 1.79347825050354,
-            "z": 1.8478257656097413
+            "x": 1.0326086282730103,
+            "y": 1.0326087474822999,
+            "z": 1.0326083898544312
         },
         "scalesHigh": {
-            "x": 2.17391300201416,
-            "y": 2.11956524848938,
-            "z": 2.173912763595581
+            "x": 1.0326086282730103,
+            "y": 1.0326087474822999,
+            "z": 1.0326083898544312
         },
         "rotationsLow": {
-            "x": 91.01123809814453,
+            "x": 0.0,
             "y": 0.0,
             "z": 0.0
         },
         "rotationsHigh": {
-            "x": 91.01123809814453,
-            "y": 0.0,
+            "x": 0.0,
+            "y": 360.0,
             "z": 0.0
         },
         "zOffset": 0.0,
-        "slopeLow": 0.0,
-        "slopeHigh": 9.305547714233399
+        "slopeLow": 10.412066459655762,
+        "slopeHigh": 32.662437438964847
     },
     "replacer": {
         "prefabID0": 0,
@@ -177,5 +177,12 @@
         "zOff": -0.019999999552965165,
         "x": 0,
         "y": 0
+    },
+    "breaker": {
+        "title": "",
+        "monument": {
+            "category": [],
+            "monumentName": ""
+        }
     }
 }

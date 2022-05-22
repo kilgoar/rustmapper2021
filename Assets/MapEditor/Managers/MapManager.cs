@@ -672,6 +672,7 @@ public static class MapManager
 		int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
         int spwCircuit = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);
 		int spwNPCs = Progress.Start("NPCs", null, Progress.Options.Sticky, progressID);
+		//int heightmap = Progress.Start("Heightmap", null, Progress.Options.Sticky, progressID);
 		PrefabManager.DeletePrefabs(PrefabManager.CurrentMapPrefabs);
         PrefabManager.DeleteCircuits(PrefabManager.CurrentMapElectrics);
 		PrefabManager.DeleteNPCs(PrefabManager.CurrentMapNPCs);
@@ -680,6 +681,7 @@ public static class MapManager
 		PrefabManager.SpawnCircuits(mapInfo.circuitData, spwCircuit);
 		PrefabManager.SpawnNPCs(mapInfo.npcData, spwNPCs);
 		PrefabManager.SpawnModifiers(mapInfo.modifierData);
+		//SetPrefabHeightmap(PrefabManager.LoadHeightmap(loadPath + ".heights"), heightmap);
 		
     }
 	

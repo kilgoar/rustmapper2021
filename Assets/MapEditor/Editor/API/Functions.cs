@@ -1,11 +1,18 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEditor;
 using RustMapEditor.Variables;
+using UnityEditor.IMGUI.Controls;
+using System.Collections.Generic;
 using static TerrainManager;
+
 
 namespace RustMapEditor.UI
 {
+	
+	
+	
 	public enum BIOMES
 	{
     TEMPERATE = 0,
@@ -35,7 +42,7 @@ namespace RustMapEditor.UI
 			{
 				PrefabManager.keepElectrics(PrefabManager.CurrentMapPrefabs, PrefabManager.CurrentMapElectrics);
 				
-			}
+			}	
 
 			prefabsOffset = EditorGUILayout.Vector3Field("Offset:", prefabsOffset);
 			
@@ -54,7 +61,380 @@ namespace RustMapEditor.UI
 				if (GUILayout.Button("Rip Custom Prefab into json"))
 					LoadCustomPrefabJSONPanel();
 		}
-	
+		
+		
+		
+		public static void BreakerHierarchy(ref BreakerPreset breakerPreset, ref BreakerTreeView breakerTree, ref BreakingData fragmentData, ref int oldID, ref IconTextures icons, ref string [] breakerList, ref int presetIndex, ref FragmentPair pair)
+		{
+			
+				
+			EditorGUILayout.BeginHorizontal();
+				
+				EditorGUILayout.BeginVertical();
+				
+					
+							breakerPreset.title = EditorGUILayout.TextField("Breaker File", breakerPreset.title);
+							
+							EditorGUI.BeginChangeCheck();
+								
+							presetIndex = EditorGUILayout.Popup("Name:", presetIndex, breakerList);
+							
+								
+								if (EditorGUI.EndChangeCheck())
+								{
+									breakerPreset.title = breakerList[presetIndex];
+								}
+							
+							
+							
+							if (EditorGUI.EndChangeCheck())
+							{
+								SettingsManager.breaker = breakerPreset;
+							}
+							
+							
+							
+							EditorGUILayout.BeginHorizontal();
+							if (GUILayout.Button("Save"))
+								{
+									SettingsManager.breaker = breakerPreset;
+									SettingsManager.SaveBreakerPreset();
+									SettingsManager.LoadPresets();							
+									breakerList = SettingsManager.GetPresetTitles("Presets/Breaker/");
+								}
+							if (GUILayout.Button("Load"))
+								{
+									if(breakerPreset.title != null)
+									{
+										breakerTree.LoadIcons(icons);
+										SettingsManager.LoadBreakerPreset(breakerPreset.title);	
+										breakerPreset = SettingsManager.breaker;								
+										PrefabManager.loadFragments(breakerPreset.monument, breakerTree);									
+										breakerList = SettingsManager.GetPresetTitles("Presets/Breaker/");
+									}
+								}
+
+							
+							EditorGUILayout.EndHorizontal();
+							
+							if (GUILayout.Button("Build"))
+								{
+									PrefabManager.SpawnPrefabs(breakerTree.fragment);
+								}
+				
+				if (GUILayout.Button("Import from Prefab"))
+					{
+						breakerPreset.monument = PrefabManager.monumentFragments(PrefabManager.CurrentMapPrefabs);
+						breakerTree.LoadIcons(icons);
+						PrefabManager.loadFragments(breakerPreset.monument, breakerTree);
+						SettingsManager.breaker = breakerPreset;
+					}
+				EditorGUILayout.LabelField("Fragment Tree", EditorStyles.boldLabel);	
+				Rect treeSpace = GUILayoutUtility.GetRect(250f, 400f);
+				breakerTree.OnGUI(treeSpace);
+				
+
+				
+				EditorGUILayout.EndVertical();
+				
+				EditorGUILayout.BeginVertical();
+				
+				
+				if (breakerTree != null && breakerTree.fragment.Count > 0)
+				{
+					if (breakerTree.HasSelection())
+					{
+							if (breakerTree.GetSelection()[0] != oldID)
+							{
+								if (oldID != -1)
+								{
+									breakerTree.fragment[oldID] = fragmentData;
+								}
+
+
+									fragmentData = breakerTree.fragment[breakerTree.GetSelection()[0]];
+									breakerTree.fragment[breakerTree.GetSelection()[0]] = fragmentData;
+									breakerTree.Update();
+									breakerTree.Reload();
+									oldID = breakerTree.GetSelection()[0];
+							}
+							EditorGUILayout.LabelField("Fragment Inspector", EditorStyles.boldLabel);
+							EditorGUI.BeginChangeCheck();
+							
+							fragmentData.ignore = EditorGUILayout.ToggleLeft("Disable", fragmentData.ignore);
+							
+							EditorGUI.EndChangeCheck();
+							{
+								foreach(int ID in breakerTree.GetSelection())
+									{
+										bool disable = fragmentData.ignore;
+										fragmentData = breakerTree.fragment[ID];
+										fragmentData.ignore = disable;
+										breakerTree.fragment[ID] = fragmentData;
+									}
+										fragmentData = breakerTree.fragment[breakerTree.GetSelection()[0]];
+										breakerTree.Update();
+										breakerTree.Reload();
+										SettingsManager.breaker = breakerPreset;
+							}
+							
+												EditorGUILayout.Space();
+
+					
+					
+				
+							
+							fragmentData.name = EditorGUILayout.TextField("Fragment ", fragmentData.name);
+							
+							EditorGUILayout.BeginHorizontal();
+								
+								fragmentData.prefabData.id = (uint)EditorGUILayout.LongField("ID ", fragmentData.prefabData.id);
+								
+								if (GUILayout.Button("ID to Selection"))
+								{
+									foreach(int ID in breakerTree.GetSelection())
+									{
+										uint id = fragmentData.prefabData.id;
+										fragmentData = breakerTree.fragment[ID];
+										fragmentData.prefabData.id = id;
+										breakerTree.fragment[ID] = fragmentData;
+									}
+										fragmentData = breakerTree.fragment[breakerTree.GetSelection()[0]];
+										breakerTree.Update();
+										breakerTree.Reload();
+										SettingsManager.breaker = breakerPreset;
+								}
+								
+								if (GUILayout.Button("Lookup ID"))
+								{
+									foreach(int ID in breakerTree.GetSelection())
+									{
+										fragmentData = breakerTree.fragment[ID];
+										
+										fragmentData.prefabData.id = AssetManager.fragmentToID(breakerTree.fragment[ID].name, breakerTree.fragment[ID].parent, breakerPreset.monument.monumentName);
+										breakerTree.fragment[ID] = fragmentData;
+									}
+									fragmentData = breakerTree.fragment[breakerTree.GetSelection()[0]];
+									breakerTree.Update();
+									breakerTree.Reload();
+									SettingsManager.breaker = breakerPreset;
+								}
+								
+							EditorGUILayout.EndHorizontal();
+							
+							PrefabInspector(fragmentData.prefabData);
+							CollidersInspector(ref fragmentData, ref breakerTree);
+						
+					}
+				}
+				EditorGUILayout.LabelField("Tree Selector", EditorStyles.boldLabel);
+				EditorGUILayout.BeginHorizontal();
+					if (GUILayout.Button("Expand"))
+									{
+										foreach(int ID in breakerTree.GetSelection())
+										{
+											breakerTree.SetExpanded(ID, true);
+										}
+									}
+					
+					if (GUILayout.Button("Explode"))
+									{
+										foreach(int ID in breakerTree.GetSelection())
+										{
+											breakerTree.SetExpandedRecursive(ID, true);
+										}
+									}
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.BeginHorizontal();
+					if (GUILayout.Button("Expand All"))
+									{
+										breakerTree.ExpandAll();
+									}
+					if (GUILayout.Button("Select All"))
+									{
+										breakerTree.SelectAllRows();
+									}
+					
+				EditorGUILayout.EndHorizontal();
+				
+				
+				EditorGUILayout.BeginHorizontal();
+				if (GUILayout.Button("Select Children"))
+								{
+									IList<int> IDs = breakerTree.GetSelection();
+									breakerTree.ClearSelection();
+									foreach(int ID in IDs)
+										{
+											breakerTree.SetExpanded(ID, true);
+											breakerTree.ConcatSelection(breakerTree.ChildList(ID));
+										}
+								}
+				if (GUILayout.Button("Explode Select"))
+								{
+									IList<int> IDs = breakerTree.GetSelection();
+									foreach(int ID in IDs)
+										{
+											breakerTree.SetExpanded(ID, true);
+											breakerTree.ConcatSelection(breakerTree.ChildList(ID));
+										}
+								}
+				EditorGUILayout.EndHorizontal();
+				
+				if (GUILayout.Button("Collapse All"))
+								{				
+									breakerTree.CollapseAll();
+								}
+				
+				EditorGUI.BeginChangeCheck();
+				
+				EditorGUILayout.LabelField("Override Dictionary", EditorStyles.boldLabel);
+				pair.fragment = EditorGUILayout.TextField("Fragment", pair.fragment);
+					
+				if (EditorGUI.EndChangeCheck())
+				{
+					try
+						{
+							pair.id = SettingsManager.fragmentIDs.fragmentNamelist[pair.fragment];
+						}
+						catch (KeyNotFoundException)
+						{
+							//nothing
+						}
+				}
+				
+				pair.id = (uint)EditorGUILayout.LongField("ID", pair.id);
+				
+				EditorGUILayout.BeginHorizontal();
+					if (GUILayout.Button("Save"))
+						{
+							SettingsManager.fragmentIDs.fragmentNamelist[pair.fragment] = pair.id;							
+							SettingsManager.fragmentIDs.Serialize();
+							SettingsManager.SaveFragmentLookup();
+						}
+					if (GUILayout.Button("Reload"))
+						{
+							SettingsManager.LoadFragmentLookup();
+						}
+				EditorGUILayout.EndHorizontal();
+				
+				EditorGUILayout.EndVertical();
+				
+								
+							
+
+				
+			EditorGUILayout.EndHorizontal();
+			
+			
+			
+		}
+		
+		public static void CollidersInspector(ref BreakingData fragmentData, ref BreakerTreeView breakerTree)
+		{
+			
+			if(fragmentData.colliderScales.box!=Vector3.zero)
+			{
+				fragmentData.colliderScales.box = EditorGUILayout.Vector3Field("Box Scale",fragmentData.colliderScales.box);
+				EditorGUILayout.BeginHorizontal();	
+				if (GUILayout.Button("Apply Box Scale"))
+									
+									{
+										foreach(int ID in breakerTree.GetSelection())
+										{	
+											fragmentData = breakerTree.fragment[ID];
+											fragmentData.prefabData.scale = fragmentData.colliderScales.box;
+											fragmentData.colliderScales.box = Vector3.zero;
+											breakerTree.fragment[ID] = fragmentData;
+										}
+										breakerTree.Update();
+										breakerTree.Reload();
+									}
+				if (GUILayout.Button("Remove Box Scale"))
+									{
+										foreach(int ID in breakerTree.GetSelection())
+										{	
+											fragmentData = breakerTree.fragment[ID];
+											fragmentData.colliderScales.box = Vector3.zero;
+											breakerTree.fragment[ID] = fragmentData;
+										}
+										breakerTree.Update();
+										breakerTree.Reload();
+									}
+				EditorGUILayout.EndHorizontal();
+			}
+			
+			if(fragmentData.colliderScales.sphere!=Vector3.zero)
+			{
+				fragmentData.colliderScales.sphere = EditorGUILayout.Vector3Field("Sphere Scale", fragmentData.colliderScales.sphere);
+				EditorGUILayout.BeginHorizontal();	
+				if (GUILayout.Button("Apply Sphere Scale"))
+								{
+									foreach(int ID in breakerTree.GetSelection())
+										{
+											fragmentData = breakerTree.fragment[ID];
+											fragmentData.prefabData.scale = fragmentData.colliderScales.sphere;
+											fragmentData.colliderScales.sphere = Vector3.zero;
+											breakerTree.fragment[ID] = fragmentData;
+										}
+										breakerTree.Update();
+										breakerTree.Reload();
+								}
+				if (GUILayout.Button("Remove Sphere Scale"))
+								{
+									foreach(int ID in breakerTree.GetSelection())
+										{
+											fragmentData = breakerTree.fragment[ID];
+											fragmentData.colliderScales.sphere = Vector3.zero;
+											breakerTree.fragment[ID] = fragmentData;
+										}
+										breakerTree.Update();
+										breakerTree.Reload();
+								}
+				EditorGUILayout.EndHorizontal();
+			}
+			
+			if(fragmentData.colliderScales.capsule!=Vector3.zero)
+			{				
+				fragmentData.colliderScales.capsule = EditorGUILayout.Vector3Field("Capsule Scale", fragmentData.colliderScales.capsule);
+				EditorGUILayout.BeginHorizontal();	
+				if (GUILayout.Button("Apply Capsule Scale"))
+								{
+									foreach(int ID in breakerTree.GetSelection())
+										{
+											fragmentData = breakerTree.fragment[ID];
+											fragmentData.prefabData.scale = fragmentData.colliderScales.capsule;
+											fragmentData.colliderScales.capsule = Vector3.zero;
+											breakerTree.fragment[ID] = fragmentData;
+										}
+									breakerTree.Update();
+									breakerTree.Reload();
+								}
+				if (GUILayout.Button("Remove Capsule Scale"))
+								{
+									foreach(int ID in breakerTree.GetSelection())
+										{
+											fragmentData = breakerTree.fragment[ID];
+											fragmentData.colliderScales.capsule = Vector3.zero;
+											breakerTree.fragment[ID] = fragmentData;
+										}
+									breakerTree.Update();
+									breakerTree.Reload();
+								}
+				EditorGUILayout.EndHorizontal();
+			}
+			
+		}
+		
+		public static void PrefabInspector(WorldSerialization.PrefabData prefab)
+		{
+			
+			prefab.position = EditorGUILayout.Vector3Field("Position", prefab.position);
+			prefab.rotation = EditorGUILayout.Vector3Field("Rotation", prefab.rotation);
+			prefab.scale = EditorGUILayout.Vector3Field("Scale", prefab.scale);
+			
+		}
+			
 		public static void Combinator(ref Layers layers, ref Layers sourceLayers, ref float tttWeight, ref int thicc)
 		{
 			EditorGUILayout.Space();
@@ -133,7 +513,12 @@ namespace RustMapEditor.UI
 			{
 				SettingsManager.crazing = preset;
 
-			}				
+			}	
+
+			if (GUILayout.Button("Dither Fill"))
+					{
+						GenerativeManager.splatDitherFill(preset.splatLayer);
+					}			
 		}
 		
 		public static void Ocean(ref OceanPreset ocean)
@@ -438,7 +823,7 @@ namespace RustMapEditor.UI
 			
 			EditorGUI.BeginChangeCheck();
 						
-			replacerPresetIndex = EditorGUILayout.Popup("Presets:", replacerPresetIndex, replacerList);
+			replacerPresetIndex = EditorGUILayout.Popup("Breaker Save", replacerPresetIndex, replacerList);
 						
 						if (EditorGUI.EndChangeCheck())
 						{
@@ -454,7 +839,7 @@ namespace RustMapEditor.UI
 						SettingsManager.replacer = replacer;
 					}
 					
-					replacer.title = EditorGUILayout.TextField("Preset Name", replacer.title);
+					replacer.title = EditorGUILayout.TextField("Breaker Name", replacer.title);
 					
 					EditorGUILayout.BeginHorizontal();
 					if (GUILayout.Button("Save"))
@@ -1581,6 +1966,12 @@ namespace RustMapEditor.UI
 						string loadFile = "highrise.monuments.generated.highres.v3.map";
 						monumentBlob.Load(loadFile);
 						GenerativeManager.createRustCity(monumentBlob, city);
+					}
+					
+					if (GUILayout.Button("Cube Village"))
+					{
+						//placeCube(Vector3 position, Vector3 scale, float scaleDown)
+						PrefabManager.placeCube(new Vector3(0,80f,0), new Vector3(50f,50f,50f), 2.5f);
 					}
 					
 					if (GUILayout.Button("RGB Plots"))

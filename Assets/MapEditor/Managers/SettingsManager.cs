@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using RustMapEditor.Variables;
+
 
 public static class SettingsManager
 {
@@ -24,11 +26,13 @@ public static class SettingsManager
 	public static PerlinPreset perlin { get; set; }
 	public static GeologyPreset geology { get; set; }
 	public static ReplacerPreset replacer { get; set; }
+	public static string[] breakerPresets { get; set; }
 	public static string[] geologyPresets { get; set; }
     public static string[] PrefabPaths { get; private set; }
-	
 	public static GeologyPreset[] macro {get; set; }
  	public static RustCityPreset city {get; set; }
+	public static BreakerPreset breaker {get; set;}
+	public static FragmentLookup fragmentIDs {get; set;}
 
     [InitializeOnLoadMethod]
     private static void Init()
@@ -53,6 +57,57 @@ public static class SettingsManager
         }
     }
 	
+	public static Dictionary<string,uint> ListToDict(List<FragmentPair> fragmentPairs)
+		{
+			Dictionary<string,uint> namelist = new Dictionary<string,uint>();
+			foreach(FragmentPair pair in fragmentPairs)
+			{
+				namelist.Add(pair.fragment, pair.id);
+			}
+			return namelist;
+		}
+		
+	public static List<FragmentPair> DictToList(Dictionary<string,uint> fragmentNamelist)
+		{
+			List<FragmentPair> namePairs = new List<FragmentPair>();
+			FragmentPair fragPair = new FragmentPair();
+			foreach (KeyValuePair<string,uint> pair in fragmentNamelist)
+			{
+				fragPair.fragment = pair.Key;
+				fragPair.id = pair.Value;
+				namePairs.Add(fragPair);
+			}
+			return namePairs;
+		}
+	
+	public static void SaveFragmentLookup()
+	{
+		using (StreamWriter write = new StreamWriter($"Presets/breakerFragments.json", false))
+        {
+            write.Write(JsonUtility.ToJson(fragmentIDs, true));
+			fragmentIDs.Deserialize();
+        }
+	}
+
+	public static void LoadFragmentLookup()
+    {
+		fragmentIDs  = new FragmentLookup();
+		using (StreamReader reader = new StreamReader($"Presets/breakerFragments.json"))
+			{
+				fragmentIDs  = JsonUtility.FromJson<FragmentLookup>(reader.ReadToEnd());
+				fragmentIDs.Deserialize();
+			}
+    }
+
+	
+	public static void SaveBreakerPreset()
+    {
+        using (StreamWriter write = new StreamWriter($"Presets/Breaker/{breaker.title}.json", false))
+        {
+            write.Write(JsonUtility.ToJson(breaker, true));
+        }
+    }
+	
 	public static void SaveGeologyPreset()
     {
         using (StreamWriter write = new StreamWriter($"Presets/Geology/{geology.title}.json", false))
@@ -68,6 +123,14 @@ public static class SettingsManager
             write.Write(JsonUtility.ToJson(replacer, true));
         }
     }
+	
+	public static void LoadBreakerPreset(string filename)
+	{
+		using (StreamReader reader = new StreamReader($"Presets/Breaker/{filename}.json"))
+			{
+				breaker = JsonUtility.FromJson<BreakerPreset>(reader.ReadToEnd());
+			}
+	}
 	
 	public static void LoadGeologyPreset(string filename)
 	{
@@ -181,6 +244,7 @@ public static class SettingsManager
 	public static void LoadPresets()
 	{
 		string[] geologyPresets = Directory.GetFiles("Presets/Geology/");
+		string[] breakerPresets = Directory.GetFiles("Presets/Breaker/");
 	}
 	
 	public static void LoadMacros()
@@ -238,13 +302,15 @@ public struct EditorSettings
 	public ReplacerPreset replacer;
 	public string[] prefabPaths;
 	public RustCityPreset city;
+	public BreakerPreset breaker;
 
     public EditorSettings
     (
         string rustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust", float prefabRenderDistance = 700f, float pathRenderDistance = 200f, 
         float waterTransparency = 0.2f, bool loadbundleonlaunch = false, bool terrainTextureSet = false, bool style = true, CrazingPreset crazing = new CrazingPreset(), PerlinSplatPreset perlinSplat = new PerlinSplatPreset(),
 		RipplePreset ripple = new RipplePreset(), OceanPreset ocean = new OceanPreset(), TerracingPreset terracing = new TerracingPreset(), PerlinPreset perlin = new PerlinPreset(), GeologyPreset geology = new GeologyPreset(), 
-		ReplacerPreset replacer = new ReplacerPreset(), RustCityPreset city = new RustCityPreset())
+		ReplacerPreset replacer = new ReplacerPreset(), RustCityPreset city = new RustCityPreset(), BreakerPreset breaker = new BreakerPreset()
+	)
         {
             this.rustDirectory = rustDirectory;
             this.prefabRenderDistance = prefabRenderDistance;
@@ -263,5 +329,6 @@ public struct EditorSettings
 			this.geology = geology;
 			this.replacer = replacer;
 			this.city = city;
+			this.breaker = breaker;
         }
 }

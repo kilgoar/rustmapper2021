@@ -142,11 +142,21 @@ namespace RustMapEditor.UI
 
         public static void ReloadTree()
 		{
-			if (HasOpenInstances<PrefabHierarchyWindow>())
+			try
 			{
-				PrefabHierarchyWindow window = (PrefabHierarchyWindow)GetWindow(typeof(PrefabHierarchyWindow), false, "Prefab Hierachy");
-				window.m_Initialized = false;
+				if (HasOpenInstances<PrefabHierarchyWindow>())
+				{
+					
+					PrefabHierarchyWindow window = (PrefabHierarchyWindow)GetWindow(typeof(PrefabHierarchyWindow), false, "Prefab Hierachy");
+					
+					window.m_Initialized = false;
+				}
 			}
+			catch(NullReferenceException err)
+			{
+				Debug.LogError(err.Message);
+			}
+			
 		}
 	}
 

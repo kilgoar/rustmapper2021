@@ -1,7 +1,10 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 using RustMapEditor.UI;
 using RustMapEditor.Variables;
+using UnityEditor.IMGUI.Controls;
+using System.Collections.Generic;
 
 public class MapManagerWindow : EditorWindow
 {
@@ -24,6 +27,7 @@ public class MapManagerWindow : EditorWindow
 	GeologyPreset activePreset = new GeologyPreset();
 	
 	int presetIndex = 0;
+	int breakerIndex = 0;
 	int replacerPresetIndex = 0;
 	int macroIndex = 0;
 	string macroTitle = "";
@@ -32,7 +36,16 @@ public class MapManagerWindow : EditorWindow
 	float zBreaker = 100f;
 	bool destroy = false;
 	
+	[SerializeField] TreeViewState breakerState;
+	BreakerTreeView breakerTree;
+	BreakerPreset breakerPreset = new BreakerPreset();
+	BreakingData breakingFragment = new BreakingData();
+	int oldID = -1;
+	FragmentPair pair;
 	
+	IconTextures icons;
+	
+	string [] breakerList = SettingsManager.GetPresetTitles("Presets/Breaker/");
 	string [] geologyList = SettingsManager.GetPresetTitles("Presets/Geology/");
 	string [] replacerList = SettingsManager.GetPresetTitles("Presets/Replacer/");
 	string [] macroList = SettingsManager.GetPresetTitles("Presets/Geology/Macros/");
@@ -41,6 +54,8 @@ public class MapManagerWindow : EditorWindow
 	int layerIndex = (int)TerrainManager.LandLayer;
 	int prefabIndex= 0, thicc = 3;
     bool aboveTerrain = false;
+	
+	
 	
 	Layers layers = new Layers() { Ground = TerrainSplat.Enum.Grass, Biome = TerrainBiome.Enum.Temperate, Topologies = TerrainTopology.Enum.Field };
 	Layers sourceLayers = new Layers() { Ground = TerrainSplat.Enum.Grass, Biome = TerrainBiome.Enum.Temperate, Topologies = TerrainTopology.Enum.Field };
@@ -64,7 +79,22 @@ public class MapManagerWindow : EditorWindow
 	int mapSize = 3000;
 	float landHeight = 505f;
     #endregion
-
+	
+	public void OnEnable()
+	{
+		
+		breakerTree = new BreakerTreeView(breakerState);
+		SettingsManager.LoadFragmentLookup();
+		
+		icons = new IconTextures(
+			(Texture2D)Resources.Load("Textures/Icons/gears"),
+			(Texture2D)Resources.Load("Textures/Icons/scrap"),
+			(Texture2D)Resources.Load("Textures/Icons/stop"),
+			(Texture2D)Resources.Load("Textures/Icons/tarp"),
+			(Texture2D)Resources.Load("Textures/Icons/trash"));
+	
+	}
+	
     public void OnGUI()
     {
 		
@@ -99,8 +129,28 @@ public class MapManagerWindow : EditorWindow
                 Functions.EditorLinks();
 				break;
             case 2:
-				Functions.Replacer(ref replacer, ref replacerPresetIndex, ref replacerList);
-				Functions.refabs(ref prefabsOffset, ref mark);
+				GUIContent[] prefabsMenu = new GUIContent[3];
+				prefabsMenu[0] = new GUIContent("Batch Replacer");
+				prefabsMenu[1] = new GUIContent("Prefab Breaker");
+				prefabsMenu[2] = new GUIContent("Advanced");
+				
+				prefabIndex = GUILayout.Toolbar(prefabIndex, prefabsMenu, EditorStyles.toolbarButton);
+				
+				switch(prefabIndex)
+				{
+					case 0:
+						Functions.Replacer(ref replacer, ref replacerPresetIndex, ref replacerList);
+						break;
+					case 1:
+						breakerPreset = SettingsManager.breaker;
+						Functions.BreakerHierarchy(ref breakerPreset, ref breakerTree, ref breakingFragment, ref oldID, ref icons, ref breakerList, ref breakerIndex, ref pair);
+						break;
+					case 2:
+						Functions.refabs(ref prefabsOffset, ref mark);
+						break;
+				}
+				
+				
 				break;
             #endregion
             case 3:
@@ -111,6 +161,7 @@ public class MapManagerWindow : EditorWindow
 			layersMenu[3] = new GUIContent("Topology");
 
 			EditorGUI.BeginChangeCheck();
+			
 			layerIndex = GUILayout.Toolbar(layerIndex, layersMenu, EditorStyles.toolbarButton);
 			
 			if (EditorGUI.EndChangeCheck())

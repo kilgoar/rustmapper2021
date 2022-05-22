@@ -173,40 +173,49 @@ public static class WorldConverter
 
 	public static WorldSerialization TerrainToCustomPrefab((int prefab, int circuit) ID) 
     {
-        WorldSerialization world = new WorldSerialization();
-		
-		world.rePrefab.modifiers = PrefabManager.CurrentModifiers.modifierData;
-		
-		
-		foreach(NPCDataHolder p in PrefabManager.CurrentMapNPCs)
-		{
-			if (p.bots != null)
+		WorldSerialization world = new WorldSerialization();
+		try
 			{
-				world.rePrefab.npcs.bots.Insert(0, p.bots);
+			
+			
+			world.rePrefab.modifiers = PrefabManager.CurrentModifiers.modifierData;
+			
+			
+			foreach(NPCDataHolder p in PrefabManager.CurrentMapNPCs)
+			{
+				if (p.bots != null)
+				{
+					world.rePrefab.npcs.bots.Insert(0, p.bots);
+				}
 			}
-		}
-		
-		
-        foreach (PrefabDataHolder p in PrefabManager.CurrentMapPrefabs)
-        {
-            if (p.prefabData != null)
-            {
-                p.AlwaysBreakPrefabs(); // Updates the prefabdata before saving.
-				world.rePrefab.prefabs.Insert(0, p.prefabData);
-            }
-        }
-		foreach (CircuitDataHolder p in PrefabManager.CurrentMapElectrics)
-        {
-            if (p.circuitData != null)
-            {
-                p.UpdateCircuitData(); // Updates the circuitdata before saving.
-				world.rePrefab.electric.circuitData.Insert(0, p.circuitData);
-            }
-        }
-        Progress.Report(ID.prefab, 0.99f, "Saved " + PrefabManager.CurrentMapPrefabs.Length + " prefabs.");
-		Progress.Report(ID.circuit, 0.99f, "Saved " + PrefabManager.CurrentMapPrefabs.Length + " circuits.");
+			
+			
+			foreach (PrefabDataHolder p in PrefabManager.CurrentMapPrefabs)
+			{
+				if (p.prefabData != null)
+				{
+					p.AlwaysBreakPrefabs(); // Updates the prefabdata before saving.
+					world.rePrefab.prefabs.Add(p.prefabData);
+				}
+			}
+			foreach (CircuitDataHolder p in PrefabManager.CurrentMapElectrics)
+			{
+				if (p.circuitData != null)
+				{
+					p.UpdateCircuitData(); // Updates the circuitdata before saving.
+					world.rePrefab.electric.circuitData.Insert(0, p.circuitData);
+				}
+			}
+			Progress.Report(ID.prefab, 0.99f, "Saved " + PrefabManager.CurrentMapPrefabs.Length + " prefabs.");
+			Progress.Report(ID.circuit, 0.99f, "Saved " + PrefabManager.CurrentMapPrefabs.Length + " circuits.");
 
-        return world;
+			return world;
+			}
+			catch(NullReferenceException err)
+			{
+					//Debug.LogError(err.Message);
+					return world;
+			}
     }
 
     /// <summary>Converts Unity terrains to WorldSerialization.</summary>

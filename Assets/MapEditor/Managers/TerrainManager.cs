@@ -222,6 +222,19 @@ public static class TerrainManager
 
         Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
     }
+	
+	public static void SetPrefabHeightmap(float[,] heightMap, int progressID)
+    {
+		int res = heightMap.GetLength(0);
+		Debug.LogError(res);
+        Land.terrainData.heightmapResolution = 512;
+        Land.terrainData.size = new Vector3(1000,1000,1000);
+        Land.terrainData.SetHeights(0, 0, heightMap);
+        Progress.Report(progressID, .5f, "Loaded: Land");
+        AreaManager.Reset();
+
+        Progress.Report(progressID, 0.99f, "Loaded " + TerrainSize.x + " size map.");
+    }
 
     public static void SetSplatMaps(MapInfo mapInfo)
     {
