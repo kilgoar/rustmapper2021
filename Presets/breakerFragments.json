@@ -823,6 +823,14 @@
         {
             "fragment": "GameObject",
             "id": 0
+        },
+        {
+            "fragment": "Oil Rig FX",
+            "id": 3496704987
+        },
+        {
+            "fragment": "Oil Rig Lighting",
+            "id": 1051135025
         }
     ]
 }

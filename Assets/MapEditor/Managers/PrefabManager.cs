@@ -2601,6 +2601,7 @@ public static class PrefabManager
 			float adjustXY = TerrainManager.TerrainSize.x / 2f;
 			Vector3 adjuster = new Vector3(adjustXY,adjustZ,adjustXY);
 			
+			
             for (int i = 0; i < fragment.Count; i++)
             {
 				if(!fragment[i].ignore)
@@ -2609,6 +2610,7 @@ public static class PrefabManager
 					{
 						fragment[i].prefabData.position -= adjuster;
 						Spawn(Load(fragment[i].prefabData.id), fragment[i].prefabData, GetParent(fragment[i].prefabData.category));	
+						fragment[i].prefabData.position += adjuster;
 					}
 				}
             }
