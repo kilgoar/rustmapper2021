@@ -144,9 +144,9 @@ public static class PrefabManager
         foreach (var item in go.GetComponentsInChildren<MeshCollider>())
         {
             item.cookingOptions = MeshColliderCookingOptions.None;
-            item.enabled = false;
+            item.enabled = true;
             item.isTrigger = false;
-            item.convex = false;
+            item.convex = true;
         }
         foreach (var item in go.GetComponentsInChildren<Animator>())
         {
@@ -567,6 +567,22 @@ public static class PrefabManager
 			
 	}
 	
+	public static PrefabData prefab(string category, uint id, Vector3 position, Vector3 rotation, Vector3 scale)
+	{
+		
+		GameObject defaultObj = Load(id);
+		PrefabData newPrefab = new PrefabData();
+		defaultObj.SetActive(true);
+		var prefab = new PrefabData();
+
+		prefab.category = category;
+		prefab.id = id;
+		prefab.position = position;
+		prefab.rotation = rotation;
+		prefab.scale = scale;
+		return prefab;
+	}
+	
 	public static void createPrefab(string category, uint id, Vector3 position, Vector3 rotation, Vector3 scale)
     {
 		Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
@@ -582,6 +598,41 @@ public static class PrefabManager
 		prefab.scale = scale;
 		SpawnPrefab(defaultObj, prefab, prefabsParent);
     }
+	
+	public static void createPrefab(string category, uint id, Transform transItem)
+    {
+		Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
+		GameObject defaultObj = Load(id);
+		PrefabData newPrefab = new PrefabData();
+		defaultObj.SetActive(true);
+		var prefab = new PrefabData();
+
+		prefab.category = category;
+		prefab.id = id;
+		prefab.position = prefabPosition(transItem.position);
+		
+		prefab.rotation = transItem.eulerAngles;
+		prefab.scale = transItem.lossyScale;
+		SpawnPrefab(defaultObj, prefab, prefabsParent);
+    }
+	
+	public static void createPrefab(string category, uint id, Transform transItem, Vector3 position, Vector3 rotation)
+    {
+		Transform prefabsParent = GameObject.FindGameObjectWithTag("Prefabs").transform;
+		GameObject defaultObj = Load(id);
+		PrefabData newPrefab = new PrefabData();
+		defaultObj.SetActive(true);
+		var prefab = new PrefabData();
+
+		prefab.category = category;
+		prefab.id = id;
+		prefab.position = position;
+		
+		prefab.rotation = rotation;
+		prefab.scale = transItem.lossyScale;
+		SpawnPrefab(defaultObj, prefab, prefabsParent);
+    }
+	
 
 	public static void Offset(PrefabDataHolder[] prefabs, CircuitDataHolder[] circuits, Vector3 offset)
 	{
@@ -1084,6 +1135,142 @@ public static class PrefabManager
 	{
 		breakerTree.LoadFragments(monumentFragments);
 	}
+
+	public static Vector3 transformPosition(Vector3 prefabPosition)
+	{
+		float adjustZ = 500f;
+		float adjustXY = TerrainManager.TerrainSize.x / 2f;
+		Vector3 adjuster = new Vector3(adjustXY,adjustZ,adjustXY);
+		return (prefabPosition + adjuster);
+	}
+
+	public static Vector3 prefabPosition(Vector3 transformPosition)
+	{
+		float adjustZ = 500f;
+		float adjustXY = TerrainManager.TerrainSize.x / 2f;
+		Vector3 adjuster = new Vector3(adjustXY,adjustZ,adjustXY);
+		return (transformPosition - adjuster);
+	}
+
+	public static bool sphereCollision(Vector3 position, float radius, int mask)
+	{
+		Collider[] hitcolliders = Physics.OverlapSphere(transformPosition(position), radius, mask);
+		
+		if (hitcolliders.GetLength(0) > 0)
+		{	return true; }
+		else
+		{  return false; }	
+	}
+
+	public static bool inTerrain(PrefabData prefab)
+	{
+		
+		Vector3 direction = new Vector3();
+		Vector3 frontAngle =  new Vector3(70f,0f,0f);
+		Vector3 sideAngle = new Vector3(0f,135f,0f);
+		Vector3 debugAdjustment = new Vector3(90f,0f,0f);
+		Vector3 rotateAgain = new Vector3(0f,0f,0f);
+		Vector3 rayOrigin = new Vector3(0f,0f,0f);
+		RaycastHit hit;
+		int rayTest = 0;
+		int count = 0;
+		int groundmask = 1<<10;
+		GameObject raycaster = GameObject.Find("Raycaster");
+		
+		
+		
+		
+		raycaster.transform.rotation = Quaternion.Euler(prefab.rotation + frontAngle);
+		direction = Quaternion.Euler(prefab.rotation + frontAngle) * raycaster.transform.forward;
+		
+
+		
+		
+		rayOrigin = transformPosition(prefab.position);
+		rayOrigin -= raycaster.transform.forward * 10f;
+		rayOrigin -= raycaster.transform.up * -10f;
+		raycaster.transform.position = rayOrigin;
+		
+		Ray cliffray = new Ray(rayOrigin, direction);
+		
+		
+		rotateAgain = raycaster.transform.rotation.eulerAngles;
+		rotateAgain.x += debugAdjustment.x;
+		//createPrefab("decor",  576463322, prefabPosition(cliffray.origin), rotateAgain, new Vector3(1f,8f,1f));
+		
+		if (Physics.Raycast(cliffray, out hit, 18f, groundmask))
+			{	rayTest ++;	}
+			else
+			{   return false;	}
+		
+		raycaster.transform.Rotate(100f,0f,0f);
+		rotateAgain.x += 100f;
+		cliffray.direction = raycaster.transform.forward;
+		//createPrefab("decor",  576463322, prefabPosition(cliffray.origin), rotateAgain, new Vector3(1f,8f,1f));	
+			
+		if (Physics.Raycast(cliffray, out hit, 18f, groundmask))
+			{	rayTest ++;	}
+			else
+			{   return false;	}
+		
+		raycaster.transform.Rotate(0f,0f,45f);
+		rotateAgain.z += 45f;
+		cliffray.direction = raycaster.transform.forward;
+		
+		//createPrefab("decor",  576463322, prefabPosition(cliffray.origin), rotateAgain, new Vector3(1f,8f,1f));	
+		
+		if (Physics.Raycast(cliffray, out hit, 18f, groundmask))
+			{	rayTest ++;	}
+			else
+			{   return false;	}
+		
+		raycaster.transform.Rotate(0f,0f,-90f);
+		rotateAgain.z -= 90f;
+		cliffray.direction = raycaster.transform.forward;
+		
+		//createPrefab("decor",  576463322, prefabPosition(cliffray.origin), rotateAgain, new Vector3(1f,8f,1f));	
+			
+		if (Physics.Raycast(cliffray, out hit, 18f, groundmask))
+			{	rayTest ++;	}
+			else
+			{   return false;	}
+		
+		/*
+		
+		for (float testAngle = 0f; testAngle < 98f; testAngle += angle)
+		{
+			count ++;
+			
+			createPrefab("decor",  576463322, prefabPosition(cliffray.origin), rotateAgain, new Vector3(1f,18f,1f));
+			
+			
+			if (Physics.Raycast(cliffray, out hit, 18f, groundmask))
+			{
+				
+				rayTest ++;
+			}
+			else
+			{
+				return false;
+			}
+			
+			raycaster.transform.Rotate(angle,0f,0f);
+			rotateAgain.x += angle;
+			cliffray.direction = raycaster.transform.forward;
+		}
+		*/
+		//Debug.LogError(rayTest);
+		return true;
+	}
+	
+	public static void testPrefab(PrefabDataHolder[] prefabs)
+	{
+		
+		
+	}
+		
+	
+	
 
 	public static void breakMonument(PrefabDataHolder[] prefabs, float z, bool destroy)
 	{
@@ -2637,6 +2824,24 @@ public static class PrefabManager
         }
     }
 
+			
+	public static void EnableColliders(PrefabDataHolder[] prefabs)
+        {
+            for (int i = 0; i < prefabs.Length; i++)
+            {                
+                prefabs[i].EnableColliders();
+            }
+        }
+		
+	public static void DisableColliders(PrefabDataHolder[] prefabs)
+        {
+            for (int i = 0; i < prefabs.Length; i++)
+            {                
+                prefabs[i].DisableColliders();
+            }
+        }
+		
+
     public static void RenamePrefabCategories(PrefabDataHolder[] prefabs, string name)
     {
         EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.RenamePrefabCategories(prefabs, name));
@@ -2845,6 +3050,7 @@ public static class PrefabManager
             IsChangingPrefabs = false;
         }
 		
+
 		
         public static IEnumerator RenameNPCs(NPCDataHolder[] bots, string name)
         {

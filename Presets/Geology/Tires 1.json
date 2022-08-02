@@ -1,4 +1,24 @@
 {
+    "geologyItems": [
+        {
+            "customPrefab": "",
+            "custom": false,
+            "prefabID": 766753890,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "",
+            "custom": false,
+            "prefabID": 477532245,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "",
+            "custom": false,
+            "prefabID": 3007326564,
+            "emphasis": 1
+        }
+    ],
     "title": "Tires 1",
     "prefabID": 766753890,
     "prefabID0": 0,
@@ -13,7 +33,9 @@
     "frequency": 40,
     "floor": 500,
     "ceiling": 1000,
-    "biomeIndex": 1,
+    "biomeIndex": 0,
+    "biomeLayer": 1,
+    "colliderLayer": 0,
     "avoidTopo": true,
     "flipping": false,
     "tilting": false,
@@ -21,6 +43,8 @@
     "normalizeY": true,
     "normalizeZ": true,
     "biomeExclusive": false,
+    "cliffTest": false,
+    "overlap": false,
     "scalesLow": {
         "x": 0.9782608151435852,
         "y": 0.9782608151435852,
@@ -43,5 +67,6 @@
     },
     "zOffset": 0.0,
     "slopeLow": 0.0,
-    "slopeHigh": 10.416658401489258
+    "slopeHigh": 10.416658401489258,
+    "colliderDistance": 0.0
 }

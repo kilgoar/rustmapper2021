@@ -1,4 +1,12 @@
 {
+    "geologyItems": [
+        {
+            "customPrefab": "",
+            "custom": false,
+            "prefabID": 2371334959,
+            "emphasis": 1
+        }
+    ],
     "title": "Road Cones",
     "prefabID": 2371334959,
     "prefabID0": 0,
@@ -13,7 +21,9 @@
     "frequency": 10,
     "floor": 500,
     "ceiling": 1000,
-    "biomeIndex": 3,
+    "biomeIndex": 0,
+    "biomeLayer": 1,
+    "colliderLayer": 0,
     "avoidTopo": true,
     "flipping": false,
     "tilting": false,
@@ -21,6 +31,8 @@
     "normalizeY": true,
     "normalizeZ": true,
     "biomeExclusive": false,
+    "cliffTest": false,
+    "overlap": false,
     "scalesLow": {
         "x": 1.7391303777694703,
         "y": 1.79347825050354,
@@ -43,5 +55,6 @@
     },
     "zOffset": 0.0,
     "slopeLow": 0.0,
-    "slopeHigh": 9.305547714233399
+    "slopeHigh": 9.305547714233399,
+    "colliderDistance": 0.0
 }

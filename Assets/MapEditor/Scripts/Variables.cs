@@ -147,6 +147,14 @@ namespace RustMapEditor.Variables
         public float HeightHigh;
         public float HeightBlendHigh;
     }
+	
+	public enum ColliderLayer
+	{
+		Prefabs = 1<<8,
+		Paths = 1<<9,
+		Land = 1<<10,
+	}
+	
     public class Selections
     {
         public enum Objects
@@ -597,10 +605,35 @@ namespace RustMapEditor.Variables
 				public bool scale;
 				public Vector3 scaling;
 	}
-	
+
+	[Serializable]
+	public class GeologyItem
+	{
+		public string customPrefab;
+		public bool custom;
+		public uint prefabID;
+		public int emphasis;
+		
+		public GeologyItem(uint prefabID)
+		{
+			this.prefabID = prefabID;
+		}
+		public GeologyItem(GeologyItem geoItem)
+		{
+			this.prefabID = geoItem.prefabID;
+			this.custom =  geoItem.custom;
+			this.emphasis = geoItem.emphasis;
+			this.customPrefab = geoItem.customPrefab;
+		}
+		public GeologyItem()
+		{
+		}
+	}
+		
 	[Serializable]
 	public struct GeologyPreset
 	{
+				public List<GeologyItem> geologyItems;
 				public string title;
 				public uint prefabID;
 				public uint prefabID0;
@@ -612,9 +645,11 @@ namespace RustMapEditor.Variables
 				public uint prefabID6;
 				public uint prefabID7;
 				public int density, frequency, floor, ceiling, biomeIndex;
-				public bool avoidTopo, flipping, tilting, normalizeX, normalizeY, normalizeZ, biomeExclusive; 
+				public TerrainBiome.Enum biomeLayer;
+				public ColliderLayer colliderLayer, closeColliderLayer;				
+				public bool avoidTopo, flipping, tilting, normalizeX, normalizeY, normalizeZ, biomeExclusive, cliffTest, overlap, closeOverlap; 
 				public Vector3 scalesLow, scalesHigh, rotationsLow, rotationsHigh;
-				public float zOffset, slopeLow, slopeHigh;
+				public float zOffset, slopeLow, slopeHigh, colliderDistance, closeColliderDistance;
 	}
 	
 	[Serializable]

@@ -21,6 +21,33 @@ public class PrefabDataHolder : MonoBehaviour
         prefabData.scale = transform.localScale;
     }
 	
+	public void EnableColliders()
+	{
+			Collider[] colliders = gameObject.GetComponentsInChildren(typeof(Collider), true) as Collider[];
+			if (colliders!= null)
+			{
+				foreach (MeshCollider collider in colliders)
+				{
+					collider.enabled = true;
+					collider.convex = true;
+				}
+			}
+	}
+	
+	public void DisableColliders()
+	{
+			Collider[] colliders = gameObject.GetComponentsInChildren(typeof(Collider), true) as Collider[];
+			
+			if (colliders!= null)
+			{				
+				foreach (MeshCollider collider in colliders)
+				{
+					collider.enabled = false;
+					collider.convex = false;
+				}
+			}
+	}
+	
 	public void AlwaysBreakPrefabs()
     {
 		

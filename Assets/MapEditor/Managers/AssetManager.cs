@@ -151,6 +151,9 @@ public static class AssetManager
 					case "Sphere":
 						LoadPrefab(lineSplit[1]).AddComponent<VolumeGizmo>().mesh = sphereMesh;
 						break;
+					case "Spawner":
+						LoadPrefab("");
+						break;
                 }
             }
         }

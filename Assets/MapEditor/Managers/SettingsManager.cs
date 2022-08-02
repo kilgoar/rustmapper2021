@@ -268,6 +268,14 @@ public static class SettingsManager
 		return filenames;
 	}
 	
+	public static string[] GetDirectoryTitles(string path)
+	{
+		
+			return Directory.GetDirectories(path);
+
+	}
+	
+	
 
     /// <summary> Sets the EditorSettings back to default values.</summary>
     public static void SetDefaultSettings()

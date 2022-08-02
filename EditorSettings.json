@@ -5,7 +5,7 @@
     "waterTransparency": 0.20000000298023225,
     "loadbundleonlaunch": false,
     "terrainTextureSet": false,
-    "style": false,
+    "style": true,
     "crazing": {
         "title": "",
         "zones": 300,
@@ -19,7 +19,7 @@
         "biomeLayer": 2,
         "strength": 1.0,
         "invert": false,
-        "paintBiome": true
+        "paintBiome": false
     },
     "ripple": {
         "size": 1200,
@@ -55,37 +55,51 @@
         "simple": true
     },
     "geology": {
-        "title": "Arid formations medium",
-        "prefabID": 2591072256,
+        "geologyItems": [
+            {
+                "customPrefab": "",
+                "custom": false,
+                "prefabID": 1654744457,
+                "emphasis": 1
+            }
+        ],
+        "title": "nodes Mars",
+        "prefabID": 1654744457,
         "prefabID0": 0,
-        "prefabID1": 4064290979,
-        "prefabID2": 3817899359,
-        "prefabID3": 4064290979,
-        "prefabID4": 3817899359,
+        "prefabID1": 0,
+        "prefabID2": 0,
+        "prefabID3": 0,
+        "prefabID4": 0,
         "prefabID5": 0,
         "prefabID6": 0,
         "prefabID7": 0,
-        "density": 1250,
-        "frequency": 100,
-        "floor": 555,
-        "ceiling": 590,
-        "biomeIndex": 1,
+        "density": 1000,
+        "frequency": 35,
+        "floor": 0,
+        "ceiling": 1000,
+        "biomeIndex": 0,
+        "biomeLayer": 1,
+        "colliderLayer": 256,
+        "closeColliderLayer": 0,
         "avoidTopo": true,
         "flipping": false,
         "tilting": false,
-        "normalizeX": false,
+        "normalizeX": true,
         "normalizeY": false,
-        "normalizeZ": false,
-        "biomeExclusive": false,
+        "normalizeZ": true,
+        "biomeExclusive": true,
+        "cliffTest": false,
+        "overlap": true,
+        "closeOverlap": false,
         "scalesLow": {
-            "x": 1.0326086282730103,
-            "y": 1.0326087474822999,
-            "z": 1.0326083898544312
+            "x": 0.9958094358444214,
+            "y": 0.9914530515670776,
+            "z": 0.9918146133422852
         },
         "scalesHigh": {
-            "x": 1.0326086282730103,
-            "y": 1.0326087474822999,
-            "z": 1.0326083898544312
+            "x": 0.9958094358444214,
+            "y": 0.9914530515670776,
+            "z": 0.9918146133422852
         },
         "rotationsLow": {
             "x": 0.0,
@@ -94,12 +108,14 @@
         },
         "rotationsHigh": {
             "x": 0.0,
-            "y": 360.0,
+            "y": 0.0,
             "z": 0.0
         },
         "zOffset": 0.0,
-        "slopeLow": 10.412066459655762,
-        "slopeHigh": 32.662437438964847
+        "slopeLow": 0.0,
+        "slopeHigh": 6.023895740509033,
+        "colliderDistance": 7.0,
+        "closeColliderDistance": 0.0
     },
     "replacer": {
         "prefabID0": 0,

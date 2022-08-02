@@ -25,11 +25,14 @@ public class MapManagerWindow : EditorWindow
     float terraceErodeFeatureSize = 150f, terraceErodeInteriorCornerWeight = 1f, blurDirection = 0f, filterStrength = 1f;
 	
 	GeologyPreset activePreset = new GeologyPreset();
+
+	GeologyItem geoItem = new GeologyItem();
 	
 	int presetIndex = 0;
 	int breakerIndex = 0;
 	int replacerPresetIndex = 0;
 	int macroIndex = 0;
+	int customPrefabIndex = 0;
 	string macroTitle = "";
 	
 	float tttWeight = .7f;
@@ -49,7 +52,7 @@ public class MapManagerWindow : EditorWindow
 	string [] geologyList = SettingsManager.GetPresetTitles("Presets/Geology/");
 	string [] replacerList = SettingsManager.GetPresetTitles("Presets/Replacer/");
 	string [] macroList = SettingsManager.GetPresetTitles("Presets/Geology/Macros/");
-	
+	string [] customPrefabList  = SettingsManager.GetDirectoryTitles("Custom/");
 
 	int layerIndex = (int)TerrainManager.LandLayer;
 	int prefabIndex= 0, thicc = 3;
@@ -82,7 +85,7 @@ public class MapManagerWindow : EditorWindow
 	
 	public void OnEnable()
 	{
-		
+		activePreset.biomeLayer = TerrainBiome.Enum.Arid;
 		breakerTree = new BreakerTreeView(breakerState);
 		SettingsManager.LoadFragmentLookup();
 		
@@ -299,7 +302,8 @@ public class MapManagerWindow : EditorWindow
 						break;
 
 						case 1:
-								Functions.Geology(ref activePreset, ref presetIndex, ref geologyList, ref macroIndex, ref macroList, ref macroTitle, ref macroDisplay, ref layers);
+								Functions.Geology(ref activePreset, ref presetIndex, ref geologyList, ref macroIndex, ref macroList, ref macroTitle, ref macroDisplay, ref layers, ref geoItem,
+								ref customPrefabList, ref customPrefabIndex);
 						break;
 						
 						case 2:
