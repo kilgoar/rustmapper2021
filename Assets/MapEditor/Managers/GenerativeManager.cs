@@ -1653,28 +1653,22 @@ public static class GenerativeManager
 		return oddsList;
 	}
 	
-	public static void spawnItem(GeologyItem geoItem, Transform transItem)
+	public static void spawnCustom(GeologyItem geoItem, Vector3 position, Vector3 rotation, Vector3 scale, Transform parent)
 	{
-		if(geoItem.custom)
-		{
-			PrefabManager.placeCustomPrefab(geoItem.customPrefab, transItem);
-		}
-		else
-		{
-			PrefabManager.createPrefab("Decor", geoItem.prefabID, transItem);
-		}
+		PrefabManager.placeCustomPrefab(geoItem.customPrefab, position, rotation, scale, parent);
 	}
 	
-	public static void spawnItem(GeologyItem geoItem, Transform transItem, Vector3 position, Vector3 rotation)
+	public static void spawnItem(GeologyItem geoItem, Transform transItem)
 	{
-		if(geoItem.custom)
-		{
-			PrefabManager.placeCustomPrefab(geoItem.customPrefab, transItem);
-		}
-		else
-		{
-			PrefabManager.createPrefab("Decor", geoItem.prefabID, transItem, position, rotation);
-		}
+
+			PrefabManager.createPrefab("Decor", geoItem.prefabID, transItem);
+	}
+	
+	public static void spawnGeoItem(GeologyItem geoItem, Vector3 position, Vector3 rotation, Vector3 scale)
+	{
+
+			PrefabManager.createPrefab("Decor", geoItem.prefabID, position, rotation, scale);
+
 	}
 	
 	public static void insertPrefabCliffs(GeologyPreset geo)
@@ -1974,7 +1968,11 @@ public static class GenerativeManager
 											{
 												if (far && close && skirts)
 													{
-														spawnItem(oddsList[selection],raycaster.transform, position, rRotate);
+														
+														if(!oddsList[selection].custom)
+															spawnGeoItem(oddsList[selection], position, rRotate, rScale);
+														else
+															spawnCustom(oddsList[selection], position, rRotate, rScale, GameObject.FindGameObjectWithTag("Prefabs").transform);
 														
 														if(geo.colliderLayer == ColliderLayer.Prefabs || geo.closeColliderLayer == ColliderLayer.Prefabs)
 															yield return null;

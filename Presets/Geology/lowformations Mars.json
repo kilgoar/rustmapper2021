@@ -3,12 +3,6 @@
         {
             "customPrefab": "",
             "custom": false,
-            "prefabID": 140564594,
-            "emphasis": 1
-        },
-        {
-            "customPrefab": "",
-            "custom": false,
             "prefabID": 1854787556,
             "emphasis": 1
         },
@@ -31,6 +25,7 @@
             "emphasis": 1
         }
     ],
+    "filename": "Presets/Geology/lowformations Mars.json",
     "title": "lowformations Mars",
     "prefabID": 140564594,
     "prefabID0": 0,

@@ -700,21 +700,22 @@ public static class MapManager
 	
 	public static void MergeOffsetREPrefab(MapInfo mapInfo, Transform parent, string loadPath = "")
     {
-		//EditorCoroutineUtility.StartCoroutineOwnerless(Coroutines.LoadREPrefab(mapInfo, loadPath));
+		
 		GameObject obj = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/PrefabCategory"), PrefabManager.PrefabParent, false);
 		
+		obj.name = loadPath.Split('/').Last().Split('.')[0] + " " + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10);
 		
-		obj.name = loadPath.Split('/').Last().Split('.')[0] + " " + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10) + UnityEngine.Random.Range(0,10);
-		PrefabManager.PrefabCategories.Add(obj.name, obj.transform);
+		if (!PrefabManager.PrefabCategories.ContainsKey(obj.name))
+			PrefabManager.PrefabCategories.Add(obj.name, obj.transform);
+		else
+			Debug.LogError("duplicate custom prefab name");
 		
 		int progressID = Progress.Start("Load: " + loadPath.Split('/').Last(),  "Preparing Map", Progress.Options.Sticky);
 		int spwPrefab = Progress.Start("Prefabs", null, Progress.Options.Sticky, progressID);
         //int spwCircuit = Progress.Start("Circuits", null, Progress.Options.Sticky, progressID);
-		PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab, obj.transform);
+		PrefabManager.SpawnPrefabs(mapInfo.prefabData, spwPrefab, parent);
 		//PrefabManager.SpawnCircuits(mapInfo.circuitData, spwCircuit);
-		obj.transform.localPosition = parent.position;
-		obj.transform.rotation = parent.rotation;
-		obj.transform.localScale = parent.localScale;
+
     }
 
     /// <summary>Saves the map.</summary>

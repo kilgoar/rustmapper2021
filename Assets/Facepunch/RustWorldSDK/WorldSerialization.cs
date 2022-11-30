@@ -429,7 +429,7 @@ public class WorldSerialization
 				using (var binaryReader = new BinaryReader(fileStream))
                 {
 					uint ver = binaryReader.ReadUInt32();
-					Debug.LogError(ver);
+					//Debug.LogError(ver);
 					
                     using (var compressionStream = new LZ4Stream(fileStream, LZ4StreamMode.Decompress))
 					{

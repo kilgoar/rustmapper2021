@@ -62,8 +62,14 @@ namespace RustMapEditor.UI
 					LoadCustomPrefabJSONPanel();
 		}
 		
-		
-		
+		public static void SendPrefab(uint ID)
+		{
+			if (GUILayout.Button("Geology"))
+			{
+				MapManagerWindow.geoItem.prefabID = ID;
+			}
+		}
+				
 		public static void BreakerHierarchy(ref BreakerPreset breakerPreset, ref BreakerTreeView breakerTree, ref BreakingData fragmentData, ref int oldID, ref IconTextures icons, ref string [] breakerList, ref int presetIndex, ref FragmentPair pair)
 		{
 			
@@ -868,17 +874,9 @@ namespace RustMapEditor.UI
 		{
 					EditorGUI.BeginChangeCheck();
 					
-
+					EditorGUIUtility.labelWidth =150;
 					GUILayout.Label("Feature List", EditorStyles.boldLabel);
 
-					
-					//activePreset.prefabID1 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID1);
-					//activePreset.prefabID2 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID2);
-					//activePreset.prefabID3 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID3);
-					//activePreset.prefabID4 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID4);
-					//activePreset.prefabID5 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID5);
-					//activePreset.prefabID6 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID6);
-					//activePreset.prefabID7 = (uint)EditorGUILayout.LongField("PREFAB ID:", activePreset.prefabID7);
 					
 					if (activePreset.geologyItems != null)
 					{
@@ -888,11 +886,11 @@ namespace RustMapEditor.UI
 							activePreset.geologyItems[i].custom = EditorGUILayout.ToggleLeft("Custom", activePreset.geologyItems[i].custom, GUILayout.MaxWidth(100));
 							if(!activePreset.geologyItems[i].custom)
 							{
-								activePreset.geologyItems[i].prefabID = (uint)EditorGUILayout.LongField("Prefab ID", activePreset.geologyItems[i].prefabID);
+								activePreset.geologyItems[i].prefabID = (uint)EditorGUILayout.LongField(AssetManager.ToName(activePreset.geologyItems[i].prefabID), activePreset.geologyItems[i].prefabID);
 							}
 							else
 							{
-								activePreset.geologyItems[i].customPrefab = EditorGUILayout.TextField("Custom Prefab name", activePreset.geologyItems[i].customPrefab);
+								activePreset.geologyItems[i].customPrefab = EditorGUILayout.TextField(AssetManager.pathToName(activePreset.geologyItems[i].customPrefab), activePreset.geologyItems[i].customPrefab);
 							}
 							activePreset.geologyItems[i].emphasis = EditorGUILayout.IntField("Weight", activePreset.geologyItems[i].emphasis);
 							if (GUILayout.Button("Delete"))
@@ -904,7 +902,7 @@ namespace RustMapEditor.UI
 							
 					}
 					}
-					GUILayout.Label("Feature", EditorStyles.boldLabel);
+					GUILayout.Label("Add Feature", EditorStyles.boldLabel);
 					EditorGUILayout.BeginHorizontal();
 						geologyItem.custom = EditorGUILayout.ToggleLeft("Custom", geologyItem.custom, GUILayout.MaxWidth(100));
 						if(!geologyItem.custom)
@@ -955,38 +953,10 @@ namespace RustMapEditor.UI
 							}
 					EditorGUILayout.EndHorizontal();
 					
-					if (GUILayout.Button("Add old prefab IDs"))
-						{
-							geologyItem.prefabID = activePreset.prefabID;
-							geologyItem.emphasis = 1;
-							geologyItem.custom = false;
-							activePreset.geologyItems.Add(new GeologyItem(geologyItem));
-							geologyItem.prefabID = activePreset.prefabID1;
-							activePreset.geologyItems.Add(new GeologyItem(geologyItem));
-							geologyItem.prefabID = activePreset.prefabID2;
-							activePreset.geologyItems.Add(new GeologyItem(geologyItem));
-							geologyItem.prefabID = activePreset.prefabID3;
-							activePreset.geologyItems.Add(new GeologyItem(geologyItem));
-							geologyItem.prefabID = activePreset.prefabID4;
-							activePreset.geologyItems.Add(new GeologyItem(geologyItem));
-							geologyItem.prefabID = activePreset.prefabID5;
-							activePreset.geologyItems.Add(new GeologyItem(geologyItem));
-							geologyItem.prefabID = activePreset.prefabID6;
-							activePreset.geologyItems.Add(new GeologyItem(geologyItem));
-							geologyItem.prefabID = activePreset.prefabID7;
-							activePreset.geologyItems.Add(new GeologyItem(geologyItem));
-						}
 					
 					if (GUILayout.Button("Delete prefabs"))
 						{
-							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID);
-							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID1);
-							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID2);
-							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID3);
-							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID4);
-							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID5);
-							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID6);
-							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.prefabID7);
+							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.geologyItems);
 						}
 					
 					GUILayout.Label("Rotation range:", EditorStyles.boldLabel);					
@@ -1041,7 +1011,7 @@ namespace RustMapEditor.UI
 					GUILayout.Label("Placement", EditorStyles.boldLabel);
 					
 							EditorGUILayout.BeginHorizontal();
-							activePreset.biomeExclusive = EditorGUILayout.ToggleLeft("Place on biome:", activePreset.biomeExclusive, GUILayout.MaxWidth(250));
+							activePreset.biomeExclusive = EditorGUILayout.ToggleLeft("Biome:", activePreset.biomeExclusive, GUILayout.MaxWidth(80));
 							
 							
 							activePreset.biomeLayer = (TerrainBiome.Enum)Elements.ToolbarEnumPopup(activePreset.biomeLayer);
@@ -1110,11 +1080,13 @@ namespace RustMapEditor.UI
 						SettingsManager.geology = activePreset;					
 					}
 					
-					activePreset.title = EditorGUILayout.TextField("Preset Name", activePreset.title);
+					EditorGUIUtility.labelWidth = 250;
+					activePreset.title = EditorGUILayout.TextField(activePreset.filename, activePreset.title);
 					
 					EditorGUILayout.BeginHorizontal();
 					if (GUILayout.Button("Save"))
 						{
+							activePreset.filename = $"Presets/Geology/{activePreset.title}.json";
 							SettingsManager.geology = activePreset;
                             SettingsManager.SaveGeologyPreset();
 							SettingsManager.LoadPresets();							
@@ -1133,29 +1105,32 @@ namespace RustMapEditor.UI
 					
 					EditorGUI.BeginChangeCheck();
 						macroIndex = EditorGUILayout.Popup("Multi Presets:", macroIndex, macroList);
-					if (EditorGUI.EndChangeCheck())
-					{
-						macroTitle = macroList[macroIndex];
-						macroDisplay = "PRESETS";
-						SettingsManager.LoadGeologyMacro(macroTitle);				
-						
-						foreach (GeologyPreset pre in SettingsManager.macro)
-						{
-							macroDisplay += " - " + pre.title;
-						}
-					}
+					
 					
 					GUILayout.Label(macroDisplay, EditorStyles.boldLabel);
 					
-					macroTitle = EditorGUILayout.TextField("Multi Preset Name", macroTitle);
+					
 					
 					EditorGUILayout.BeginHorizontal();
 					if (GUILayout.Button("Add"))
 						{
+							activePreset.filename = $"Presets/Geology/{activePreset.title}.json"; // this part for for backwards compatibility
+							SettingsManager.geology = activePreset;
+                            SettingsManager.SaveGeologyPreset();
+							
+							
 							SettingsManager.AddToMacro(macroTitle);
 							macroList = SettingsManager.GetPresetTitles("Presets/Geology/Macros/");
 							
 						}
+					if (GUILayout.Button("Remove"))
+						{
+							SettingsManager.RemovePreset(macroTitle);
+							macroList = SettingsManager.GetPresetTitles("Presets/Geology/Macros/");
+							
+						}
+						
+
 					if (GUILayout.Button("Apply"))
 						{
 							foreach (GeologyPreset pre in SettingsManager.macro)
@@ -1164,6 +1139,25 @@ namespace RustMapEditor.UI
 							}
 						}
 					EditorGUILayout.EndHorizontal();
+					SettingsManager.macroSources = EditorGUILayout.ToggleLeft("Use source files", SettingsManager.macroSources);
+					
+					if (EditorGUI.EndChangeCheck())
+					{
+						macroTitle = macroList[macroIndex];
+						macroDisplay = "Preset List";
+						SettingsManager.LoadGeologyMacro(macroTitle);			
+						
+						
+						foreach (GeologyPreset pre in SettingsManager.macro)
+						{
+							macroDisplay += "\n" + pre.title;
+							
+							if (SettingsManager.macroSources)
+								macroDisplay += ".json";
+						}
+					}
+					
+					macroTitle = EditorGUILayout.TextField("Multi Preset Name", macroTitle);
 		}
 		
         public static void EditorIO(string mapName = "")
@@ -2022,11 +2016,7 @@ namespace RustMapEditor.UI
 
         public static void DisplayPrefabPath(string prefabPath)
         {
-            Elements.BeginToolbarHorizontal();
-            if (Elements.ToolbarButton(ToolTips.prefabPath))
-                CopyText(prefabPath);
-            Elements.ToolbarLabel(new GUIContent(prefabPath, prefabPath));
-            Elements.EndToolbarHorizontal();
+            GUILayout.Label(prefabPath, EditorStyles.wordWrappedLabel);
         }
 		
 		public static void Merger(ref float zOffset)

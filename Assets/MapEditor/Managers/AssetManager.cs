@@ -166,6 +166,28 @@ public static class AssetManager
 			foreach (var item in BundleLookup.Keys)
 				streamWriter.WriteLine(item + " : " + ToID(item));
 	}
+	
+	public static string pathToName(string path)
+	{
+			path = path.Replace(@"\","/");
+			string[] pathFragment = path.Split('/');
+			string filename = pathFragment[pathFragment.Length-1];
+			filename = filename.Replace('_',' ');
+			string[] extension = filename.Split('.');
+			filename = extension[0];
+			return filename;
+	}
+
+	public static string ToName(uint i)
+	{
+		if ((int)i == 0)
+			return i.ToString();
+		if (IDLookup.TryGetValue(i, out string str))
+		{
+			return pathToName(str);
+		}
+		return i.ToString();
+	}
 
 	public static string ToPath(uint i)
 	{

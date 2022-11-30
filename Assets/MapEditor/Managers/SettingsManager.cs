@@ -30,6 +30,7 @@ public static class SettingsManager
 	public static string[] geologyPresets { get; set; }
     public static string[] PrefabPaths { get; private set; }
 	public static GeologyPreset[] macro {get; set; }
+	public static bool macroSources {get; set; }
  	public static RustCityPreset city {get; set; }
 	public static BreakerPreset breaker {get; set;}
 	public static FragmentLookup fragmentIDs {get; set;}
@@ -140,6 +141,20 @@ public static class SettingsManager
 			}
 	}
 	
+	public static GeologyPreset GetGeologyPreset(string filename)
+	{
+		if (File.Exists(filename))
+			{
+				using (StreamReader reader = new StreamReader(filename))
+					{
+						return JsonUtility.FromJson<GeologyPreset>(reader.ReadToEnd());
+					}
+			}
+		else
+			return new GeologyPreset("file not found");
+	}
+
+	
 	public static void LoadReplacerPreset(string filename)
 	{
 		using (StreamReader reader = new StreamReader($"Presets/Replacer/{filename}.json"))
@@ -150,6 +165,7 @@ public static class SettingsManager
 	
 	public static void LoadGeologyMacro(string filename)
 	{
+			int length;
 			using (StreamReader reader = new StreamReader($"Presets/Geology/Macros/{filename}.macro"))
 			{
 				string macroFile = reader.ReadToEnd();
@@ -157,7 +173,7 @@ public static class SettingsManager
 				
 				char[] delimiters = { '*'};
 				string[] parse = macroFile.Split(delimiters);
-				int length = parse.Length-1;
+				length = parse.Length-1;
 				GeologyPreset[] newMacro = new GeologyPreset[length];
 				
 				for(int i = 0; i < length; i++)
@@ -166,6 +182,19 @@ public static class SettingsManager
 					}
 				macro = newMacro;
 			}
+			
+			if(macroSources)
+			{
+				GeologyPreset[] fileMacro = new GeologyPreset[length];
+				
+				for(int i = 0; i < length; i++)
+				{
+					fileMacro[i] = GetGeologyPreset(macro[i].filename);
+				}
+				macro = fileMacro;
+			}
+
+
 	}
 	
 	
@@ -182,6 +211,26 @@ public static class SettingsManager
             write.Write(macroFile);
         }
     }
+	
+	public static void RemovePreset(string macroTitle)
+	{
+		int newlength = macro.Length -1;
+		
+		
+		if (newlength >= 0)
+		{
+			GeologyPreset[] newMacro = new GeologyPreset[newlength];
+			
+			for (int i = 0; i < newlength; i++)
+			{	
+					newMacro[i] = macro[i];
+			}
+			macro = newMacro;
+			SaveGeologyMacro(macroTitle);
+		}
+		
+	}
+	
 	
 	public static void AddToMacro(string macroTitle)
 	{
@@ -235,6 +284,7 @@ public static class SettingsManager
 			geology = editorSettings.geology;
 			replacer = editorSettings.replacer;
 			city = editorSettings.city;
+			macroSources = editorSettings.macroSources;
         }
 
 		LoadPresets();
@@ -311,13 +361,14 @@ public struct EditorSettings
 	public string[] prefabPaths;
 	public RustCityPreset city;
 	public BreakerPreset breaker;
+	public bool macroSources;
 
     public EditorSettings
     (
         string rustDirectory = @"C:\Program Files (x86)\Steam\steamapps\common\Rust", float prefabRenderDistance = 700f, float pathRenderDistance = 200f, 
         float waterTransparency = 0.2f, bool loadbundleonlaunch = false, bool terrainTextureSet = false, bool style = true, CrazingPreset crazing = new CrazingPreset(), PerlinSplatPreset perlinSplat = new PerlinSplatPreset(),
 		RipplePreset ripple = new RipplePreset(), OceanPreset ocean = new OceanPreset(), TerracingPreset terracing = new TerracingPreset(), PerlinPreset perlin = new PerlinPreset(), GeologyPreset geology = new GeologyPreset(), 
-		ReplacerPreset replacer = new ReplacerPreset(), RustCityPreset city = new RustCityPreset(), BreakerPreset breaker = new BreakerPreset()
+		ReplacerPreset replacer = new ReplacerPreset(), RustCityPreset city = new RustCityPreset(), BreakerPreset breaker = new BreakerPreset(), bool macroSources = true
 	)
         {
             this.rustDirectory = rustDirectory;
@@ -338,5 +389,6 @@ public struct EditorSettings
 			this.replacer = replacer;
 			this.city = city;
 			this.breaker = breaker;
+			this.macroSources = macroSources;
         }
 }

@@ -30,7 +30,7 @@ namespace RustMapEditor.UI
 
 		Rect previewImageDetails
 		{
-			get { return new Rect(rightColumn, position.width - rightColumn + 10, position.width - rightColumn - 20, 120); }
+			get { return new Rect(rightColumn, position.width - rightColumn + 10, position.width - rightColumn - 20, 300); }
 		}
 
 		Rect options { get { return new Rect(rightColumn, previewImageDetails.height + previewImageRect.height, position.width - rightColumn - 20, position.height - previewImageDetails.height + previewImageRect.height); } }
@@ -111,7 +111,7 @@ namespace RustMapEditor.UI
 			DrawTreeView(multiColumnTreeViewRect);
 			DrawPreviewImage(previewImageRect);
 			DrawPreviewDetails(previewImageDetails);
-			DrawOptions(options, treeView, ref showAllPrefabs);
+			
 		}
 
 		void DrawSearchBar(Rect rect)
@@ -140,6 +140,7 @@ namespace RustMapEditor.UI
 		void DrawPreviewDetails(Rect rect)
 		{
 			GUILayout.BeginArea(rect);
+			Functions.SendPrefab(treeView.prefabID);
 			Elements.BoldLabel(ToolTips.prefabDetailsLabel);
 			Functions.DisplayPrefabName(treeView.prefabName);
 			Functions.DisplayPrefabID(treeView.prefabID);

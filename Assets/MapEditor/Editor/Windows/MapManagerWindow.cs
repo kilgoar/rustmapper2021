@@ -26,7 +26,8 @@ public class MapManagerWindow : EditorWindow
 	
 	GeologyPreset activePreset = new GeologyPreset();
 
-	GeologyItem geoItem = new GeologyItem();
+	public static GeologyItem geoItem = new GeologyItem();
+	
 	
 	int presetIndex = 0;
 	int breakerIndex = 0;
@@ -85,6 +86,7 @@ public class MapManagerWindow : EditorWindow
 	
 	public void OnEnable()
 	{
+		geoItem.emphasis = 1;
 		activePreset.biomeLayer = TerrainBiome.Enum.Arid;
 		breakerTree = new BreakerTreeView(breakerState);
 		SettingsManager.LoadFragmentLookup();

@@ -49,6 +49,7 @@
             "emphasis": 1
         }
     ],
+    "filename": "",
     "title": "Mars Cliffs",
     "prefabID": 261440689,
     "prefabID0": 0,
@@ -66,6 +67,7 @@
     "biomeIndex": 0,
     "biomeLayer": 1,
     "colliderLayer": 512,
+    "closeColliderLayer": 0,
     "avoidTopo": true,
     "flipping": false,
     "tilting": true,
@@ -75,6 +77,7 @@
     "biomeExclusive": true,
     "cliffTest": true,
     "overlap": true,
+    "closeOverlap": false,
     "scalesLow": {
         "x": 1.013292908668518,
         "y": 1.0166773796081544,
@@ -98,7 +101,8 @@
     "zOffset": -6.5,
     "slopeLow": 9.23638916015625,
     "slopeHigh": 90.0,
-    "colliderDistance": 30.0
+    "colliderDistance": 30.0,
+    "closeColliderDistance": 0.0
 }*{
     "geologyItems": [
         {
@@ -138,6 +142,7 @@
             "emphasis": 1
         }
     ],
+    "filename": "",
     "title": "lowformations Mars",
     "prefabID": 140564594,
     "prefabID0": 0,
@@ -155,6 +160,7 @@
     "biomeIndex": 0,
     "biomeLayer": 1,
     "colliderLayer": 512,
+    "closeColliderLayer": 0,
     "avoidTopo": true,
     "flipping": false,
     "tilting": false,
@@ -164,6 +170,7 @@
     "biomeExclusive": true,
     "cliffTest": false,
     "overlap": true,
+    "closeOverlap": false,
     "scalesLow": {
         "x": 0.9958094358444214,
         "y": 0.9914530515670776,
@@ -187,7 +194,8 @@
     "zOffset": -1.2000000476837159,
     "slopeLow": 0.0,
     "slopeHigh": 4.236663341522217,
-    "colliderDistance": 30.0
+    "colliderDistance": 30.0,
+    "closeColliderDistance": 0.0
 }*{
     "geologyItems": [
         {
@@ -239,6 +247,7 @@
             "emphasis": 1
         }
     ],
+    "filename": "",
     "title": "lowformations Mars 2",
     "prefabID": 2939550396,
     "prefabID0": 0,
@@ -256,6 +265,7 @@
     "biomeIndex": 0,
     "biomeLayer": 1,
     "colliderLayer": 512,
+    "closeColliderLayer": 0,
     "avoidTopo": true,
     "flipping": true,
     "tilting": false,
@@ -265,6 +275,7 @@
     "biomeExclusive": true,
     "cliffTest": false,
     "overlap": true,
+    "closeOverlap": false,
     "scalesLow": {
         "x": 1.0082371234893799,
         "y": 1.0219531059265137,
@@ -288,7 +299,8 @@
     "zOffset": 0.0,
     "slopeLow": 6.228813648223877,
     "slopeHigh": 16.630619049072267,
-    "colliderDistance": 25.0
+    "colliderDistance": 25.0,
+    "closeColliderDistance": 0.0
 }*{
     "geologyItems": [
         {
@@ -304,6 +316,7 @@
             "emphasis": 1
         }
     ],
+    "filename": "",
     "title": "largeformations Mars",
     "prefabID": 2515908409,
     "prefabID0": 0,
@@ -321,6 +334,7 @@
     "biomeIndex": 0,
     "biomeLayer": 1,
     "colliderLayer": 0,
+    "closeColliderLayer": 0,
     "avoidTopo": true,
     "flipping": false,
     "tilting": false,
@@ -330,6 +344,7 @@
     "biomeExclusive": true,
     "cliffTest": false,
     "overlap": true,
+    "closeOverlap": false,
     "scalesLow": {
         "x": 0.9958094358444214,
         "y": 0.9914530515670776,
@@ -353,7 +368,8 @@
     "zOffset": -4.0,
     "slopeLow": 0.0,
     "slopeHigh": 4.236663341522217,
-    "colliderDistance": 35.0
+    "colliderDistance": 35.0,
+    "closeColliderDistance": 0.0
 }*{
     "geologyItems": [
         {
@@ -363,6 +379,7 @@
             "emphasis": 1
         }
     ],
+    "filename": "Presets/Geology/nodes Mars.json",
     "title": "nodes Mars",
     "prefabID": 1654744457,
     "prefabID0": 0,
@@ -374,12 +391,13 @@
     "prefabID6": 0,
     "prefabID7": 0,
     "density": 1000,
-    "frequency": 40,
+    "frequency": 35,
     "floor": 0,
     "ceiling": 1000,
     "biomeIndex": 0,
     "biomeLayer": 1,
     "colliderLayer": 256,
+    "closeColliderLayer": 0,
     "avoidTopo": true,
     "flipping": false,
     "tilting": false,
@@ -389,6 +407,7 @@
     "biomeExclusive": true,
     "cliffTest": false,
     "overlap": true,
+    "closeOverlap": false,
     "scalesLow": {
         "x": 0.9958094358444214,
         "y": 0.9914530515670776,
@@ -412,5 +431,6 @@
     "zOffset": 0.0,
     "slopeLow": 0.0,
     "slopeHigh": 6.023895740509033,
-    "colliderDistance": 5.0
+    "colliderDistance": 7.0,
+    "closeColliderDistance": 0.0
 }*

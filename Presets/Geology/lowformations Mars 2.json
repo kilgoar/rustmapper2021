@@ -3,24 +3,6 @@
         {
             "customPrefab": "",
             "custom": false,
-            "prefabID": 2939550396,
-            "emphasis": 1
-        },
-        {
-            "customPrefab": "",
-            "custom": false,
-            "prefabID": 1077083573,
-            "emphasis": 1
-        },
-        {
-            "customPrefab": "",
-            "custom": false,
-            "prefabID": 2939550396,
-            "emphasis": 1
-        },
-        {
-            "customPrefab": "",
-            "custom": false,
             "prefabID": 2506672559,
             "emphasis": 1
         },
@@ -34,7 +16,7 @@
             "customPrefab": "",
             "custom": false,
             "prefabID": 1077083573,
-            "emphasis": 1
+            "emphasis": 2
         }
     ],
     "title": "lowformations Mars 2",
@@ -48,7 +30,7 @@
     "prefabID6": 1077083573,
     "prefabID7": 732484098,
     "density": 250,
-    "frequency": 55,
+    "frequency": 50,
     "floor": 500,
     "ceiling": 1000,
     "biomeIndex": 0,

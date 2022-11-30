@@ -317,11 +317,22 @@ public static class PrefabManager
 
     }
 
-	public static void placeCustomPrefab(string loadPath, Transform spawnItem)
+	public static void placeCustomPrefab(string loadPath,Vector3 position, Vector3 rotation, Vector3 scale, Transform parent = null)
 	{
 			var world = new WorldSerialization();
             world.LoadREPrefab(loadPath);
-			MapManager.MergeOffsetREPrefab(WorldConverter.WorldToREPrefab(world), spawnItem, loadPath);
+			
+
+			
+			GameObject newObj = new GameObject(loadPath);
+			newObj.transform.parent = parent;
+			newObj.transform.localPosition = position;
+			newObj.transform.rotation = Quaternion.Euler(rotation);
+			newObj.transform.localScale = scale;
+			newObj.name = loadPath;
+			
+			
+			MapManager.MergeOffsetREPrefab(WorldConverter.WorldToREPrefab(world), newObj.transform, loadPath);
 	}
 	
 	public static Colliders ItemToColliders(Transform item)
@@ -409,7 +420,7 @@ public static class PrefabManager
 		if (id == 817541646)
 		{
 			spawnItem.position -= adjuster;		
-			placeCustomPrefab("fenceReplacer.prefab", spawnItem);
+			//placeCustomPrefab("fenceReplacer.prefab", spawnItem);
 			return;
 		}
 		
@@ -2764,6 +2775,37 @@ public static class PrefabManager
 		Debug.LogError(count + " prefabs removed");
 	}
 
+
+	public static void deletePrefabIDs(PrefabDataHolder[] prefabs, List<GeologyItem> geologyItems)
+	{
+		int count = 0;
+		uint ID = 0;
+		
+		if (geologyItems != null)
+		{
+				for (int i  = 0; i < geologyItems.Count; i++)
+				{
+					ID = geologyItems[i].prefabID;
+					for (int k = 0; k < prefabs.Length; k++)
+					{
+						if (prefabs[k] != null)
+						{
+							if ( prefabs[k].prefabData.id == ID )
+							{			
+											GameObject.DestroyImmediate(prefabs[k].gameObject);
+											prefabs[k] = null;
+											count ++;
+							}
+						}
+					}
+
+				}
+		}
+
+
+		
+		Debug.LogError(count + " prefabs removed");
+	}
 	
 
 	public static void deleteAllPrefabs(PrefabDataHolder[] prefabs)

@@ -8,23 +8,23 @@
     "style": true,
     "crazing": {
         "title": "",
-        "zones": 300,
-        "minSize": 1000,
-        "maxSize": 200,
-        "splatLayer": 4
+        "zones": 500,
+        "minSize": 3000,
+        "maxSize": 5000,
+        "splatLayer": 5
     },
     "perlinSplat": {
         "scale": 25,
-        "splatLayer": 4,
-        "biomeLayer": 2,
-        "strength": 1.0,
+        "splatLayer": 1,
+        "biomeLayer": 8,
+        "strength": 50.0,
         "invert": false,
-        "paintBiome": false
+        "paintBiome": true
     },
     "ripple": {
-        "size": 1200,
-        "density": 125,
-        "weight": 0.25
+        "size": 40,
+        "density": 60,
+        "weight": 0.07999999821186066
     },
     "ocean": {
         "title": "",
@@ -40,16 +40,16 @@
         "flatten": false,
         "perlinBanks": true,
         "circular": true,
-        "weight": 0.02925989404320717,
-        "zStart": 498,
-        "gateBottom": 4,
-        "gateTop": 4,
-        "gates": 1,
+        "weight": 0.6337448358535767,
+        "zStart": 497,
+        "gateBottom": 6,
+        "gateTop": 6,
+        "gates": 3,
         "descaleFactor": 4,
-        "perlinDensity": 80
+        "perlinDensity": 50
     },
     "perlin": {
-        "layers": 3,
+        "layers": 5,
         "period": 40,
         "scale": 220,
         "simple": true
@@ -63,6 +63,7 @@
                 "emphasis": 1
             }
         ],
+        "filename": "Presets/Geology/nodes Mars.json",
         "title": "nodes Mars",
         "prefabID": 1654744457,
         "prefabID0": 0,
@@ -80,7 +81,7 @@
         "biomeIndex": 0,
         "biomeLayer": 1,
         "colliderLayer": 256,
-        "closeColliderLayer": 0,
+        "closeColliderLayer": 512,
         "avoidTopo": true,
         "flipping": false,
         "tilting": false,
@@ -200,5 +201,6 @@
             "category": [],
             "monumentName": ""
         }
-    }
+    },
+    "macroSources": true
 }

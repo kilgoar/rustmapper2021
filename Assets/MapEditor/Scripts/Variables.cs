@@ -197,7 +197,7 @@ namespace RustMapEditor.Variables
 	[Serializable]
 	public class GeologyPresetCollection
 	{
-		public GeologyPreset[] geoPresets;	
+		public GeologyPreset[] geoPresets;
 	}
 	
 	[Serializable]
@@ -354,6 +354,7 @@ namespace RustMapEditor.Variables
 		}
 	}
 	
+		
 	public class BreakingItem : TreeViewItem 
 	{
 		public BreakingData breakingData;
@@ -634,6 +635,7 @@ namespace RustMapEditor.Variables
 	public struct GeologyPreset
 	{
 				public List<GeologyItem> geologyItems;
+				public string filename;
 				public string title;
 				public uint prefabID;
 				public uint prefabID0;
@@ -650,6 +652,11 @@ namespace RustMapEditor.Variables
 				public bool avoidTopo, flipping, tilting, normalizeX, normalizeY, normalizeZ, biomeExclusive, cliffTest, overlap, closeOverlap; 
 				public Vector3 scalesLow, scalesHigh, rotationsLow, rotationsHigh;
 				public float zOffset, slopeLow, slopeHigh, colliderDistance, closeColliderDistance;
+				
+				public GeologyPreset(string title) : this()
+				{
+					this.title = title;
+				}
 	}
 	
 	[Serializable]
