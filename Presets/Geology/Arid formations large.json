@@ -1,24 +1,149 @@
 {
     "geologyItems": [
         {
-            "customPrefab": "",
-            "custom": false,
-            "prefabID": 2506672559,
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile1.prefab",
+            "custom": true,
+            "prefabID": 110310205,
             "emphasis": 1
         },
         {
-            "customPrefab": "",
-            "custom": false,
-            "prefabID": 3830715959,
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile10.prefab",
+            "custom": true,
+            "prefabID": 110310205,
             "emphasis": 1
         },
         {
-            "customPrefab": "",
-            "custom": false,
-            "prefabID": 2506672559,
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile11.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile12.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile13.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile14.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile15.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile16.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile17.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile18.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile19.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile2.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile20.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile3.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile4.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile5.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile6.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile7.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile8.prefab",
+            "custom": true,
+            "prefabID": 110310205,
+            "emphasis": 1
+        },
+        {
+            "customPrefab": "Custom/Martian Junkpiles\\Martian-RoadsideJunkpile9.prefab",
+            "custom": true,
+            "prefabID": 110310205,
             "emphasis": 1
         }
     ],
+    "geologyCollisions": [
+        {
+            "minMax": false,
+            "radius": 50.0,
+            "layer": 512
+        },
+        {
+            "minMax": true,
+            "radius": 50.0,
+            "layer": 256
+        },
+        {
+            "minMax": true,
+            "radius": 20.0,
+            "layer": 512
+        }
+    ],
+    "newCollisions": {
+        "minMax": false,
+        "radius": 50.0,
+        "layer": 256
+    },
+    "filename": "Presets/Geology/Arid formations large.json",
     "title": "Arid formations large",
     "prefabID": 2506672559,
     "prefabID0": 0,
@@ -29,13 +154,14 @@
     "prefabID5": 0,
     "prefabID6": 0,
     "prefabID7": 0,
-    "density": 1250,
-    "frequency": 100,
+    "density": 2000,
+    "frequency": 50,
     "floor": 505,
     "ceiling": 1000,
     "biomeIndex": 0,
     "biomeLayer": 1,
     "colliderLayer": 0,
+    "closeColliderLayer": 0,
     "avoidTopo": true,
     "flipping": false,
     "tilting": false,
@@ -45,6 +171,7 @@
     "biomeExclusive": true,
     "cliffTest": false,
     "overlap": false,
+    "closeOverlap": false,
     "scalesLow": {
         "x": 1.0326086282730103,
         "y": 1.0326087474822999,
@@ -66,7 +193,8 @@
         "z": 0.0
     },
     "zOffset": -0.15000000596046449,
-    "slopeLow": 1.4600024223327637,
-    "slopeHigh": 3.4449758529663088,
-    "colliderDistance": 0.0
+    "slopeLow": 0.0,
+    "slopeHigh": 4.349505424499512,
+    "colliderDistance": 0.0,
+    "closeColliderDistance": 0.0
 }

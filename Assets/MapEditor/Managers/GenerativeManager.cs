@@ -1837,6 +1837,11 @@ public static class GenerativeManager
 			}
 			EditorUtility.ClearProgressBar();
 			
+			bool prefabCollisions = false;
+			foreach (GeologyCollisions collision in geo.geologyCollisions)
+													{
+														prefabCollisions |= (collision.layer ==  ColliderLayer.Prefabs);
+													}
 			
 			for (int i = 1; i < splatRes-1; i++)
 			{
@@ -1863,130 +1868,115 @@ public static class GenerativeManager
 					{
 
 										
-										height = 0f;
-										
-										tempHeight= 0f;
-										for (int n = -1; n < 2; n++)
-										{
-											for (int o = -1; o < 2; o++)
-											{
-												tempHeight = baseMap[heightMapsX+n, heightMapsY+o];
-												
-												if (height < tempHeight)
-												{
-													height = tempHeight;
-													xOff = n;
-													yOff = o;
-												}
-												
-												
-												
-											}
-										}
-										
-										
-									
-										if(flipping)
-										{
-										flipX = UnityEngine.Random.Range(0,2) * 180;
-										flipZ = UnityEngine.Random.Range(0,2) * 180;
-										}
-										//lean and displace each rock for 'geology'
-										if(tilting)
-										{
-										geology = (Mathf.PerlinNoise(i*1f/80,j*1f/80))*20;
-										}
-										//geolog = 0f;
-										//position is nearest highest pixel + zoffset
-										position = new Vector3(j *ratio-(size/2f)+yOff*ratio, height * sizeZ - (sizeZ*.5f) + zOffset,i *ratio-(size/2f)+xOff*ratio);
-										
-										//rotation gets geology and randomization
-										//normalization
 										
 										
 										
 
-										
-										
-										rRotate = new Vector3(UnityEngine.Random.Range(rotationRange1.x, rotationRange2.x) + geology + flipX, UnityEngine.Random.Range(rotationRange1.y, rotationRange2.y), UnityEngine.Random.Range(rotationRange1.z,rotationRange2.z) + flipZ);
-										rScale = new Vector3(UnityEngine.Random.Range(scaleRange1.x, scaleRange2.x), UnityEngine.Random.Range(scaleRange1.y, scaleRange2.y), UnityEngine.Random.Range(scaleRange1.z,scaleRange2.z));
-										
-										if(geo.normalizeY)
-										{
-										normal = land.terrainData.GetInterpolatedNormal(1f*j/splatRes, 1f*i/splatRes);
-										qRotate = Quaternion.LookRotation(normal);
-										preRotate = qRotate.eulerAngles;
-										rRotate.y += preRotate.y;
-										}
-										
-										if(geo.normalizeX)
-										{
-										normal = land.terrainData.GetInterpolatedNormal(1f*j/splatRes, 1f*i/splatRes);
-										qRotate = Quaternion.LookRotation(normal);
-										preRotate = qRotate.eulerAngles;
-										rRotate.x += preRotate.x;
-										}
-										
-										if(geo.normalizeZ)
-										{
-										normal = land.terrainData.GetInterpolatedNormal(1f*j/splatRes, 1f*i/splatRes);
-										qRotate = Quaternion.LookRotation(normal);
-										preRotate = qRotate.eulerAngles;
-										rRotate.z += preRotate.z;
-										}
-										GameObject raycaster = GameObject.Find("Raycaster");
-										raycaster.transform.position = position;
-										raycaster.transform.localScale = rScale;
-										raycaster.transform.eulerAngles = rRotate;
-										
-										selection = UnityEngine.Random.Range(0, oddsList.Count);
-										
-										
-										bool far = true;
-										bool close = true;
-										bool skirts = true;
-										
-											if(overlap)
+											if(UnityEngine.Random.Range(0,thinnitude) == 0)
 											{
-												far = !PrefabManager.sphereCollision(position, colliderDistance, colliderLayer);
-											}
-											
-											if(closeOverlap)
-											{
-												close = PrefabManager.sphereCollision(position, closeColliderDistance, closeColliderLayer);
-											}
-											
-											if(testing)
-											{
-												skirts = PrefabManager.inTerrain(new PrefabData("f", 261440689, position, Quaternion.Euler(rRotate), rScale));
-											}
-											
+													if(prefabCollisions){yield return null;}
+													
+													height = 0f;
+													tempHeight= 0f;
+													for (int n = -1; n < 2; n++)
+													{
+														for (int o = -1; o < 2; o++)
+														{
+															tempHeight = baseMap[heightMapsX+n, heightMapsY+o];
+															
+															if (height < tempHeight)
+															{
+																height = tempHeight;
+																xOff = n;
+																yOff = o;
+															}
+															
+															
+															
+														}
+													}
+												
+													if(flipping)
+													{
+													flipX = UnityEngine.Random.Range(0,2) * 180;
+													flipZ = UnityEngine.Random.Range(0,2) * 180;
+													}
+													
+													if(tilting)
+													{
+													geology = (Mathf.PerlinNoise(i*1f/80,j*1f/80))*20;
+													}
+													
+													position = new Vector3(j *ratio-(size/2f)+yOff*ratio, height * sizeZ - (sizeZ*.5f) + zOffset,i *ratio-(size/2f)+xOff*ratio);
+													
 
-											
-											
-											if(UnityEngine.Random.Range(0,thinnitude) == 2)
-											{
-												if (far && close && skirts)
+													
+													
+													rRotate = new Vector3(UnityEngine.Random.Range(rotationRange1.x, rotationRange2.x) + geology + flipX, UnityEngine.Random.Range(rotationRange1.y, rotationRange2.y), UnityEngine.Random.Range(rotationRange1.z,rotationRange2.z) + flipZ);
+													rScale = new Vector3(UnityEngine.Random.Range(scaleRange1.x, scaleRange2.x), UnityEngine.Random.Range(scaleRange1.y, scaleRange2.y), UnityEngine.Random.Range(scaleRange1.z,scaleRange2.z));
+													
+													if(geo.normalizeY)
 													{
-														
-														if(!oddsList[selection].custom)
-															spawnGeoItem(oddsList[selection], position, rRotate, rScale);
-														else
-															spawnCustom(oddsList[selection], position, rRotate, rScale, GameObject.FindGameObjectWithTag("Prefabs").transform);
-														
-														if(geo.colliderLayer == ColliderLayer.Prefabs || geo.closeColliderLayer == ColliderLayer.Prefabs)
-															yield return null;
-																count++;
+													normal = land.terrainData.GetInterpolatedNormal(1f*j/splatRes, 1f*i/splatRes);
+													qRotate = Quaternion.LookRotation(normal);
+													preRotate = qRotate.eulerAngles;
+													rRotate.y += preRotate.y;
 													}
-												else
+													
+													if(geo.normalizeX)
 													{
-														cullcount++;
+													normal = land.terrainData.GetInterpolatedNormal(1f*j/splatRes, 1f*i/splatRes);
+													qRotate = Quaternion.LookRotation(normal);
+													preRotate = qRotate.eulerAngles;
+													rRotate.x += preRotate.x;
 													}
+													
+													if(geo.normalizeZ)
+													{
+													normal = land.terrainData.GetInterpolatedNormal(1f*j/splatRes, 1f*i/splatRes);
+													qRotate = Quaternion.LookRotation(normal);
+													preRotate = qRotate.eulerAngles;
+													rRotate.z += preRotate.z;
+													}
+													GameObject raycaster = GameObject.Find("Raycaster");
+													raycaster.transform.position = position;
+													raycaster.transform.localScale = rScale;
+													raycaster.transform.eulerAngles = rRotate;
+													
+													selection = UnityEngine.Random.Range(0, oddsList.Count);
+													
+													bool collisions = true;
+													bool skirts = true;
+													
+													if(testing)
+													{
+														skirts = PrefabManager.inTerrain(new PrefabData("f", 261440689, position, Quaternion.Euler(rRotate), rScale));
+													}
+												
+													foreach (GeologyCollisions collision in geo.geologyCollisions)
+													{
+														bool sphere = PrefabManager.sphereCollision(position, collision.radius,(int)collision.layer);
+														collisions &= collision.minMax ? !sphere : sphere;
+													}
+												
+												
+													if (collisions && skirts)
+														{
+															
+															if(!oddsList[selection].custom)
+																spawnGeoItem(oddsList[selection], position, rRotate, rScale);
+															else
+																spawnCustom(oddsList[selection], position, rRotate, rScale, GameObject.FindGameObjectWithTag("Prefabs").transform);
+															
+															if(prefabCollisions){yield return null;}
+														}
+													else
+														{
+															cullcount++;
+														}
 											}
 										
 										
-										 //if (sw.Elapsed.TotalSeconds > 4f)
-                							//yield return null;
 										
 										
 					}

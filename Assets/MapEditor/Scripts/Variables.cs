@@ -150,9 +150,11 @@ namespace RustMapEditor.Variables
 	
 	public enum ColliderLayer
 	{
+		All = Physics.AllLayers,
 		Prefabs = 1<<8,
 		Paths = 1<<9,
 		Land = 1<<10,
+		Water = 1<<4,
 	}
 	
     public class Selections
@@ -630,11 +632,28 @@ namespace RustMapEditor.Variables
 		{
 		}
 	}
+	
+	[Serializable]
+	public class GeologyCollisions
+	{
+		public bool minMax;
+		public float radius;
+		public ColliderLayer layer;
+		
+		public GeologyCollisions(GeologyCollisions geoCollisions)
+		{
+			this.minMax = geoCollisions.minMax;
+			this.radius = geoCollisions.radius;
+			this.layer = geoCollisions.layer;
+		}
+	}
 		
 	[Serializable]
 	public struct GeologyPreset
 	{
 				public List<GeologyItem> geologyItems;
+				public List<GeologyCollisions> geologyCollisions;
+				public GeologyCollisions newCollisions;
 				public string filename;
 				public string title;
 				public uint prefabID;
@@ -650,6 +669,9 @@ namespace RustMapEditor.Variables
 				public TerrainBiome.Enum biomeLayer;
 				public ColliderLayer colliderLayer, closeColliderLayer;				
 				public bool avoidTopo, flipping, tilting, normalizeX, normalizeY, normalizeZ, biomeExclusive, cliffTest, overlap, closeOverlap; 
+				
+				public bool featureMenu, rotationMenu, scaleMenu, placementMenu, collisionMenu, presetMenu;
+				
 				public Vector3 scalesLow, scalesHigh, rotationsLow, rotationsHigh;
 				public float zOffset, slopeLow, slopeHigh, colliderDistance, closeColliderDistance;
 				

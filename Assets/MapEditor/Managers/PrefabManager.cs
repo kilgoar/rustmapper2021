@@ -1163,6 +1163,16 @@ public static class PrefabManager
 		return (transformPosition - adjuster);
 	}
 
+	public static bool spacing(PrefabDataHolder[] prefabs, Vector3 position, float distance)
+	{
+		bool tooClose =  false;
+		for (int k = 0; k < prefabs.Length; k++)
+		{
+			tooClose |= (Vector3.Distance(prefabs[k].prefabData.position, position) < distance);
+		}
+		return tooClose;
+	}
+
 	public static bool sphereCollision(Vector3 position, float radius, int mask)
 	{
 		Collider[] hitcolliders = Physics.OverlapSphere(transformPosition(position), radius, mask);
@@ -2785,16 +2795,28 @@ public static class PrefabManager
 		{
 				for (int i  = 0; i < geologyItems.Count; i++)
 				{
-					ID = geologyItems[i].prefabID;
-					for (int k = 0; k < prefabs.Length; k++)
+					if (geologyItems[i].custom)
 					{
-						if (prefabs[k] != null)
+						GameObject[] allGameObjects = GameObject.FindObjectsOfType<GameObject>();
+						foreach(GameObject gameObject in allGameObjects)
 						{
-							if ( prefabs[k].prefabData.id == ID )
-							{			
-											GameObject.DestroyImmediate(prefabs[k].gameObject);
-											prefabs[k] = null;
-											count ++;
+							if (gameObject.name == geologyItems[i].customPrefab)
+							{ GameObject.DestroyImmediate(gameObject);}
+						}
+					}
+					else
+					{
+						ID = geologyItems[i].prefabID;
+						for (int k = 0; k < prefabs.Length; k++)
+						{
+							if (prefabs[k] != null)
+							{
+								if ( prefabs[k].prefabData.id == ID )
+								{			
+												GameObject.DestroyImmediate(prefabs[k].gameObject);
+												prefabs[k] = null;
+												count ++;
+								}
 							}
 						}
 					}

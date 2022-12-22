@@ -874,92 +874,91 @@ namespace RustMapEditor.UI
 		{
 					EditorGUI.BeginChangeCheck();
 					
-					EditorGUIUtility.labelWidth =150;
-					GUILayout.Label("Feature List", EditorStyles.boldLabel);
-
-					
-					if (activePreset.geologyItems != null)
-					{
-					for (int i  = 0; i < activePreset.geologyItems.Count; i++)
-					{					
+					activePreset.featureMenu = EditorGUILayout.BeginFoldoutHeaderGroup(activePreset.featureMenu, "Item List");
+					if(activePreset.featureMenu)
+						{
+						
+						if (activePreset.geologyItems != null)
+						{
+						for (int i  = 0; i < activePreset.geologyItems.Count; i++)
+						{					
+							EditorGUILayout.BeginHorizontal();
+								activePreset.geologyItems[i].custom = EditorGUILayout.ToggleLeft("Custom", activePreset.geologyItems[i].custom, GUILayout.MaxWidth(100));
+								if(!activePreset.geologyItems[i].custom)
+								{
+									activePreset.geologyItems[i].prefabID = (uint)EditorGUILayout.LongField(AssetManager.ToName(activePreset.geologyItems[i].prefabID), activePreset.geologyItems[i].prefabID);
+								}
+								else
+								{
+									activePreset.geologyItems[i].customPrefab = EditorGUILayout.TextField(AssetManager.pathToName(activePreset.geologyItems[i].customPrefab), activePreset.geologyItems[i].customPrefab);
+								}
+								activePreset.geologyItems[i].emphasis = EditorGUILayout.IntField("Weight", activePreset.geologyItems[i].emphasis);
+								if (GUILayout.Button("Delete"))
+									{
+										activePreset.geologyItems.RemoveAt(i);
+									}
+							EditorGUILayout.EndHorizontal();
+								
+								
+						}
+						}
+						
 						EditorGUILayout.BeginHorizontal();
-							activePreset.geologyItems[i].custom = EditorGUILayout.ToggleLeft("Custom", activePreset.geologyItems[i].custom, GUILayout.MaxWidth(100));
-							if(!activePreset.geologyItems[i].custom)
+								if (GUILayout.Button("Add"))
+								{
+									string directory = geologyItem.customPrefab;
+									if (geologyItem.custom)
+									{	
+										
+										foreach(string filename in SettingsManager.GetPresetTitles(directory))
+										{
+											geologyItem.customPrefab = "Custom/" + filename + ".prefab";
+											activePreset.geologyItems.Add(new GeologyItem(geologyItem));
+										}
+									}
+
+									else
+										activePreset.geologyItems.Add(new GeologyItem(geologyItem));
+								}
+						
+							geologyItem.custom = EditorGUILayout.ToggleLeft("Custom", geologyItem.custom, GUILayout.MaxWidth(100));
+							if(!geologyItem.custom)
 							{
-								activePreset.geologyItems[i].prefabID = (uint)EditorGUILayout.LongField(AssetManager.ToName(activePreset.geologyItems[i].prefabID), activePreset.geologyItems[i].prefabID);
+								geologyItem.prefabID = (uint)EditorGUILayout.LongField("Prefab ID", geologyItem.prefabID);
 							}
 							else
 							{
-								activePreset.geologyItems[i].customPrefab = EditorGUILayout.TextField(AssetManager.pathToName(activePreset.geologyItems[i].customPrefab), activePreset.geologyItems[i].customPrefab);
-							}
-							activePreset.geologyItems[i].emphasis = EditorGUILayout.IntField("Weight", activePreset.geologyItems[i].emphasis);
-							if (GUILayout.Button("Delete"))
-								{
-									activePreset.geologyItems.RemoveAt(i);
-								}
-						EditorGUILayout.EndHorizontal();
-							
-							
-					}
-					}
-					GUILayout.Label("Add Feature", EditorStyles.boldLabel);
-					EditorGUILayout.BeginHorizontal();
-						geologyItem.custom = EditorGUILayout.ToggleLeft("Custom", geologyItem.custom, GUILayout.MaxWidth(100));
-						if(!geologyItem.custom)
-						{
-							geologyItem.prefabID = (uint)EditorGUILayout.LongField("Prefab ID", geologyItem.prefabID);
-						}
-						else
-						{
-							/*
-							EditorGUI.BeginChangeCheck();
-							
-								customPrefabIndex = EditorGUILayout.Popup("Presets:", customPrefabIndex, customPrefabList);
+								EditorGUI.BeginChangeCheck();
 								
-							if (EditorGUI.EndChangeCheck())
-							{
-								geologyItem.customPrefab = customPrefabList[customPrefabIndex];
-								customPrefabList = SettingsManager.GetDirectoryTitles("Custom");
-							}
-							*/
-						EditorGUI.BeginChangeCheck();
-						
-							customPrefabIndex = EditorGUILayout.Popup("Custom Folders:", customPrefabIndex, customPrefabList);
-						
-						if (EditorGUI.EndChangeCheck())
-						{
-							geologyItem.customPrefab = customPrefabList[customPrefabIndex];
-						}
-							
-							
-							
-						}
-						geologyItem.emphasis = EditorGUILayout.IntField("Weight", geologyItem.emphasis);
-						if (GUILayout.Button("Add"))
-							{
-								string directory = geologyItem.customPrefab;
-								if (geologyItem.custom)
-								{	
-									
-									foreach(string filename in SettingsManager.GetPresetTitles(directory))
-									{
-										geologyItem.customPrefab = "Custom/" + filename + ".prefab";
-										activePreset.geologyItems.Add(new GeologyItem(geologyItem));
-									}
+									customPrefabIndex = EditorGUILayout.Popup("Custom Folders:", customPrefabIndex, customPrefabList);
+								
+								if (EditorGUI.EndChangeCheck())
+								{
+									geologyItem.customPrefab = customPrefabList[customPrefabIndex];
 								}
-
-								else
-									activePreset.geologyItems.Add(new GeologyItem(geologyItem));
+								
 							}
-					EditorGUILayout.EndHorizontal();
-					
-					
-					if (GUILayout.Button("Delete prefabs"))
+							geologyItem.emphasis = EditorGUILayout.IntField("Weight", geologyItem.emphasis);
+
+						EditorGUILayout.EndHorizontal();
+						
+						
+						if (GUILayout.Button("Delete prefabs"))
+							{
+								PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.geologyItems);
+							}
+					}
+					EditorGUILayout.EndFoldoutHeaderGroup();
+					DrawHorizontalGUILine(); 
+					activePreset.rotationMenu = EditorGUILayout.BeginFoldoutHeaderGroup(activePreset.rotationMenu, "Rotation generator");
+					if(activePreset.rotationMenu)
 						{
-							PrefabManager.deletePrefabIDs(PrefabManager.CurrentMapPrefabs, activePreset.geologyItems);
-						}
 					
-					GUILayout.Label("Rotation range:", EditorStyles.boldLabel);					
+					GUILayout.Label("Randomized rotation range:", EditorStyles.boldLabel);					
+					EditorGUILayout.BeginHorizontal();
+					activePreset.rotationsLow = EditorGUILayout.Vector3Field("Low bound", activePreset.rotationsLow);
+					activePreset.rotationsHigh = EditorGUILayout.Vector3Field("High bound", activePreset.rotationsHigh);
+					EditorGUILayout.EndHorizontal();
 					
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.LabelField("x",GUILayout.MaxWidth(10));
@@ -985,7 +984,24 @@ namespace RustMapEditor.UI
 					activePreset.normalizeZ = EditorGUILayout.ToggleLeft("Align to Z", activePreset.normalizeZ, GUILayout.MaxWidth(250));
 					EditorGUILayout.EndHorizontal();
 					
-					GUILayout.Label("Scale range:", EditorStyles.boldLabel);
+					EditorGUILayout.BeginHorizontal();
+					activePreset.flipping = EditorGUILayout.ToggleLeft("Flip every other prefab", activePreset.flipping);
+					activePreset.tilting = EditorGUILayout.ToggleLeft("Geological shift", activePreset.tilting);
+					EditorGUILayout.EndHorizontal();
+					
+					}
+					EditorGUILayout.EndFoldoutHeaderGroup();
+					DrawHorizontalGUILine(); 
+					activePreset.scaleMenu = EditorGUILayout.BeginFoldoutHeaderGroup(activePreset.scaleMenu, "Scale generator");
+					if(activePreset.scaleMenu)
+					{
+					
+					GUILayout.Label("Randomized scale range:", EditorStyles.boldLabel);
+					EditorGUILayout.BeginHorizontal();
+					activePreset.scalesLow = EditorGUILayout.Vector3Field("Low bound", activePreset.scalesLow);
+					activePreset.scalesHigh = EditorGUILayout.Vector3Field("High bound", activePreset.scalesHigh);
+					EditorGUILayout.EndHorizontal();
+
 
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.LabelField("x",GUILayout.MaxWidth(10));
@@ -1007,17 +1023,14 @@ namespace RustMapEditor.UI
 					EditorGUILayout.LabelField(activePreset.scalesLow.z.ToString("0.0#") + " - " + activePreset.scalesHigh.z.ToString("0.0#") ,GUILayout.MaxWidth(80));
 					EditorGUILayout.EndHorizontal();
 					
+					}
+					EditorGUILayout.EndFoldoutHeaderGroup();
+					DrawHorizontalGUILine(); 
+					activePreset.placementMenu = EditorGUILayout.BeginFoldoutHeaderGroup(activePreset.placementMenu, "Item Placement");
+					if(activePreset.placementMenu)
+					{
 					
-					GUILayout.Label("Placement", EditorStyles.boldLabel);
-					
-							EditorGUILayout.BeginHorizontal();
-							activePreset.biomeExclusive = EditorGUILayout.ToggleLeft("Biome:", activePreset.biomeExclusive, GUILayout.MaxWidth(80));
 							
-							
-							activePreset.biomeLayer = (TerrainBiome.Enum)Elements.ToolbarEnumPopup(activePreset.biomeLayer);
-							activePreset.biomeIndex = TerrainBiome.TypeToIndex((int)activePreset.biomeLayer);
-							
-							EditorGUILayout.EndHorizontal();
 						
                             EditorGUILayout.BeginHorizontal();
                             GUILayout.Label("Slope Range: " + activePreset.slopeLow.ToString("0.0#") + "° - " + activePreset.slopeHigh.ToString("0.0#") + "°");
@@ -1026,22 +1039,21 @@ namespace RustMapEditor.UI
                             EditorGUILayout.MinMaxSlider(ref activePreset.slopeLow, ref activePreset.slopeHigh, 0f, 90f);
 							
 							EditorGUILayout.BeginHorizontal();
+							activePreset.biomeExclusive = EditorGUILayout.ToggleLeft("Biome:", activePreset.biomeExclusive, GUILayout.MaxWidth(80));
+							
+							
+							activePreset.biomeLayer = (TerrainBiome.Enum)Elements.ToolbarEnumPopup(activePreset.biomeLayer);
+							activePreset.biomeIndex = TerrainBiome.TypeToIndex((int)activePreset.biomeLayer);
+							
+							EditorGUILayout.EndHorizontal();
+							
+							
+							EditorGUILayout.BeginHorizontal();
 							activePreset.avoidTopo = EditorGUILayout.ToggleLeft("Dodge roads and monuments", activePreset.avoidTopo, GUILayout.MaxWidth(250));
 							activePreset.cliffTest = EditorGUILayout.ToggleLeft("Test cliff skirts", activePreset.cliffTest, GUILayout.MaxWidth(250));							
 							EditorGUILayout.EndHorizontal();
 							
-							EditorGUILayout.BeginHorizontal();
-							activePreset.overlap = EditorGUILayout.ToggleLeft("Minimum Distance", activePreset.overlap, GUILayout.MaxWidth(250));
-							activePreset.colliderDistance = EditorGUILayout.FloatField(activePreset.colliderDistance);
-							activePreset.colliderLayer = (ColliderLayer)Elements.ToolbarEnumPopup(activePreset.colliderLayer);
-							EditorGUILayout.EndHorizontal();
 							
-							EditorGUILayout.BeginHorizontal();
-							activePreset.closeOverlap = EditorGUILayout.ToggleLeft("Maximum Distance", activePreset.closeOverlap, GUILayout.MaxWidth(250));
-							activePreset.closeColliderDistance = EditorGUILayout.FloatField(activePreset.closeColliderDistance);
-							activePreset.closeColliderLayer = (ColliderLayer)Elements.ToolbarEnumPopup(activePreset.closeColliderLayer);
-							EditorGUILayout.EndHorizontal();
-				
 					activePreset.zOffset = EditorGUILayout.FloatField("Height Offset", activePreset.zOffset);
 					activePreset.density = EditorGUILayout.IntField("Density", activePreset.density);
 					activePreset.frequency = EditorGUILayout.IntField("Frequency", activePreset.frequency);
@@ -1049,22 +1061,66 @@ namespace RustMapEditor.UI
 					activePreset.ceiling = EditorGUILayout.IntField("Ceiling", activePreset.ceiling);
 					
 					
-					GUILayout.Label("Styling", EditorStyles.boldLabel);
-					activePreset.flipping = EditorGUILayout.ToggleLeft("Flipping", activePreset.flipping);
-					activePreset.tilting = EditorGUILayout.ToggleLeft("Geological shift", activePreset.tilting);
 					
-					
+					}
+					EditorGUILayout.EndFoldoutHeaderGroup();
+					DrawHorizontalGUILine(); 
+					activePreset.collisionMenu = EditorGUILayout.BeginFoldoutHeaderGroup(activePreset.collisionMenu, "Collision detection");
+					if(activePreset.collisionMenu)
+					{					
+							if (activePreset.geologyCollisions != null)
+							{
+								for (int i  = 0; i < activePreset.geologyCollisions.Count; i++)
+								{					
+									EditorGUILayout.BeginHorizontal();
+								
+									if(activePreset.geologyCollisions[i].minMax)
+										{	activePreset.geologyCollisions[i].minMax = EditorGUILayout.ToggleLeft("Min Distance", activePreset.geologyCollisions[i].minMax, GUILayout.MaxWidth(250)); }
+									else
+										{ activePreset.geologyCollisions[i].minMax = EditorGUILayout.ToggleLeft("Max Distance", activePreset.geologyCollisions[i].minMax, GUILayout.MaxWidth(250)); }
+								
+									activePreset.geologyCollisions[i].radius = EditorGUILayout.FloatField(activePreset.geologyCollisions[i].radius);
+									activePreset.geologyCollisions[i].layer = (ColliderLayer)Elements.ToolbarEnumPopup(activePreset.geologyCollisions[i].layer);
+									if (GUILayout.Button("Remove"))
+									{
+										activePreset.geologyCollisions.RemoveAt(i);
+									}
+									EditorGUILayout.EndHorizontal();
+								}
+
+							
+							
+
+							EditorGUILayout.BeginHorizontal();
+							if (GUILayout.Button("Add Collision Test"))
+							{
+								activePreset.geologyCollisions.Add(new GeologyCollisions(activePreset.newCollisions));
+							}
+							if(activePreset.newCollisions.minMax)
+							{		activePreset.newCollisions.minMax = EditorGUILayout.ToggleLeft("Min Distance", activePreset.newCollisions.minMax, GUILayout.MaxWidth(250));	}
+							else
+							{		activePreset.newCollisions.minMax = EditorGUILayout.ToggleLeft("Max Distance", activePreset.newCollisions.minMax, GUILayout.MaxWidth(250));	}
+							activePreset.newCollisions.radius = EditorGUILayout.FloatField(activePreset.newCollisions.radius);
+							activePreset.newCollisions.layer = (ColliderLayer)Elements.ToolbarEnumPopup(activePreset.newCollisions.layer);
+							EditorGUILayout.EndHorizontal();							
+							
+							}
 					
 					
 
 					
-					EditorGUILayout.Space();
+					}
+					EditorGUILayout.EndFoldoutHeaderGroup();
+					DrawHorizontalGUILine(); 
+					activePreset.presetMenu = EditorGUILayout.BeginFoldoutHeaderGroup(activePreset.presetMenu, "Presets");
+					if(activePreset.presetMenu)
+					{
 
 					
 					
 					EditorGUI.BeginChangeCheck();
 						
-					presetIndex = EditorGUILayout.Popup("Presets:", presetIndex, geologyList);
+					presetIndex = EditorGUILayout.Popup("Preset list:", presetIndex, geologyList);
 						
 						if (EditorGUI.EndChangeCheck())
 						{
@@ -1072,6 +1128,8 @@ namespace RustMapEditor.UI
 							SettingsManager.LoadGeologyPreset(activePreset.title);
 							activePreset = SettingsManager.geology;
 							geologyList = SettingsManager.GetPresetTitles("Presets/Geology/");
+							activePreset.featureMenu = true;
+							activePreset.presetMenu = true;
 						}
 					
 					
@@ -1082,7 +1140,7 @@ namespace RustMapEditor.UI
 					
 					EditorGUIUtility.labelWidth = 250;
 					activePreset.title = EditorGUILayout.TextField(activePreset.filename, activePreset.title);
-					
+
 					EditorGUILayout.BeginHorizontal();
 					if (GUILayout.Button("Save"))
 						{
@@ -1100,11 +1158,10 @@ namespace RustMapEditor.UI
 
 					EditorGUILayout.EndHorizontal();
 				
-					EditorGUILayout.Space();
-					
+					DrawHorizontalGUILine(); 
 					
 					EditorGUI.BeginChangeCheck();
-						macroIndex = EditorGUILayout.Popup("Multi Presets:", macroIndex, macroList);
+						macroIndex = EditorGUILayout.Popup("Multi Preset list:", macroIndex, macroList);
 					
 					
 					GUILayout.Label(macroDisplay, EditorStyles.boldLabel);
@@ -1158,7 +1215,26 @@ namespace RustMapEditor.UI
 					}
 					
 					macroTitle = EditorGUILayout.TextField("Multi Preset Name", macroTitle);
+					}
+					EditorGUILayout.EndFoldoutHeaderGroup();
+					DrawHorizontalGUILine(); 
 		}
+		
+		//modlunar on unity forums
+	    private static void DrawHorizontalGUILine(int height = 1) 
+		{
+        GUILayout.Space(4);
+     
+        Rect rect = GUILayoutUtility.GetRect(10, height, GUILayout.ExpandWidth(true));
+        rect.height = height;
+        rect.xMin = 0;
+        rect.xMax = EditorGUIUtility.currentViewWidth;
+     
+        Color lineColor = new Color(0.10196f, 0.10196f, 0.10196f, 1);
+        EditorGUI.DrawRect(rect, lineColor);
+        GUILayout.Space(4);
+		}
+
 		
         public static void EditorIO(string mapName = "")
         {

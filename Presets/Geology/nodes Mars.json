@@ -7,6 +7,18 @@
             "emphasis": 1
         }
     ],
+    "geologyCollisions": [
+        {
+            "minMax": true,
+            "radius": 20.0,
+            "layer": 256
+        }
+    ],
+    "newCollisions": {
+        "minMax": true,
+        "radius": 20.0,
+        "layer": 256
+    },
     "filename": "Presets/Geology/nodes Mars.json",
     "title": "nodes Mars",
     "prefabID": 1654744457,

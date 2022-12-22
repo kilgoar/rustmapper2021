@@ -19,6 +19,29 @@
             "emphasis": 2
         }
     ],
+    "geologyCollisions": [
+        {
+            "minMax": true,
+            "radius": 150.0,
+            "layer": 512
+        },
+        {
+            "minMax": false,
+            "radius": 300.0,
+            "layer": 512
+        },
+        {
+            "minMax": true,
+            "radius": 30.0,
+            "layer": 256
+        }
+    ],
+    "newCollisions": {
+        "minMax": false,
+        "radius": 300.0,
+        "layer": 512
+    },
+    "filename": "Presets/Geology/lowformations Mars 2.json",
     "title": "lowformations Mars 2",
     "prefabID": 2939550396,
     "prefabID0": 0,

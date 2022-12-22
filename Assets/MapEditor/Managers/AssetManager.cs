@@ -85,6 +85,20 @@ public static class AssetManager
 		return asset;
 	}
 
+	public static  GameObject LoadSphere()
+	{
+		GameObject newObj = Resources.Load("Prefabs/TranslucentSphere") as GameObject;
+		GameObject prefab = GameObject.Instantiate(newObj);
+		return prefab;
+	}
+	
+	public static  GameObject LoadCube()
+	{
+		GameObject newObj = Resources.Load("Prefabs/TranslucentSphere") as GameObject;
+		GameObject prefab = GameObject.Instantiate(newObj);
+		return newObj;
+	}
+
 
 	public static GameObject LoadPrefab(string filePath)
     {
@@ -136,7 +150,11 @@ public static class AssetManager
 			var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 			var sphereMesh = sphere.GetComponent<MeshFilter>().sharedMesh;
 			GameObject.DestroyImmediate(sphere);
+			
+			GameObject transSphere  = Resources.Load("Prefabs/TranslucentSphere") as GameObject;
+			GameObject transCube  = Resources.Load("Prefabs/TranslucentCube") as GameObject;
 
+			
 			var volumes = File.ReadAllLines(VolumesListPath);
             for (int i = 0; i < volumes.Length; i++)
             {
@@ -145,14 +163,20 @@ public static class AssetManager
 				lineSplit[1] = lineSplit[1].Trim(' '); // Prefab Path
                 switch (lineSplit[0])
                 {
-					case "Cube":
+					case "CubeMesh":
 						LoadPrefab(lineSplit[1]).AddComponent<VolumeGizmo>().mesh = cubeMesh;
 						break;
-					case "Sphere":
+					case "SphereMesh":
 						LoadPrefab(lineSplit[1]).AddComponent<VolumeGizmo>().mesh = sphereMesh;
 						break;
 					case "Spawner":
-						LoadPrefab("");
+						GameObject.Instantiate(transSphere).transform.SetParent(LoadPrefab(lineSplit[1]).transform);
+						break;
+					case "Cube":
+						GameObject.Instantiate(transCube).transform.SetParent(LoadPrefab(lineSplit[1]).transform);
+						break;
+					case "Sphere":
+						GameObject.Instantiate(transSphere).transform.SetParent(LoadPrefab(lineSplit[1]).transform);
 						break;
                 }
             }
